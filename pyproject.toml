@@ -10,8 +10,8 @@ dependencies = [
     "plotly>=6.3.1",
     "pydantic-ai>=1.10.0",
     "pydantic-settings>=2.11.0",
+    "pymongo>=4.15.3",
     "python-gitlab>=7.0.0",
-    "sqlalchemy>=2.0.44",
     "uvicorn>=0.38.0",
     "weasyprint>=66.0",
 ]

@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.router import api_router
 from app.core.config import get_settings
-from app.core.database import init_db
+from app.db.database import close_client, init_db
 from app.frontend import STATIC_DIR
 
 
@@ -19,7 +19,10 @@ async def lifespan(_: FastAPI):
     """Initialize resources such as the database before serving requests."""
 
     init_db()
-    yield
+    try:
+        yield
+    finally:
+        close_client()
 
 
 settings = get_settings()
@@ -35,7 +38,6 @@ if settings.cors_origins:
         allow_headers=["*"],
     )
 
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
 app.include_router(api_router)
 
 

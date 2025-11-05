@@ -1,17 +1,15 @@
 """Shared FastAPI dependencies."""
 
-from collections.abc import Generator
-
-from sqlalchemy.orm import Session
+from pymongo.database import Database
 
 from app.core.config import Settings, get_settings
-from app.core.database import get_session
+from app.db.database import get_database as _get_database
 
 
-def get_db_session() -> Generator[Session, None, None]:
-    """Provide a transactional database session."""
+def get_mongo_database() -> Database:
+    """Expose the configured MongoDB database instance."""
 
-    yield from get_session()
+    return _get_database()
 
 
 def get_app_settings() -> Settings:

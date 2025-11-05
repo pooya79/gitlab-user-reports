@@ -1,8 +1,11 @@
 """Development entrypoint for running the FastAPI application."""
 
 import uvicorn
+import dotenv
 
-from app.core.config import get_settings
+dotenv.load_dotenv()
+
+from app.core.config import get_settings # noqa: E402
 
 
 def main() -> None:
