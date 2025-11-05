@@ -33,7 +33,7 @@ def get_database() -> Database:
     """Retrieve the configured MongoDB database."""
 
     settings = get_settings()
-    return get_client()[settings.mongodb_database]
+    return get_client()[settings.mongodb.database]
 
 
 def init_db() -> None:
@@ -42,8 +42,10 @@ def init_db() -> None:
     db = get_database()
     commits = db["commits"]
     commits.create_index("id", unique=True)
+
     merge_requests = db["merge_requests"]
     merge_requests.create_index("id", unique=True)
+
     merge_request_diffs = db["merge_request_diffs"]
     merge_request_diffs.create_index(
         [
@@ -53,3 +55,8 @@ def init_db() -> None:
         ],
         name="project_mr_timestamp_idx",
     )
+
+    auth_session = db["auth_session"]
+    auth_session.create_index("jti", unique=True)
+
+    app_user_config = db["app_user_config"]

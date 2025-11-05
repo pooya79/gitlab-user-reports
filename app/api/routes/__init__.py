@@ -1,5 +1,14 @@
-"""Available API route modules."""
+"""API route modules available for inclusion."""
 
-from app.api.routes import pages, users
+from fastapi import APIRouter
 
-__all__ = ["pages", "users"]
+from .auth import router as auth_router
+
+
+def get_routes() -> list[APIRouter]:
+    """Return the list of routers that should be registered."""
+
+    return [auth_router]
+
+
+__all__ = ["auth_router", "get_routes"]

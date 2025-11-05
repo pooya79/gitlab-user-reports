@@ -1,8 +1,13 @@
+"""MongoDB document types for the application."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, List
+
+from app.services import NOW_UTC
+
 
 @dataclass(slots=True)
 class Commit:
@@ -137,7 +142,7 @@ class MergeRequest:
     def __repr__(self) -> str:  # pragma: no cover - debug helper
         preview = self.title[:40] + ("..." if len(self.title) > 40 else "")
         return f"<MergeRequest {self.iid} ({self.state}) {preview}>"
-    
+
 
 @dataclass(slots=True)
 class Diff:
@@ -194,3 +199,55 @@ class MergeRequestDiffs:
 
     def __repr__(self) -> str:  # pragma: no cover
         return f"<MR#{self.merge_request_iid} DiffSnapshot ({len(self.diffs)} diffs)>"
+
+
+@dataclass(slots=True)
+class AuthSession:
+    """Represents a single user authentication session (refresh or JWT record)."""
+
+    username: str
+    jti: str  # JWT ID (unique identifier for the token)
+    issued_at: datetime
+    expires_at: datetime
+    ip: str | None = None
+    user_agent: str | None = None
+    revoked: bool = False
+
+    def to_document(self) -> dict[str, Any]:
+        """Serialize this session to a MongoDB-friendly document."""
+        return {
+            "username": self.username,
+            "jti": self.jti,
+            "issued_at": self.issued_at,
+            "expires_at": self.expires_at,
+            "ip": self.ip,
+            "user_agent": self.user_agent,
+            "revoked": self.revoked,
+        }
+
+
+@dataclass(slots=True)
+class AppUserConfig:
+    """Represents the single application's user and configuration."""
+
+    username: str
+    password_hash: str
+    updated_at: datetime = NOW_UTC()
+
+    # custom app configs
+    gitlab_url: str | None = None
+    gitlab_admin_token: str | None = None
+    gitlab_user_info: dict[str, Any] | None = None
+
+    def to_document(self) -> dict[str, Any]:
+        return {
+            "username": self.username,
+            "password_hash": self.password_hash,
+            "gitlab_user_info": self.gitlab_user_info,
+            "updated_at": self.updated_at,
+            "gitlab_url": self.gitlab_url,
+            "gitlab_admin_token": self.gitlab_admin_token,
+        }
+
+    def __repr__(self) -> str:
+        return f"<AppUserConfig {self.username}>"

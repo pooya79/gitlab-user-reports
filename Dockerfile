@@ -37,6 +37,3 @@ ENTRYPOINT []
 
 # Use the non-root user to run our application
 USER nonroot
-
-# Run the FastAPI application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
