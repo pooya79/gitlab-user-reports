@@ -15,43 +15,23 @@ class MongoDBSettings(BaseModel):
     database: str = "gitlab_user_reports"
     root_username: str | None = None
     root_password: str | None = None
-    uri: str | None = None
-
-    @field_validator("uri", mode="after")
-    @classmethod
-    def _construct_uri(cls, value: Any, values: dict[str, Any]) -> str:
-        if value:
-            return value
-
-        host = values.get("host", "127.0.0.1")
-        port = values.get("port", 27017)
-        database = values.get("database", "gitlab_user_reports")
-        user = values.get("root_username")
-        password = values.get("root_password")
-
-        if user and password:
-            return (
-                f"mongodb://{user}:{password}@{host}:{port}/{database}?authSource=admin"
-            )
-        return f"mongodb://{host}:{port}/{database}"
 
 
 class Settings(BaseSettings):
     """Central application settings loaded from environment variables."""
 
-    mongodb: MongoDBSettings = MongoDBSettings()
+    model_config = SettingsConfigDict(env_nested_delimiter="_", env_nested_max_split=1)
+
+    mongodb: MongoDBSettings
     app_name: str = "GitLab User Reports"
     debug: bool = False
-    cors_origins: list[str] = []
+    cors_origins: str | list[str] = []
     host: str = "127.0.0.1"
     port: int = 8000
     jwt_secret_key: str = "insecure-development-secret"
     jwt_algorithm: str = "HS256"
     jwt_access_token_exp_minutes: int = 60
-
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
-    )
+    require_admin_token_for_gitlab_config: bool = True
 
     @field_validator("cors_origins", mode="before")
     @classmethod

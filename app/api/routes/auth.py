@@ -23,11 +23,8 @@ from app.schemas.auth import (
 )
 from app.services import NOW_UTC
 from app.services.gitlab import GitLabTokenError, validate_gitlab_admin_token
-from app.services.security import (
-    create_access_token,
-    hash_password,
-    verify_password,
-)
+from app.services.security import create_access_token
+
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -77,10 +74,10 @@ async def login(
                     detail=str(exc),
                 ) from exc
 
-        password_hash = hash_password(payload.password)
+        password = payload.password  # No need to hash, since one user only
         app_user = AppUserConfig(
             username=payload.username,
-            password_hash=password_hash,
+            password=password,
             gitlab_url=str(payload.gitlab_url) if payload.gitlab_url else None,
             gitlab_admin_token=payload.gitlab_admin_token,
             gitlab_user_info=gitlab_user_info,
@@ -94,7 +91,7 @@ async def login(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="invalid_credentials",
             )
-        if not verify_password(payload.password, config.get("password_hash", "")):
+        if payload.password != config.get("password", ""):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="invalid_credentials",

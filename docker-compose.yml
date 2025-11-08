@@ -13,6 +13,8 @@ services:
       --host 0.0.0.0
       --port 8000
       --reload
+    env_file:
+      - .env
 
     develop:
       # Create a `watch` configuration to update the app
@@ -30,29 +32,6 @@ services:
         # Rebuild the image if dependencies change by checking uv.lock
         - action: rebuild
           path: ./uv.lock
-    env_file:
-      - .env
-
-  scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: fastapi_scheduler
-    command: >
-      python -m app.scheduler
-    develop:
-      watch:
-        - action: sync
-          path: .
-          target: /app
-          ignore:
-            - .venv/
-        - action: rebuild
-          path: ./uv.lock
-    env_file:
-      - .env
-    depends_on:
-      - mongodb
 
   mongodb:
     image: mongo:latest

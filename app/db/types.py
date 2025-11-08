@@ -239,7 +239,7 @@ class AppUserConfig:
     """Represents the single application's user and configuration."""
 
     username: str
-    password_hash: str
+    password: str
     updated_at: datetime = NOW_UTC()
 
     # custom app configs
@@ -250,7 +250,7 @@ class AppUserConfig:
     def to_document(self) -> dict[str, Any]:
         return {
             "username": self.username,
-            "password_hash": self.password_hash,
+            "password": self.password,
             "gitlab_user_info": self.gitlab_user_info,
             "updated_at": self.updated_at,
             "gitlab_url": self.gitlab_url,

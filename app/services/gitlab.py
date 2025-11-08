@@ -7,6 +7,9 @@ from typing import Any
 import gitlab
 from gitlab.exceptions import GitlabAuthenticationError, GitlabError
 
+from app.core.config import get_settings
+
+required_admin = get_settings().require_admin_token_for_gitlab_config
 
 class GitLabTokenError(Exception):
     """Raised when the GitLab admin token is missing required permissions."""
@@ -24,7 +27,7 @@ def validate_gitlab_admin_token(
     except (GitlabAuthenticationError, GitlabError) as exc:
         raise GitLabTokenError("gitlab_token_invalid") from exc
 
-    if user_info.get("is_admin") is not True:
+    if user_info.get("is_admin") is not True and required_admin:
         raise GitLabTokenError("gitlab_token_not_admin")
 
     sanitized_user_info = {

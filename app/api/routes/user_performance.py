@@ -105,7 +105,11 @@ def get_user_performance_data(
                 "web_url": mr.web_url,
                 "created_at": mr.created_at,
                 "state": mr.state,
-                "commits": [commit.title for commit in user_commits if commit.id in mr_to_commit[mr.iid]],
+                "commits": [
+                    commit.title
+                    for commit in user_commits
+                    if commit.id in mr_to_commit[mr.iid]
+                ],
                 "commits_count": len(mr_to_commit[mr.iid]),
                 "additions": sum(
                     commit.stats["additions"]
@@ -154,32 +158,37 @@ def get_user_performance_data(
 async def get_user_performance(
     user_id: int = Path(..., description="GitLab user ID"),
     project_id: str = Path(..., description="GitLab project ID or path"),
-    start_date: dt = Query(..., description="Start date"),
-    end_date: dt = Query(..., description="End date"),
+    start_date: dt.date = Query(..., description="Start date"),
+    end_date: dt.date = Query(..., description="End date"),
     mongo_db: Database = Depends(get_mongo_database),
     auth_context: AuthContext = Depends(get_auth_context),
 ) -> UserPerformanceResponse:
     """Return cached performance data if present."""
     payload = UserPerformanceRequest(
-        user_id=user_id, project_id=project_id,
-        start_date=start_date, end_date=end_date
+        user_id=user_id, project_id=project_id, start_date=start_date, end_date=end_date
     )
 
-    user = auth_context.gitlab.users.get(payload.user_id)
-    if not user.email:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="User not found or has no email.")
+    user = auth_context.gitlab_client.users.get(payload.user_id)
+    if hasattr(user, "email") and not user.email:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found or has no email.",
+        )
 
-    existing = mongo_db["user_performance"].find_one({
-        "username": user.username,
-        "project_path_name": payload.project_id,
-        "since": _to_date(payload.start_date),
-        "until": _to_date(payload.end_date),
-    })
+    existing = mongo_db["user_performance"].find_one(
+        {
+            "username": user.username,
+            "project_path_name": payload.project_id,
+            "since": _to_date(payload.start_date),
+            "until": _to_date(payload.end_date),
+        }
+    )
 
     if not existing:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="No cached performance data found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No cached performance data found.",
+        )
 
     return UserPerformanceResponse.model_validate(existing)
 
@@ -192,25 +201,33 @@ async def get_user_performance(
 async def refresh_user_performance(
     user_id: int = Path(..., description="GitLab user ID"),
     project_id: str = Path(..., description="GitLab project ID or path"),
-    start_date: dt = Query(..., description="Start date"),
-    end_date: dt = Query(..., description="End date"),
+    start_date: dt.date = Query(..., description="Start date"),
+    end_date: dt.date = Query(..., description="End date"),
     mongo_db: Database = Depends(get_mongo_database),
     auth_context: AuthContext = Depends(get_auth_context),
 ) -> UserPerformanceResponse:
     """Recalculate and store fresh performance data."""
     payload = UserPerformanceRequest(
-        user_id=user_id, project_id=project_id,
-        start_date=start_date, end_date=end_date
+        user_id=user_id, project_id=project_id, start_date=start_date, end_date=end_date
     )
 
-    user = auth_context.gitlab.users.get(payload.user_id)
-    if not user.email:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="User not found or has no email.")
+    user = auth_context.gitlab_client.users.get(payload.user_id)
+    if hasattr(user, "email") and not user.email:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found or has no email.",
+        )
 
-    user_performance = get_user_performance_data(
-        data=payload, user=user, mongo_db=mongo_db, gitlab=auth_context.gitlab
-    )
+    try:
+        user_performance = get_user_performance_data(
+            data=payload,
+            user=user,
+            mongo_db=mongo_db,
+            gitlab=auth_context.gitlab_client,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
     return user_performance
-

@@ -12,7 +12,7 @@ class LoginRequest(BaseModel):
     """Incoming payload for user login or first-time bootstrap."""
 
     username: str = Field(min_length=3, max_length=128)
-    password: str = Field(min_length=8, max_length=256)
+    password: str = Field(min_length=6, max_length=256)
     gitlab_url: AnyHttpUrl | None = None
     gitlab_admin_token: str | None = Field(default=None, min_length=1)
 

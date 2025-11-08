@@ -19,45 +19,6 @@ _PBKDF2_ITERATIONS = 480_000
 _SALT_BYTES = 16
 
 
-def hash_password(password: str) -> str:
-    """Hash the provided password using PBKDF2-SHA256."""
-
-    if not password:
-        raise ValueError("password must not be empty")
-
-    salt = secrets.token_bytes(_SALT_BYTES)
-    derived_key = hashlib.pbkdf2_hmac(
-        "sha256", password.encode("utf-8"), salt, _PBKDF2_ITERATIONS
-    )
-    encoded_salt = base64.urlsafe_b64encode(salt).decode("ascii")
-    encoded_key = base64.urlsafe_b64encode(derived_key).decode("ascii")
-    return f"pbkdf2_sha256${_PBKDF2_ITERATIONS}${encoded_salt}${encoded_key}"
-
-
-def verify_password(password: str, stored_hash: str) -> bool:
-    """Check whether the supplied password matches the stored hash."""
-
-    try:
-        algorithm, iterations, encoded_salt, encoded_key = stored_hash.split("$")
-    except ValueError:
-        return False
-
-    if algorithm != "pbkdf2_sha256":
-        return False
-
-    try:
-        iteration_count = int(iterations)
-    except ValueError:
-        return False
-
-    salt = base64.urlsafe_b64decode(encoded_salt.encode("ascii"))
-    expected_key = base64.urlsafe_b64decode(encoded_key.encode("ascii"))
-    derived_key = hashlib.pbkdf2_hmac(
-        "sha256", password.encode("utf-8"), salt, iteration_count
-    )
-    return hmac.compare_digest(derived_key, expected_key)
-
-
 def create_access_token(
     *,
     settings: Settings,

@@ -14,9 +14,17 @@ def get_client() -> MongoClient:
     """Return a shared MongoDB client instance."""
 
     global _client
+
+    
     if _client is None:
         settings = get_settings()
-        _client = MongoClient(settings.mongodb.uri)
+        mongodb = settings.mongodb
+        if mongodb.root_username and mongodb.root_password:
+            uri = f"mongodb://{mongodb.root_username}:{mongodb.root_password}@{mongodb.host}:{mongodb.port}/{mongodb.database}?authSource=admin"
+        else:
+            uri = f"mongodb://{mongodb.host}:{mongodb.port}/{mongodb.database}"
+
+        _client = MongoClient(uri)
     return _client
 
 
