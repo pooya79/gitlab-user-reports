@@ -17,3 +17,8 @@ dependencies = [
     "uvicorn>=0.38.0",
     "weasyprint>=66.0",
 ]
+
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+]

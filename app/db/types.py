@@ -2,12 +2,19 @@
 
 from __future__ import annotations
 
+from typing import TypedDict
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, List
 
 from app.services import NOW_UTC
 
+class CommitStats(TypedDict):
+    """TypedDict representing commit statistics."""
+
+    additions: int
+    deletions: int
+    total: int
 
 @dataclass(slots=True)
 class Commit:
@@ -23,7 +30,6 @@ class Commit:
     author_email: str
     created_at: datetime
     web_url: str
-    id: str | None = None
     committer_name: str | None = None
     committer_email: str | None = None
     authored_date: datetime | None = None
@@ -31,6 +37,7 @@ class Commit:
     parent_ids: list[str] | None = None
     trailers: dict[str, Any] | None = None
     extended_trailers: dict[str, Any] | None = None
+    stats: CommitStats | None = None
 
     def to_document(self) -> dict[str, Any]:
         """Serialize the commit to a MongoDB-friendly document."""
@@ -53,6 +60,7 @@ class Commit:
             "trailers": self.trailers,
             "extended_trailers": self.extended_trailers,
             "web_url": self.web_url,
+            "stats": self.stats,
         }
         if self.id is not None:
             document["_id"] = self.id
