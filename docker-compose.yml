@@ -2,7 +2,7 @@ services:
   backend:
     # Build the image from the Dockerfile in the current directory
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
 
     # Host the FastAPI application on port 8000
@@ -22,7 +22,7 @@ services:
       watch:
         # Sync the working directory with the `/app` directory in the container
         - action: sync
-          path: .
+          path: ./backend
           target: /app
           # Exclude the project virtual environment — it could be for a
           # different platform in the container
@@ -31,7 +31,7 @@ services:
 
         # Rebuild the image if dependencies change by checking uv.lock
         - action: rebuild
-          path: ./uv.lock
+          path: ./backend/uv.lock
 
   mongodb:
     image: mongo:latest
