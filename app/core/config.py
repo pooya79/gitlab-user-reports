@@ -35,6 +35,17 @@ class Settings(BaseSettings):
 
     safe_date_offset: int = 90 # days to add to 'until' of user performance to account for late commits
 
+    gitlab_access_level_mapping: dict[int, str] = {
+        5: "Minimal Access",
+        10: "Guest",
+        15: "Planner",
+        20: "Reporter",
+        30: "Developer",
+        40: "Maintainer",
+        50: "Owner",
+        60: "Admin",
+    }
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value: Any) -> list[str]:

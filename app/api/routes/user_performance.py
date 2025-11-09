@@ -1,4 +1,4 @@
-"""Authentication and GitLab configuration endpoints."""
+"""User performance calculation endpoints."""
 
 from __future__ import annotations
 
