@@ -13,6 +13,7 @@ from app.api.deps import (
 )
 from app.core.config import Settings
 from app.db.types import AppUserConfig, AuthSession
+from app.schemas import GeneralErrorResponses
 from app.schemas.auth import (
     GitLabConfigRequest,
     GitLabConfigResponse,
@@ -41,7 +42,14 @@ def _ensure_gitlab_payload_coherence(payload: LoginRequest) -> None:
         )
 
 
-@router.post("/login", response_model=LoginResponse)
+@router.post(
+    "/login",
+    response_model=LoginResponse,
+    responses={
+        401: GeneralErrorResponses().UNAUTHORIZED,
+        400: GeneralErrorResponses().BAD_REQUEST,
+    },
+)
 async def login(
     payload: LoginRequest,
     request: Request,
@@ -88,13 +96,13 @@ async def login(
     else:
         if config.get("username") != payload.username:
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="invalid_credentials",
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Wrong username",
             )
         if payload.password != config.get("password", ""):
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="invalid_credentials",
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Wrong password",
             )
         gitlab_user_info = config.get("gitlab_user_info")
 
@@ -157,7 +165,13 @@ async def logout(
     return LogoutResponse()
 
 
-@router.post("/gitlab", response_model=GitLabConfigResponse)
+@router.post(
+    "/gitlab",
+    response_model=GitLabConfigResponse,
+    responses={
+        400: GeneralErrorResponses().BAD_REQUEST,
+    },
+)
 async def update_gitlab_configuration(
     payload: GitLabConfigRequest,
     auth_context: AuthContext = Depends(get_auth_context),

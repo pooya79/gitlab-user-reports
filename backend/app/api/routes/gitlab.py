@@ -16,13 +16,20 @@ from app.api.deps import (
     AuthContext,
     get_auth_context,
 )
+from app.schemas import GeneralErrorResponses
 from app.schemas.gitlab import MembersResponse, ProjectsResponse
 from app.core.config import get_settings
 
 router = APIRouter(prefix="/gitlab", tags=["gitlab"])
 
 
-@router.get("/projects/{project_id}/members", response_model=list[MembersResponse])
+@router.get(
+    "/projects/{project_id}/members",
+    response_model=list[MembersResponse],
+    responses={
+        404: GeneralErrorResponses().NOT_FOUND,
+    },
+)
 def get_project_members(
     project_id: int = Path(..., description="GitLab project ID"),
     page: int = Query(1, ge=1, description="Page number for pagination"),
