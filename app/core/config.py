@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     jwt_access_token_exp_minutes: int = 60
     require_admin_token_for_gitlab_config: bool = True
 
+    safe_date_offset: int = 90 # days to add to 'until' of user performance to account for late commits
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value: Any) -> list[str]:

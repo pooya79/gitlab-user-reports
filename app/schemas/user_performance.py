@@ -3,15 +3,14 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
 
-from pydantic import AnyHttpUrl, BaseModel, Field, ValidationInfo, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 
 class UserPerformanceRequest(BaseModel):
     """Incoming payload for fetching user performance data."""
 
-    user_id: int = Field(..., description="The ID of the GitLab user.")
+    user_id: int = Field(..., description="The ID of the GitLa user.")
     project_id: int | str = Field(
         ..., description="The ID or path of the GitLab project."
     )
@@ -28,19 +27,29 @@ class UserPerformanceRequest(BaseModel):
         return end_date
 
 
+class Commits(BaseModel):
+    """Details of a Commit."""
+
+    title: str
+    message: str
+    web_url: str
+    authored_date: datetime
+    additions: int
+    deletions: int
+
+
 class MrDetails(BaseModel):
     """Details of a Merge Request."""
 
     iid: int
     title: str
-    web_url: AnyHttpUrl
+    description: str
+    web_url: str
     created_at: datetime
     state: str
 
-    commits: list[str] # List of commit titles
     commits_count: int
-    additions: int
-    deletions: int
+    commits: list[Commits]  # List of commits
 
 
 class UserPerformanceResponse(BaseModel):
