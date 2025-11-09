@@ -15,7 +15,6 @@ def get_client() -> MongoClient:
 
     global _client
 
-    
     if _client is None:
         settings = get_settings()
         mongodb = settings.mongodb
@@ -66,17 +65,18 @@ def init_db() -> None:
 
     user_performance = db["user_performance"]
     user_performance.create_index(
-    [
-        ("username", 1),
-        ("project_path_name", 1),
-        ("since", 1),
-        ("until", 1),
-    ],
-    unique=True,
-    name="user_project_date_range_idx"
-)
+        [
+            ("username", 1),
+            ("project_path_name", 1),
+            ("since", 1),
+            ("until", 1),
+        ],
+        unique=True,
+        name="user_project_date_range_idx",
+    )
 
     auth_session = db["auth_session"]
     auth_session.create_index("jti", unique=True)
+    auth_session.create_index("expires_at", expireAfterSeconds=0)
 
     app_user_config = db["app_user_config"]
