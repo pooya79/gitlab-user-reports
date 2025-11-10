@@ -11,6 +11,7 @@ from app.core.config import get_settings
 
 required_admin = get_settings().require_admin_token_for_gitlab_config
 
+
 class GitLabTokenError(Exception):
     """Raised when the GitLab admin token is missing required permissions."""
 
@@ -34,9 +35,11 @@ def validate_gitlab_admin_token(
         "id": user_info.get("id"),
         "username": user_info.get("username"),
         "name": user_info.get("name"),
-        "state": user_info.get("state"),
-        "is_admin": user_info.get("is_admin"),
         "email": user_info.get("email"),
+        "web_url": user_info.get("web_url"),
+        "avatar_url": user_info.get("avatar_url"),
+        "state": user_info.get("state"),
+        "is_admin": user_info.get("is_admin", False),
     }
 
     return sanitized_user_info, client

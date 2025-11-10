@@ -22,6 +22,7 @@ from app.schemas.auth import (
     LoginRequest,
     LoginResponse,
     LogoutResponse,
+    GitlabUserInfo,
     UserProfileResponse,
 )
 from app.services import NOW_UTC
@@ -209,7 +210,15 @@ async def update_gitlab_configuration(
         gitlab_url=payload.gitlab_url,
     )
 
-@router.post("/gitlab/token-check", response_model=GitlabTokenCheckResponse)
+
+@router.post(
+    "/gitlab/token-check",
+    response_model=GitlabTokenCheckResponse,
+    responses={
+        400: GeneralErrorResponses().BAD_REQUEST,
+        401: GeneralErrorResponses().UNAUTHORIZED,
+    },
+)
 async def check_gitlab_token(
     payload: GitLabConfigRequest,
     user_context: AuthContext = Depends(get_user),
@@ -232,7 +241,13 @@ async def check_gitlab_token(
     )
 
 
-@router.get("/me", response_model=UserProfileResponse)
+@router.get(
+    "/me",
+    response_model=UserProfileResponse,
+    responses={
+        401: GeneralErrorResponses().UNAUTHORIZED,
+    },
+)
 async def get_profile(
     auth_context: AuthContext = Depends(get_auth_context),
 ) -> UserProfileResponse:
@@ -240,6 +255,6 @@ async def get_profile(
 
     return UserProfileResponse(
         username=auth_context.username,
-        gitlab_user_info=auth_context.gitlab_user_info,
+        gitlab_user_info=GitlabUserInfo(**auth_context.gitlab_user_info),
         gitlab_url=auth_context.user_config.get("gitlab_url"),
     )

@@ -54,11 +54,24 @@ class GitlabTokenCheckResponse(BaseModel):
     gitlab_user_info: dict[str, Any] | None = None
 
 
+class GitlabUserInfo(BaseModel):
+    """Represents GitLab user information."""
+
+    id: int
+    username: str
+    name: str
+    email: str | None
+    web_url: str
+    avatar_url: str | None
+    state: str
+    is_admin: bool
+
+
 class UserProfileResponse(BaseModel):
     """Basic profile snapshot for the single configured user."""
 
     username: str
-    gitlab_user_info: dict[str, Any] | None = None
+    gitlab_user_info: GitlabUserInfo | None = None
     gitlab_url: AnyHttpUrl | None = None
 
 

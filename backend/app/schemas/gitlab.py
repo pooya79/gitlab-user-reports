@@ -26,6 +26,8 @@ class ProjectsResponse(BaseModel):
     name: str = Field(..., description="Project name")
     name_with_namespace: str = Field(..., description="Project name with namespace")
     path_with_namespace: str = Field(..., description="Project path with namespace")
+    tag_list: list[str] = Field(..., description="List of project tags")
+    topics: list[str] = Field(..., description="List of project topics")
     web_url: str = Field(..., description="Web URL to the project")
     avatar_url: str | None = Field(None, description="URL to the project's avatar")
     created_at: datetime = Field(..., description="Project creation timestamp")

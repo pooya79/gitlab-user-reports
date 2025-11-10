@@ -15,6 +15,14 @@ class GeneralErrorResponses:
     UNAUTHORIZED = {"model": ErrorResponseModel, "description": "Invalid credentials"}
     FORBIDDEN = {"model": ErrorResponseModel, "description": "Forbidden"}
     NOT_FOUND = {"model": ErrorResponseModel, "description": "Resource not found"}
+    INTERNAL_SERVER_ERROR = {
+        "model": ErrorResponseModel,
+        "description": "Internal Server Error",
+    }
+    BAD_GATEWAY = {
+        "model": ErrorResponseModel,
+        "description": "Bad Gateway",
+    }
 
     ALL = {
         status.HTTP_400_BAD_REQUEST: BAD_REQUEST,

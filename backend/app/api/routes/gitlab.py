@@ -27,6 +27,7 @@ router = APIRouter(prefix="/gitlab", tags=["gitlab"])
     "/projects/{project_id}/members",
     response_model=list[MembersResponse],
     responses={
+        401: GeneralErrorResponses().UNAUTHORIZED,
         404: GeneralErrorResponses().NOT_FOUND,
     },
 )
@@ -64,7 +65,14 @@ def get_project_members(
     ]
 
 
-@router.get("/projects", response_model=list[ProjectsResponse])
+@router.get(
+    "/projects",
+    response_model=list[ProjectsResponse],
+    responses={
+        401: GeneralErrorResponses().UNAUTHORIZED,
+        502: GeneralErrorResponses().BAD_GATEWAY,
+    },
+)
 def list_projects(
     page: int = Query(1, ge=1, description="Page number for pagination"),
     per_page: int = Query(20, ge=1, le=100, description="Number of projects per page"),
@@ -77,7 +85,12 @@ def list_projects(
 ) -> list[ProjectsResponse]:
     """List GitLab projects with optional search filtering."""
     gitlab_client = auth_context.gitlab_client
-    list_kwargs: dict[str, object] = {"page": page, "per_page": per_page}
+    list_kwargs: dict[str, object] = {
+        "page": page,
+        "per_page": per_page,
+        "order_by": "last_activity_at",
+        "sort": "desc",
+    }
     if search:
         list_kwargs["search"] = search
     if membership is not None:
@@ -97,6 +110,8 @@ def list_projects(
             name=project.name,
             name_with_namespace=project.name_with_namespace,
             path_with_namespace=project.path_with_namespace,
+            tag_list=getattr(project, "tag_list", []),
+            topics=getattr(project, "topics", []),
             web_url=project.web_url,
             avatar_url=getattr(project, "avatar_url", None),
             created_at=project.created_at,

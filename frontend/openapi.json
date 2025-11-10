@@ -190,6 +190,26 @@
                             }
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
                     "422": {
                         "description": "Validation Error",
                         "content": {
@@ -221,6 +241,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UserProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
                                 }
                             }
                         }
@@ -299,6 +329,26 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UserPerformanceResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
                                 }
                             }
                         }
@@ -382,6 +432,26 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UserPerformanceResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
                                 }
                             }
                         }
@@ -479,6 +549,16 @@
                                         "$ref": "#/components/schemas/MembersResponse"
                                     },
                                     "title": "Response Get Project Members Gitlab Projects  Project Id  Members Get"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
                                 }
                             }
                         }
@@ -593,6 +673,26 @@
                                         "$ref": "#/components/schemas/ProjectsResponse"
                                     },
                                     "title": "Response List Projects Gitlab Projects Get"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
                                 }
                             }
                         }
@@ -750,6 +850,69 @@
                 "required": ["valid"],
                 "title": "GitlabTokenCheckResponse",
                 "description": "Response for GitLab token validation check."
+            },
+            "GitlabUserInfo": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "email": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Email"
+                    },
+                    "web_url": {
+                        "type": "string",
+                        "title": "Web Url"
+                    },
+                    "avatar_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Avatar Url"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "title": "Is Admin"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "username",
+                    "name",
+                    "email",
+                    "web_url",
+                    "avatar_url",
+                    "state",
+                    "is_admin"
+                ],
+                "title": "GitlabUserInfo",
+                "description": "Represents GitLab user information."
             },
             "HTTPValidationError": {
                 "properties": {
@@ -1006,6 +1169,22 @@
                         "title": "Path With Namespace",
                         "description": "Project path with namespace"
                     },
+                    "tag_list": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Tag List",
+                        "description": "List of project tags"
+                    },
+                    "topics": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Topics",
+                        "description": "List of project topics"
+                    },
                     "web_url": {
                         "type": "string",
                         "title": "Web Url",
@@ -1036,6 +1215,8 @@
                     "name",
                     "name_with_namespace",
                     "path_with_namespace",
+                    "tag_list",
+                    "topics",
                     "web_url",
                     "created_at"
                 ],
@@ -1163,14 +1344,12 @@
                     "gitlab_user_info": {
                         "anyOf": [
                             {
-                                "additionalProperties": true,
-                                "type": "object"
+                                "$ref": "#/components/schemas/GitlabUserInfo"
                             },
                             {
                                 "type": "null"
                             }
-                        ],
-                        "title": "Gitlab User Info"
+                        ]
                     },
                     "gitlab_url": {
                         "anyOf": [

@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-
-import { isAuthenticated, clearAccessToken } from "@/lib/auth";
+import { isAuthenticated } from "@/lib/auth";
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
     fallback?: React.ReactNode;
 }
 
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
     const router = useRouter();
     const pathname = usePathname();
     const [isChecking, setIsChecking] = useState(true);
@@ -31,20 +30,16 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
         checkAuth();
 
-        const handleStorate = (event: StorageEvent) => {
+        const handleStorage = (event: StorageEvent) => {
             if (event.key === "accessToken" && event.newValue === null) {
-                // Token removed, log out the user
                 router.replace(
                     `/login?redirect=${encodeURIComponent(pathname)}`,
                 );
             }
         };
 
-        window.addEventListener("storage", handleStorate);
-
-        return () => {
-            window.removeEventListener("storage", handleStorate);
-        };
+        window.addEventListener("storage", handleStorage);
+        return () => window.removeEventListener("storage", handleStorage);
     }, [router, pathname]);
 
     if (isChecking) {
@@ -57,6 +52,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
             </div>
         );
     }
+
+    if (!isAuthorized) return fallback ?? null;
 
     return <>{children}</>;
 }

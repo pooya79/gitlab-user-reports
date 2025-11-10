@@ -101,6 +101,46 @@ export type GitlabTokenCheckResponse = {
 };
 
 /**
+ * GitlabUserInfo
+ *
+ * Represents GitLab user information.
+ */
+export type GitlabUserInfo = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Username
+     */
+    username: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Email
+     */
+    email: string | null;
+    /**
+     * Web Url
+     */
+    web_url: string;
+    /**
+     * Avatar Url
+     */
+    avatar_url: string | null;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Is Admin
+     */
+    is_admin: boolean;
+};
+
+/**
  * HTTPValidationError
  */
 export type HttpValidationError = {
@@ -307,6 +347,18 @@ export type ProjectsResponse = {
      */
     path_with_namespace: string;
     /**
+     * Tag List
+     *
+     * List of project tags
+     */
+    tag_list: Array<string>;
+    /**
+     * Topics
+     *
+     * List of project topics
+     */
+    topics: Array<string>;
+    /**
      * Web Url
      *
      * Web URL to the project
@@ -420,12 +472,7 @@ export type UserProfileResponse = {
      * Username
      */
     username: string;
-    /**
-     * Gitlab User Info
-     */
-    gitlab_user_info?: {
-        [key: string]: unknown;
-    } | null;
+    gitlab_user_info?: GitlabUserInfo | null;
     /**
      * Gitlab Url
      */
@@ -548,6 +595,14 @@ export type CheckGitlabTokenAuthGitlabTokenCheckPostData = {
 
 export type CheckGitlabTokenAuthGitlabTokenCheckPostErrors = {
     /**
+     * Bad Request
+     */
+    400: ErrorResponseModel;
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
      * Validation Error
      */
     422: HttpValidationError;
@@ -572,6 +627,16 @@ export type GetProfileAuthMeGetData = {
     query?: never;
     url: "/auth/me";
 };
+
+export type GetProfileAuthMeGetErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+};
+
+export type GetProfileAuthMeGetError =
+    GetProfileAuthMeGetErrors[keyof GetProfileAuthMeGetErrors];
 
 export type GetProfileAuthMeGetResponses = {
     /**
@@ -619,6 +684,14 @@ export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerform
 
 export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors =
     {
+        /**
+         * Invalid credentials
+         */
+        401: ErrorResponseModel;
+        /**
+         * Resource not found
+         */
+        404: ErrorResponseModel;
         /**
          * Validation Error
          */
@@ -676,9 +749,17 @@ export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPer
 export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors =
     {
         /**
+         * Invalid credentials
+         */
+        401: ErrorResponseModel;
+        /**
          * Validation Error
          */
         422: HttpValidationError;
+        /**
+         * Internal Server Error
+         */
+        500: ErrorResponseModel;
     };
 
 export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostError =
@@ -729,6 +810,10 @@ export type GetProjectMembersGitlabProjectsProjectIdMembersGetData = {
 };
 
 export type GetProjectMembersGitlabProjectsProjectIdMembersGetErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
     /**
      * Resource not found
      */
@@ -788,9 +873,17 @@ export type ListProjectsGitlabProjectsGetData = {
 
 export type ListProjectsGitlabProjectsGetErrors = {
     /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
      * Validation Error
      */
     422: HttpValidationError;
+    /**
+     * Bad Gateway
+     */
+    502: ErrorResponseModel;
 };
 
 export type ListProjectsGitlabProjectsGetError =

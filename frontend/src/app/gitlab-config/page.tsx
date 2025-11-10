@@ -19,6 +19,7 @@ import {
     checkGitlabTokenAuthGitlabTokenCheckPost,
 } from "@/client";
 import { z, ZodError } from "zod";
+import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
 
 const zGitlabConfigData = z.object({
     gitlab_url: z.url("Please enter a valid URL."),
@@ -32,6 +33,7 @@ export default function GitlabConfigPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [valid, setValid] = useState<boolean | null>(null);
+    const { setFailed } = useGitlabTokenStore();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -44,17 +46,17 @@ export default function GitlabConfigPage() {
                 gitlab_admin_token: adminToken,
             });
 
+            const valid = await handleCheckSubmit();
+            if (!valid) {
+                return;
+            }
+
             const res = await updateGitlabConfigurationAuthGitlabPost({
                 body: {
                     gitlab_url: gitlabUrl,
                     gitlab_admin_token: adminToken,
                 },
             });
-
-            const valid = await handleCheckSubmit();
-            if (!valid) {
-                return;
-            }
 
             // Handle API-level errors
             if (res.error) {
@@ -68,6 +70,7 @@ export default function GitlabConfigPage() {
             }
 
             // On success, redirect to dashboard
+            setFailed(false);
             router.push("/dashboard");
         } catch (err) {
             // Handle client-side or validation errors
@@ -192,6 +195,7 @@ export default function GitlabConfigPage() {
                                     onChange={(e) =>
                                         setGitlabUrl(e.target.value)
                                     }
+                                    disabled={loading}
                                 />
                             </div>
                             <div className="space-y-2">
@@ -208,6 +212,7 @@ export default function GitlabConfigPage() {
                                     onChange={(e) =>
                                         setAdminToken(e.target.value)
                                     }
+                                    disabled={loading}
                                 />
                             </div>
                             <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">

@@ -7,6 +7,7 @@ import type {
     CheckGitlabTokenAuthGitlabTokenCheckPostErrors,
     CheckGitlabTokenAuthGitlabTokenCheckPostResponses,
     GetProfileAuthMeGetData,
+    GetProfileAuthMeGetErrors,
     GetProfileAuthMeGetResponses,
     GetProjectMembersGitlabProjectsProjectIdMembersGetData,
     GetProjectMembersGitlabProjectsProjectIdMembersGetErrors,
@@ -168,7 +169,7 @@ export const getProfileAuthMeGet = <ThrowOnError extends boolean = false>(
 ) => {
     return (options?.client ?? client).get<
         GetProfileAuthMeGetResponses,
-        unknown,
+        GetProfileAuthMeGetErrors,
         ThrowOnError
     >({
         security: [

@@ -21,6 +21,7 @@ from app.api.deps import (
     get_auth_context,
     get_mongo_database,
 )
+from app.schemas import GeneralErrorResponses
 from app.schemas.user_performance import (
     UserPerformanceRequest,
     UserPerformanceResponse,
@@ -179,6 +180,10 @@ def get_user_performance_data(
     "/projects/{project_id}/users/{user_id}/performance",
     response_model=UserPerformanceResponse,
     summary="Get cached user performance data",
+    responses={
+        401: GeneralErrorResponses().UNAUTHORIZED,
+        404: GeneralErrorResponses().NOT_FOUND,
+    },
 )
 async def get_user_performance(
     user_id: int = Path(..., description="GitLab user ID"),
@@ -231,6 +236,10 @@ async def get_user_performance(
     "/projects/{project_id}/users/{user_id}/performance/refresh",
     response_model=UserPerformanceResponse,
     summary="Recalculate and update user performance data",
+    responses={
+        401: GeneralErrorResponses().UNAUTHORIZED,
+        500: GeneralErrorResponses().INTERNAL_SERVER_ERROR,
+    },
 )
 async def refresh_user_performance(
     user_id: int = Path(..., description="GitLab user ID"),
