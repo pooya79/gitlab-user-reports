@@ -8,6 +8,7 @@ from pymongo.database import Database
 from app.api.deps import (
     AuthContext,
     get_app_settings,
+    get_user,
     get_auth_context,
     get_mongo_database,
 )
@@ -17,6 +18,7 @@ from app.schemas import GeneralErrorResponses
 from app.schemas.auth import (
     GitLabConfigRequest,
     GitLabConfigResponse,
+    GitlabTokenCheckResponse,
     LoginRequest,
     LoginResponse,
     LogoutResponse,
@@ -153,13 +155,13 @@ async def login(
 
 @router.post("/logout", response_model=LogoutResponse)
 async def logout(
-    auth_context: AuthContext = Depends(get_auth_context),
+    user_context: AuthContext = Depends(get_user),
     mongo_db: Database = Depends(get_mongo_database),
 ) -> LogoutResponse:
     """Invalidate the currently active session."""
 
     mongo_db["auth_session"].update_one(
-        {"jti": auth_context.session["jti"]},
+        {"jti": user_context.session["jti"]},
         {"$set": {"revoked": True, "revoked_at": NOW_UTC()}},
     )
     return LogoutResponse()
@@ -174,7 +176,7 @@ async def logout(
 )
 async def update_gitlab_configuration(
     payload: GitLabConfigRequest,
-    auth_context: AuthContext = Depends(get_auth_context),
+    user_context: AuthContext = Depends(get_user),
     mongo_db: Database = Depends(get_mongo_database),
 ) -> GitLabConfigResponse:
     """Update the GitLab admin token and store user metadata."""
@@ -191,7 +193,7 @@ async def update_gitlab_configuration(
         ) from exc
 
     mongo_db["app_user_config"].update_one(
-        {"username": auth_context.username},
+        {"username": user_context.username},
         {
             "$set": {
                 "gitlab_url": str(payload.gitlab_url),
@@ -205,6 +207,28 @@ async def update_gitlab_configuration(
     return GitLabConfigResponse(
         gitlab_user_info=gitlab_user_info,
         gitlab_url=payload.gitlab_url,
+    )
+
+@router.post("/gitlab/token-check", response_model=GitlabTokenCheckResponse)
+async def check_gitlab_token(
+    payload: GitLabConfigRequest,
+    user_context: AuthContext = Depends(get_user),
+) -> GitlabTokenCheckResponse:
+    """Check the validity of a GitLab token."""
+
+    try:
+        gitlab_user_info, _ = validate_gitlab_admin_token(
+            gitlab_url=str(payload.gitlab_url),
+            admin_token=payload.gitlab_admin_token,
+        )
+        valid = True
+    except GitLabTokenError:
+        valid = False
+        gitlab_user_info = None
+
+    return GitlabTokenCheckResponse(
+        valid=valid,
+        gitlab_user_info=gitlab_user_info,
     )
 
 

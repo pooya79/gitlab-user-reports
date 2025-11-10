@@ -83,6 +83,24 @@ export type GitLabConfigResponse = {
 };
 
 /**
+ * GitlabTokenCheckResponse
+ *
+ * Response for GitLab token validation check.
+ */
+export type GitlabTokenCheckResponse = {
+    /**
+     * Valid
+     */
+    valid: boolean;
+    /**
+     * Gitlab User Info
+     */
+    gitlab_user_info?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+/**
  * HTTPValidationError
  */
 export type HttpValidationError = {
@@ -520,6 +538,33 @@ export type UpdateGitlabConfigurationAuthGitlabPostResponses = {
 
 export type UpdateGitlabConfigurationAuthGitlabPostResponse =
     UpdateGitlabConfigurationAuthGitlabPostResponses[keyof UpdateGitlabConfigurationAuthGitlabPostResponses];
+
+export type CheckGitlabTokenAuthGitlabTokenCheckPostData = {
+    body: GitLabConfigRequest;
+    path?: never;
+    query?: never;
+    url: "/auth/gitlab/token-check";
+};
+
+export type CheckGitlabTokenAuthGitlabTokenCheckPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CheckGitlabTokenAuthGitlabTokenCheckPostError =
+    CheckGitlabTokenAuthGitlabTokenCheckPostErrors[keyof CheckGitlabTokenAuthGitlabTokenCheckPostErrors];
+
+export type CheckGitlabTokenAuthGitlabTokenCheckPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: GitlabTokenCheckResponse;
+};
+
+export type CheckGitlabTokenAuthGitlabTokenCheckPostResponse =
+    CheckGitlabTokenAuthGitlabTokenCheckPostResponses[keyof CheckGitlabTokenAuthGitlabTokenCheckPostResponses];
 
 export type GetProfileAuthMeGetData = {
     body?: never;

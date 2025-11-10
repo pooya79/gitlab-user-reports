@@ -25,7 +25,13 @@ async def lifespan(_: FastAPI):
 
 settings = get_settings()
 
-app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan, docs_url="/api/docs")
+app = FastAPI(
+    title=settings.app_name,
+    debug=settings.debug,
+    lifespan=lifespan,
+    docs_url="/api/docs",
+)
+
 
 if settings.cors_origins:
     app.add_middleware(

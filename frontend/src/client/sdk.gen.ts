@@ -3,6 +3,9 @@
 import type { Client, Options as Options2, TDataShape } from "./client";
 import { client } from "./client.gen";
 import type {
+    CheckGitlabTokenAuthGitlabTokenCheckPostData,
+    CheckGitlabTokenAuthGitlabTokenCheckPostErrors,
+    CheckGitlabTokenAuthGitlabTokenCheckPostResponses,
     GetProfileAuthMeGetData,
     GetProfileAuthMeGetResponses,
     GetProjectMembersGitlabProjectsProjectIdMembersGetData,
@@ -28,26 +31,6 @@ import type {
     UpdateGitlabConfigurationAuthGitlabPostErrors,
     UpdateGitlabConfigurationAuthGitlabPostResponses,
 } from "./types.gen";
-import {
-    zGetProfileAuthMeGetData,
-    zGetProfileAuthMeGetResponse,
-    zGetProjectMembersGitlabProjectsProjectIdMembersGetData,
-    zGetProjectMembersGitlabProjectsProjectIdMembersGetResponse,
-    zGetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData,
-    zGetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponse,
-    zHealthHealthGetData,
-    zHealthHealthGetResponse,
-    zListProjectsGitlabProjectsGetData,
-    zListProjectsGitlabProjectsGetResponse,
-    zLoginAuthLoginPostData,
-    zLoginAuthLoginPostResponse,
-    zLogoutAuthLogoutPostData,
-    zLogoutAuthLogoutPostResponse,
-    zRefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData,
-    zRefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponse,
-    zUpdateGitlabConfigurationAuthGitlabPostData,
-    zUpdateGitlabConfigurationAuthGitlabPostResponse,
-} from "./zod.gen";
 
 export type Options<
     TData extends TDataShape = TDataShape,
@@ -79,12 +62,6 @@ export const loginAuthLoginPost = <ThrowOnError extends boolean = false>(
         LoginAuthLoginPostErrors,
         ThrowOnError
     >({
-        requestValidator: async (data) => {
-            return await zLoginAuthLoginPostData.parseAsync(data);
-        },
-        responseValidator: async (data) => {
-            return await zLoginAuthLoginPostResponse.parseAsync(data);
-        },
         url: "/auth/login",
         ...options,
         headers: {
@@ -107,12 +84,6 @@ export const logoutAuthLogoutPost = <ThrowOnError extends boolean = false>(
         unknown,
         ThrowOnError
     >({
-        requestValidator: async (data) => {
-            return await zLogoutAuthLogoutPostData.parseAsync(data);
-        },
-        responseValidator: async (data) => {
-            return await zLogoutAuthLogoutPostResponse.parseAsync(data);
-        },
         security: [
             {
                 scheme: "bearer",
@@ -139,16 +110,6 @@ export const updateGitlabConfigurationAuthGitlabPost = <
         UpdateGitlabConfigurationAuthGitlabPostErrors,
         ThrowOnError
     >({
-        requestValidator: async (data) => {
-            return await zUpdateGitlabConfigurationAuthGitlabPostData.parseAsync(
-                data,
-            );
-        },
-        responseValidator: async (data) => {
-            return await zUpdateGitlabConfigurationAuthGitlabPostResponse.parseAsync(
-                data,
-            );
-        },
         security: [
             {
                 scheme: "bearer",
@@ -156,6 +117,39 @@ export const updateGitlabConfigurationAuthGitlabPost = <
             },
         ],
         url: "/auth/gitlab",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+};
+
+/**
+ * Check Gitlab Token
+ *
+ * Check the validity of a GitLab token.
+ */
+export const checkGitlabTokenAuthGitlabTokenCheckPost = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        CheckGitlabTokenAuthGitlabTokenCheckPostData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).post<
+        CheckGitlabTokenAuthGitlabTokenCheckPostResponses,
+        CheckGitlabTokenAuthGitlabTokenCheckPostErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/auth/gitlab/token-check",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -177,12 +171,6 @@ export const getProfileAuthMeGet = <ThrowOnError extends boolean = false>(
         unknown,
         ThrowOnError
     >({
-        requestValidator: async (data) => {
-            return await zGetProfileAuthMeGetData.parseAsync(data);
-        },
-        responseValidator: async (data) => {
-            return await zGetProfileAuthMeGetResponse.parseAsync(data);
-        },
         security: [
             {
                 scheme: "bearer",
@@ -211,16 +199,6 @@ export const getUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerfor
             GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors,
             ThrowOnError
         >({
-            requestValidator: async (data) => {
-                return await zGetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData.parseAsync(
-                    data,
-                );
-            },
-            responseValidator: async (data) => {
-                return await zGetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponse.parseAsync(
-                    data,
-                );
-            },
             security: [
                 {
                     scheme: "bearer",
@@ -249,16 +227,6 @@ export const refreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPe
             RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors,
             ThrowOnError
         >({
-            requestValidator: async (data) => {
-                return await zRefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData.parseAsync(
-                    data,
-                );
-            },
-            responseValidator: async (data) => {
-                return await zRefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponse.parseAsync(
-                    data,
-                );
-            },
             security: [
                 {
                     scheme: "bearer",
@@ -288,16 +256,6 @@ export const getProjectMembersGitlabProjectsProjectIdMembersGet = <
         GetProjectMembersGitlabProjectsProjectIdMembersGetErrors,
         ThrowOnError
     >({
-        requestValidator: async (data) => {
-            return await zGetProjectMembersGitlabProjectsProjectIdMembersGetData.parseAsync(
-                data,
-            );
-        },
-        responseValidator: async (data) => {
-            return await zGetProjectMembersGitlabProjectsProjectIdMembersGetResponse.parseAsync(
-                data,
-            );
-        },
         security: [
             {
                 scheme: "bearer",
@@ -324,14 +282,6 @@ export const listProjectsGitlabProjectsGet = <
         ListProjectsGitlabProjectsGetErrors,
         ThrowOnError
     >({
-        requestValidator: async (data) => {
-            return await zListProjectsGitlabProjectsGetData.parseAsync(data);
-        },
-        responseValidator: async (data) => {
-            return await zListProjectsGitlabProjectsGetResponse.parseAsync(
-                data,
-            );
-        },
         security: [
             {
                 scheme: "bearer",
@@ -356,12 +306,6 @@ export const healthHealthGet = <ThrowOnError extends boolean = false>(
         unknown,
         ThrowOnError
     >({
-        requestValidator: async (data) => {
-            return await zHealthHealthGetData.parseAsync(data);
-        },
-        responseValidator: async (data) => {
-            return await zHealthHealthGetResponse.parseAsync(data);
-        },
         url: "/health",
         ...options,
     });

@@ -47,6 +47,13 @@ class GitLabConfigResponse(BaseModel):
     gitlab_url: AnyHttpUrl
 
 
+class GitlabTokenCheckResponse(BaseModel):
+    """Response for GitLab token validation check."""
+
+    valid: bool
+    gitlab_user_info: dict[str, Any] | None = None
+
+
 class UserProfileResponse(BaseModel):
     """Basic profile snapshot for the single configured user."""
 

@@ -163,6 +163,51 @@
                 ]
             }
         },
+        "/auth/gitlab/token-check": {
+            "post": {
+                "tags": ["auth"],
+                "summary": "Check Gitlab Token",
+                "description": "Check the validity of a GitLab token.",
+                "operationId": "check_gitlab_token_auth_gitlab_token_check_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GitLabConfigRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GitlabTokenCheckResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
         "/auth/me": {
             "get": {
                 "tags": ["auth"],
@@ -681,6 +726,30 @@
                 "required": ["gitlab_user_info", "gitlab_url"],
                 "title": "GitLabConfigResponse",
                 "description": "Response after updating the GitLab configuration."
+            },
+            "GitlabTokenCheckResponse": {
+                "properties": {
+                    "valid": {
+                        "type": "boolean",
+                        "title": "Valid"
+                    },
+                    "gitlab_user_info": {
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Gitlab User Info"
+                    }
+                },
+                "type": "object",
+                "required": ["valid"],
+                "title": "GitlabTokenCheckResponse",
+                "description": "Response for GitLab token validation check."
             },
             "HTTPValidationError": {
                 "properties": {

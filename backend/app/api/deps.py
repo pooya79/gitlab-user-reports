@@ -53,6 +53,38 @@ def get_app_settings() -> Settings:
     return get_settings()
 
 
+def get_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(_http_bearer),
+    mongo_db: Database = Depends(get_mongo_database),
+) -> AuthContext:
+    """Get the authenticated user's username from the JWT."""
+
+    if credentials is None:
+        raise _LOGIN_REQUIRED
+
+    token = credentials.credentials
+    try:
+        payload = decode_token(token, get_settings())
+    except InvalidTokenError as err:
+        raise _LOGIN_REQUIRED from err
+
+    username = payload.get("sub")
+    if not username:
+        raise _LOGIN_REQUIRED
+
+    user_config = mongo_db["app_user_config"].find_one({})
+    if not user_config or user_config.get("username") != username:
+        raise _LOGIN_REQUIRED
+
+    return AuthContext(
+        username=username,
+        session={},
+        user_config=user_config,
+        gitlab_client=None,
+        gitlab_user_info={},
+    )
+
+
 def get_auth_context(
     credentials: HTTPAuthorizationCredentials | None = Depends(_http_bearer),
     mongo_db: Database = Depends(get_mongo_database),

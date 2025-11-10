@@ -1,6 +1,5 @@
 "use client";
 
-import { Metadata } from "next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -16,6 +15,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginAuthLoginPost } from "@/client";
+import { z, ZodError } from "zod";
+
+const zLoginAuthLoginPostData = z.object({
+    username: z
+        .string()
+        .min(3, "Username is too short (more than 3 characters)."),
+    password: z
+        .string()
+        .min(6, "Password is too small (more than 6 characters)."),
+});
 
 export default function LoginPage() {
     const router = useRouter();
@@ -32,36 +41,50 @@ export default function LoginPage() {
         const password = formData.get("password") as string;
 
         try {
+            // Validate before sending
+            zLoginAuthLoginPostData.parse({ username, password });
+
+            // Send request
             const res = await loginAuthLoginPost({
                 body: { username, password },
             });
 
             console.log(res);
 
+            // Handle API-level errors
             if (res.error) {
                 if (typeof res.error.detail === "string") {
                     setError(res.error.detail);
                 } else {
-                    setError(null);
                     console.error("Login failed:", res.error);
+                    setError("Login failed. Please check your credentials.");
                 }
                 return;
             }
 
             const data = res.data;
             localStorage.setItem("accessToken", data?.access_token ?? "");
-            // if (!data?.gitlab_configured) {
-            //     router.replace("/gitlab-config");
-            //     return;
-            // }
-            // router.replace("/dashboard");
+
+            // Redirect to gitlab config page if it is first time login
+            if (!data?.gitlab_configured) {
+                router.push("/gitlab-config");
+            } else {
+                router.push("/dashboard");
+            }
         } catch (err) {
+            // Handle client-side or validation errors
+            if (err instanceof ZodError) {
+                // Combine Zod field messages
+                const fieldErrors = err.issues
+                    .map((i) => `${i.path.join(".")}: ${i.message}`)
+                    .join("\n");
+                setError(fieldErrors);
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Login failed. Please try again.");
+            }
             console.error("Login failed:", err);
-            const message =
-                err instanceof Error
-                    ? err.message
-                    : "Login failed. Please try again.";
-            setError(message);
         } finally {
             setLoading(false);
         }

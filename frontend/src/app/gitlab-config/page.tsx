@@ -1,5 +1,7 @@
-import { Metadata } from "next";
+"use client";
 
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -12,12 +14,138 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export const metadata: Metadata = {
-    title: "GitLab Configuration",
-    description: "Provide the GitLab connection details for the application.",
-};
+import {
+    updateGitlabConfigurationAuthGitlabPost,
+    checkGitlabTokenAuthGitlabTokenCheckPost,
+} from "@/client";
+import { z, ZodError } from "zod";
+
+const zGitlabConfigData = z.object({
+    gitlab_url: z.url("Please enter a valid URL."),
+    gitlab_admin_token: z.string().min(1, "Admin token cannot be empty."),
+});
 
 export default function GitlabConfigPage() {
+    const router = useRouter();
+    const [gitlabUrl, setGitlabUrl] = useState("");
+    const [adminToken, setAdminToken] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [valid, setValid] = useState<boolean | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError(null);
+        setLoading(true);
+
+        try {
+            zGitlabConfigData.parse({
+                gitlab_url: gitlabUrl,
+                gitlab_admin_token: adminToken,
+            });
+
+            const res = await updateGitlabConfigurationAuthGitlabPost({
+                body: {
+                    gitlab_url: gitlabUrl,
+                    gitlab_admin_token: adminToken,
+                },
+            });
+
+            const valid = await handleCheckSubmit();
+            if (!valid) {
+                return;
+            }
+
+            // Handle API-level errors
+            if (res.error) {
+                if (typeof res.error.detail === "string") {
+                    setError(res.error.detail);
+                } else {
+                    console.error("Login failed:", res.error);
+                    setError("Login failed. Please check your credentials.");
+                }
+                return;
+            }
+
+            // On success, redirect to dashboard
+            router.push("/dashboard");
+        } catch (err) {
+            // Handle client-side or validation errors
+            if (err instanceof ZodError) {
+                // Combine Zod field messages
+                const fieldErrors = err.issues
+                    .map((i) => `${i.message}`)
+                    .join("\n");
+                setError(fieldErrors);
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                console.error("Failed to update GitLab configuration:", err);
+                setError("Failed to save settings. Please check your inputs.");
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCheckSubmit = async () => {
+        setError(null);
+        setLoading(true);
+
+        try {
+            zGitlabConfigData.parse({
+                gitlab_url: gitlabUrl,
+                gitlab_admin_token: adminToken,
+            });
+
+            const res = await checkGitlabTokenAuthGitlabTokenCheckPost({
+                body: {
+                    gitlab_url: gitlabUrl,
+                    gitlab_admin_token: adminToken,
+                },
+            });
+
+            // Handle API-level errors
+            if (res.error) {
+                if (typeof res.error.detail === "string") {
+                    setError(res.error.detail);
+                } else {
+                    console.error("Token check failed:", res.error);
+                    setError(
+                        "Token check failed. Please check your credentials.",
+                    );
+                }
+                return;
+            }
+
+            const data = res.data;
+            if (data?.valid) {
+                setValid(true);
+                setError(null);
+            } else {
+                setValid(false);
+                setError("Token is invalid. Please verify and try again.");
+            }
+            return data?.valid;
+        } catch (err) {
+            // Handle client-side or validation errors
+            if (err instanceof ZodError) {
+                // Combine Zod field messages
+                const fieldErrors = err.issues
+                    .map((i) => `${i.message}`)
+                    .join("\n");
+                setError(fieldErrors);
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                console.error("Failed to check GitLab token:", err);
+                setError("Failed to check token. Please check your inputs.");
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4 py-16">
             <div className="grid w-full max-w-4xl gap-6 md:grid-cols-[1.6fr_1fr]">
@@ -33,24 +161,37 @@ export default function GitlabConfigPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="mb-6 rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                            <p className="font-medium">
-                                Token validation failed
-                            </p>
-                            <p>
-                                Please verify the target instance and provide a
-                                valid admin token.
-                            </p>
-                        </div>
-                        <form className="flex flex-col gap-6">
+                        {valid === true && !error && (
+                            <div className="mb-6 rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">
+                                <p className="font-medium">
+                                    Token is valid and working!
+                                </p>
+                            </div>
+                        )}
+                        {error && (
+                            <div className="mb-6 rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                                <p className="font-medium">
+                                    Token validation failed
+                                </p>
+                                <p>{error}</p>
+                            </div>
+                        )}
+                        <form
+                            className="flex flex-col gap-6"
+                            onSubmit={handleSubmit}
+                        >
                             <div className="space-y-2">
                                 <Label htmlFor="gitlab-url">GitLab URL</Label>
                                 <Input
                                     id="gitlab-url"
-                                    name="gitlab-url"
+                                    name="gitlab-url-input"
                                     type="url"
                                     placeholder="https://gitlab.example.com"
-                                    autoComplete="url"
+                                    autoComplete="off"
+                                    value={gitlabUrl}
+                                    onChange={(e) =>
+                                        setGitlabUrl(e.target.value)
+                                    }
                                 />
                             </div>
                             <div className="space-y-2">
@@ -59,10 +200,14 @@ export default function GitlabConfigPage() {
                                 </Label>
                                 <Input
                                     id="admin-token"
-                                    name="admin-token"
+                                    name="admin-token-input"
                                     type="password"
                                     placeholder="glpat-****************"
-                                    autoComplete="off"
+                                    autoComplete="new-password"
+                                    value={adminToken}
+                                    onChange={(e) =>
+                                        setAdminToken(e.target.value)
+                                    }
                                 />
                             </div>
                             <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
@@ -70,6 +215,7 @@ export default function GitlabConfigPage() {
                                     type="button"
                                     variant="outline"
                                     className="flex-1 sm:flex-none"
+                                    onClick={handleCheckSubmit}
                                 >
                                     Test connection
                                 </Button>
