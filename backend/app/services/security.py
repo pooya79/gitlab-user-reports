@@ -15,9 +15,6 @@ import jwt
 from app.core.config import Settings
 from app.services import NOW_UTC
 
-_PBKDF2_ITERATIONS = 480_000
-_SALT_BYTES = 16
-
 
 def create_access_token(
     *,

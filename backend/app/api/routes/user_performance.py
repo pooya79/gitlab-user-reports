@@ -226,11 +226,6 @@ async def get_user_performance(
         )
 
     user = auth_context.gitlab_client.users.get(payload.user_id)
-    # if hasattr(user, "email") and not user.email:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND,
-    #         detail="User not found or has no email.",
-    #     )
 
     existing = mongo_db["user_performance"].find_one(
         {
@@ -282,11 +277,6 @@ async def refresh_user_performance(
         )
 
     user = auth_context.gitlab_client.users.get(payload.user_id)
-    # if hasattr(user, "email") and not user.email:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND,
-    #         detail="User not found or has no email.",
-    #     )
 
     try:
         user_performance = get_user_performance_data(

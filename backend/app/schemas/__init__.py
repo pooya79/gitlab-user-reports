@@ -29,4 +29,6 @@ class GeneralErrorResponses:
         status.HTTP_401_UNAUTHORIZED: UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN: FORBIDDEN,
         status.HTTP_404_NOT_FOUND: NOT_FOUND,
+        status.HTTP_500_INTERNAL_SERVER_ERROR: INTERNAL_SERVER_ERROR,
+        status.HTTP_502_BAD_GATEWAY: BAD_GATEWAY,
     }
