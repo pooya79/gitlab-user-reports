@@ -28,6 +28,7 @@ from app.schemas.user_performance import (
 )
 from app.services import NOW_UTC
 from app.core.config import get_settings
+from app.core.promtps import USER_PERFORMANCE_TEMPLATE
 
 router = APIRouter(prefix="/user-performance", tags=["user-performance"])
 
@@ -61,14 +62,14 @@ def get_user_performance_data(
     commits = project.commits.list(
         since=data.start_date,
         until=data.end_date + dt.timedelta(days=get_settings().safe_date_offset),
-        author="pooyafallah79@gmail.com",
+        author=getattr(user, "email", None),
         all=True,
         with_stats=True,
     )
     user_commits = [
         c
         for c in commits
-        if c.author_email == "pooyafallah79@gmail.com"
+        if c.author_email == getattr(user, "email", None)
         and c.authored_date >= str(data.start_date)
         and c.authored_date <= str(data.end_date)
     ]
@@ -110,11 +111,6 @@ def get_user_performance_data(
         total_deletions += commit.stats["deletions"]
 
     total_mr_contributed = len(mr_iids)
-    llm_prompt_suggestion = (
-        "Provide insights on the user's code contributions based on the following data."
-    )
-    prompt_tokens = 0  # Placeholder for actual token calculation
-    calculated_at = NOW_UTC()
 
     for mr in mrs.values():
         merge_requests.append(
@@ -141,6 +137,7 @@ def get_user_performance_data(
             }
         )
 
+    # Build the Pydantic response object
     user_performance = UserPerformanceResponse(
         username=user.username,
         project_path_name=project.path_with_namespace,
@@ -151,15 +148,36 @@ def get_user_performance_data(
         total_deletions=total_deletions,
         total_changes=total_additions + total_deletions,
         total_mr_contributed=total_mr_contributed,
-        daily_commit_counts=daily_commit_counts,
-        daily_additions=daily_additions,
-        daily_deletions=daily_deletions,
-        daily_changes=daily_changes,
+        daily_commit_counts=dict(daily_commit_counts),
+        daily_additions=dict(daily_additions),
+        daily_deletions=dict(daily_deletions),
+        daily_changes=dict(daily_changes),
         merge_requests=merge_requests,
-        llm_prompt_suggestion=llm_prompt_suggestion,
-        prompt_tokens=prompt_tokens,
-        calculated_at=calculated_at,
+        llm_prompt_suggestion="",  # placeholder, set below
+        prompt_tokens=0,
+        calculated_at=NOW_UTC(),
     )
+
+    # --- Render the LLM prompt using the template and computed data ---
+    # Pass a plain dict to keep Jinja access simple
+    perf_view = {
+        "username": user_performance.username,
+        "project_path_name": user_performance.project_path_name,
+        "since": user_performance.since,
+        "until": user_performance.until,
+        "total_commits": user_performance.total_commits,
+        "total_additions": user_performance.total_additions,
+        "total_deletions": user_performance.total_deletions,
+        "total_changes": user_performance.total_changes,
+        "total_mr_contributed": user_performance.total_mr_contributed,
+        "daily_commit_counts": user_performance.daily_commit_counts,
+        "daily_additions": user_performance.daily_additions,
+        "daily_deletions": user_performance.daily_deletions,
+        "daily_changes": user_performance.daily_changes,
+        "merge_requests": user_performance.merge_requests,
+    }
+    llm_suggestion_prompt = USER_PERFORMANCE_TEMPLATE.render(perf=perf_view)
+    user_performance.llm_prompt_suggestion = llm_suggestion_prompt
 
     # Store the result in MongoDB
     filter_ = {

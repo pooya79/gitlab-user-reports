@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -233,7 +234,11 @@ export default function ProjectMembersClient({
                 ) : (
                     <section className="space-y-3">
                         {members.map((member) => (
-                            <MemberRow key={member.id} member={member} />
+                            <MemberRow
+                                key={member.id}
+                                member={member}
+                                projectId={projectId}
+                            />
                         ))}
                     </section>
                 )}
@@ -251,9 +256,33 @@ export default function ProjectMembersClient({
     );
 }
 
-function MemberRow({ member }: { member: MembersResponse }) {
+function MemberRow({
+    member,
+    projectId,
+}: {
+    member: MembersResponse;
+    projectId: number;
+}) {
+    const router = useRouter();
+    const navigateToMember = useCallback(() => {
+        void router.push(
+            `/dashboard/projects/${projectId}/users/${member.id}`,
+        );
+    }, [member.id, projectId, router]);
+
     return (
-        <Card className="w-full border bg-background/90 shadow-sm">
+        <Card
+            role="button"
+            tabIndex={0}
+            onClick={navigateToMember}
+            onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    navigateToMember();
+                }
+            }}
+            className="w-full cursor-pointer border bg-background/90 shadow-sm transition hover:border-primary/40 hover:bg-background"
+        >
             <CardContent className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex w-full flex-1 items-center gap-4">
                     {member.avatar_url ? (
@@ -287,6 +316,7 @@ function MemberRow({ member }: { member: MembersResponse }) {
                         size="sm"
                         className="inline-flex items-center gap-1"
                         asChild
+                        onClick={(event) => event.stopPropagation()}
                     >
                         <a
                             href={member.web_url}

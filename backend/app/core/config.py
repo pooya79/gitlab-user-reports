@@ -30,10 +30,12 @@ class Settings(BaseSettings):
     port: int = 8000
     jwt_secret_key: str = "insecure-development-secret"
     jwt_algorithm: str = "HS256"
-    jwt_access_token_exp_minutes: int = 60
+    jwt_access_token_exp_minutes: int = 360
     require_admin_token_for_gitlab_config: bool = True
 
-    safe_date_offset: int = 90 # days to add to 'until' of user performance to account for late commits
+    safe_date_offset: int = (
+        90  # days to add to 'until' of user performance to account for late commits
+    )
 
     gitlab_access_level_mapping: dict[int, str] = {
         5: "Minimal Access",
