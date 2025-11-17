@@ -81,7 +81,7 @@ export default function UserPerformanceDashboard({
 
                     setError(
                         detail ||
-                            "We could not load this user. Please try again."
+                            "We could not load this user. Please try again.",
                     );
                     setUser(null);
                     return;
@@ -93,7 +93,7 @@ export default function UserPerformanceDashboard({
                     setError(
                         err instanceof Error
                             ? err.message
-                            : "Unexpected error while loading this user."
+                            : "Unexpected error while loading this user.",
                     );
                     setUser(null);
                 }
@@ -148,7 +148,7 @@ export default function UserPerformanceDashboard({
                       { label: "Created", value: createdAtLabel },
                       { label: "Last sign in", value: lastSignInLabel },
                   ],
-        [createdAtLabel, lastSignInLabel, user]
+        [createdAtLabel, lastSignInLabel, user],
     );
 
     const statusBadges = useMemo(() => {
@@ -221,7 +221,7 @@ export default function UserPerformanceDashboard({
 
     return (
         <div className="min-h-screen bg-muted/30 pb-12 pt-8">
-            <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4">
+            <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Button
                         type="button"
@@ -355,7 +355,7 @@ export default function UserPerformanceDashboard({
                                             "rounded-full px-5",
                                             activeTab === tab.value
                                                 ? "shadow-sm"
-                                                : "bg-background/80 text-muted-foreground hover:text-foreground"
+                                                : "bg-background/80 text-muted-foreground hover:text-foreground",
                                         )}
                                         onClick={() => setActiveTab(tab.value)}
                                     >

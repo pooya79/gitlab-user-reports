@@ -84,7 +84,6 @@ export function DailyCommitChart({
                                 color: "var(--chart-1)",
                             },
                         }}
-                        className="h-64 w-full aspect-auto"
                     >
                         <BarChart data={chartData}>
                             <CartesianGrid
@@ -100,6 +99,7 @@ export function DailyCommitChart({
                                 tickLine={false}
                                 axisLine={false}
                                 allowDecimals={false}
+                                width={16}
                             />
                             <ChartTooltip
                                 cursor={{ fill: "var(--muted)" }}

@@ -107,7 +107,7 @@ export function DailyLineChangesChart({
                                 color: "var(--chart-3)",
                             },
                         }}
-                        className="h-72 w-full aspect-auto"
+                        // className="h-72 w-full aspect-auto"
                     >
                         <ComposedChart data={chartData}>
                             <CartesianGrid
@@ -123,6 +123,7 @@ export function DailyLineChangesChart({
                                 tickLine={false}
                                 axisLine={false}
                                 allowDecimals={false}
+                                width={16}
                             />
                             <ChartTooltip
                                 cursor={{ fill: "var(--muted)" }}
