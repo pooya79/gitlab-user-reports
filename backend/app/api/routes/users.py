@@ -42,6 +42,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 def list_gitlab_users(
     page: int = Query(1, description="Page number for pagination."),
     per_page: int = Query(20, description="Number of users per page."),
+    humans: bool = Query(True, description="Whether to include only human users."),
     search: str | None = Query(
         None, description="Search term to filter users by username or name."
     ),
@@ -55,6 +56,7 @@ def list_gitlab_users(
             per_page=per_page,
             search=search,
             active=True,
+            humans=humans,
         )
     except gitlab.GitlabError as exc:
         raise HTTPException(
@@ -63,6 +65,27 @@ def list_gitlab_users(
         ) from exc
 
     return [GitLabUser(**user.__dict__["_attrs"]) for user in users]
+
+@router.get(
+    "/{user_id}", response_model=GitLabUser, responses={
+        502: GeneralErrorResponses.BAD_GATEWAY,  # GitLab user fetch failure
+    },
+)
+def get_gitlab_user(
+    user_id: int = Path(..., description="The ID of the GitLab user to retrieve."),
+    auth_context: AuthContext = Depends(get_auth_context),
+) -> GitLabUser:
+    """Retrieve a GitLab user by their ID."""
+
+    try:
+        user = auth_context.gitlab_client.users.get(user_id)
+    except gitlab.GitlabError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Failed to fetch user from GitLab.",
+        ) from exc
+
+    return GitLabUser(**user.__dict__["_attrs"])
 
 
 @router.get(

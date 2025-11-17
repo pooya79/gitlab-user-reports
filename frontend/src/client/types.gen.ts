@@ -83,6 +83,64 @@ export type GitLabConfigResponse = {
 };
 
 /**
+ * GitLabUser
+ */
+export type GitLabUser = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Username
+     */
+    username: string;
+    /**
+     * Public Email
+     */
+    public_email: string | null;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Locked
+     */
+    locked: boolean;
+    /**
+     * Avatar Url
+     */
+    avatar_url: string | null;
+    /**
+     * Web Url
+     */
+    web_url: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Bot
+     */
+    bot: boolean;
+    /**
+     * Last Sign In At
+     */
+    last_sign_in_at: string | null;
+    /**
+     * Email
+     */
+    email: string | null;
+    /**
+     * Is Admin
+     */
+    is_admin: boolean;
+};
+
+/**
  * GitlabTokenCheckResponse
  *
  * Response for GitLab token validation check.
@@ -148,6 +206,32 @@ export type HttpValidationError = {
      * Detail
      */
     detail?: Array<ValidationError>;
+};
+
+/**
+ * IssueInfo
+ */
+export type IssueInfo = {
+    /**
+     * Iid
+     */
+    iid: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Weburl
+     */
+    webUrl: string;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Reference
+     */
+    reference: string;
 };
 
 /**
@@ -277,6 +361,32 @@ export type MembersResponse = {
 };
 
 /**
+ * MergeRequestInfo
+ */
+export type MergeRequestInfo = {
+    /**
+     * Iid
+     */
+    iid: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Weburl
+     */
+    webUrl: string;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Reference
+     */
+    reference: string;
+};
+
+/**
  * MrDetails
  *
  * Details of a Merge Request.
@@ -314,6 +424,64 @@ export type MrDetails = {
      * Commits
      */
     commits: Array<Commits>;
+};
+
+/**
+ * NoteInfo
+ */
+export type NoteInfo = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Body
+     */
+    body: string;
+};
+
+/**
+ * PageInfo
+ */
+export type PageInfo = {
+    /**
+     * Hasnextpage
+     */
+    hasNextPage: boolean;
+    /**
+     * Haspreviouspage
+     */
+    hasPreviousPage: boolean;
+    /**
+     * Startcursor
+     */
+    startCursor?: string | null;
+    /**
+     * Endcursor
+     */
+    endCursor?: string | null;
+};
+
+/**
+ * ProjectInfo
+ */
+export type ProjectInfo = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Weburl
+     */
+    webUrl: string;
+    /**
+     * Fullpath
+     */
+    fullPath: string;
+    /**
+     * Namewithnamespace
+     */
+    nameWithNamespace: string;
 };
 
 /**
@@ -376,6 +544,78 @@ export type ProjectsResponse = {
      * Project creation timestamp
      */
     created_at: string;
+};
+
+/**
+ * TimelogData
+ */
+export type TimelogData = {
+    /**
+     * Count
+     */
+    count: number;
+    /**
+     * Totalspenttime
+     */
+    totalSpentTime: string;
+    /**
+     * Nodes
+     */
+    nodes: Array<TimelogNode>;
+    pageInfo: PageInfo;
+};
+
+/**
+ * TimelogNode
+ */
+export type TimelogNode = {
+    /**
+     * Id
+     */
+    id: number;
+    project: ProjectInfo;
+    /**
+     * Timespent
+     */
+    timeSpent: number;
+    user: UserInfo;
+    /**
+     * Spentat
+     */
+    spentAt: string;
+    note?: NoteInfo | null;
+    /**
+     * Summary
+     */
+    summary?: string | null;
+    issue?: IssueInfo | null;
+    mergeRequest?: MergeRequestInfo | null;
+};
+
+/**
+ * UserInfo
+ */
+export type UserInfo = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Username
+     */
+    username: string;
+    /**
+     * Avatarurl
+     */
+    avatarUrl?: string | null;
+    /**
+     * Webpath
+     */
+    webPath?: string | null;
 };
 
 /**
@@ -648,7 +888,7 @@ export type GetProfileAuthMeGetResponses = {
 export type GetProfileAuthMeGetResponse =
     GetProfileAuthMeGetResponses[keyof GetProfileAuthMeGetResponses];
 
-export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData =
+export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData =
     {
         body?: never;
         path: {
@@ -679,10 +919,10 @@ export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerform
              */
             end_date: string;
         };
-        url: "/user-performance/projects/{project_id}/users/{user_id}/performance";
+        url: "/project-user-performance/projects/{project_id}/users/{user_id}/performance";
     };
 
-export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors =
+export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors =
     {
         /**
          * Invalid credentials
@@ -698,10 +938,10 @@ export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerform
         422: HttpValidationError;
     };
 
-export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetError =
-    GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors[keyof GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors];
+export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetError =
+    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors[keyof GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors];
 
-export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses =
+export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses =
     {
         /**
          * Successful Response
@@ -709,10 +949,10 @@ export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerform
         200: UserPerformanceResponse;
     };
 
-export type GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponse =
-    GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses[keyof GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses];
+export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponse =
+    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses[keyof GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses];
 
-export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData =
+export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData =
     {
         body?: never;
         path: {
@@ -743,10 +983,10 @@ export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPer
              */
             end_date: string;
         };
-        url: "/user-performance/projects/{project_id}/users/{user_id}/performance/refresh";
+        url: "/project-user-performance/projects/{project_id}/users/{user_id}/performance/refresh";
     };
 
-export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors =
+export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors =
     {
         /**
          * Invalid credentials
@@ -762,10 +1002,10 @@ export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPer
         500: ErrorResponseModel;
     };
 
-export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostError =
-    RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors[keyof RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors];
+export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostError =
+    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors[keyof RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors];
 
-export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses =
+export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses =
     {
         /**
          * Successful Response
@@ -773,8 +1013,8 @@ export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPer
         200: UserPerformanceResponse;
     };
 
-export type RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponse =
-    RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses[keyof RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses];
+export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponse =
+    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses[keyof RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses];
 
 export type GetProjectMembersGitlabProjectsProjectIdMembersGetData = {
     body?: never;
@@ -900,6 +1140,165 @@ export type ListProjectsGitlabProjectsGetResponses = {
 
 export type ListProjectsGitlabProjectsGetResponse =
     ListProjectsGitlabProjectsGetResponses[keyof ListProjectsGitlabProjectsGetResponses];
+
+export type ListGitlabUsersUsersGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Page
+         *
+         * Page number for pagination.
+         */
+        page?: number;
+        /**
+         * Per Page
+         *
+         * Number of users per page.
+         */
+        per_page?: number;
+        /**
+         * Humans
+         *
+         * Whether to include only human users.
+         */
+        humans?: boolean;
+        /**
+         * Search
+         *
+         * Search term to filter users by username or name.
+         */
+        search?: string | null;
+    };
+    url: "/users/";
+};
+
+export type ListGitlabUsersUsersGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Bad Gateway
+     */
+    502: ErrorResponseModel;
+};
+
+export type ListGitlabUsersUsersGetError =
+    ListGitlabUsersUsersGetErrors[keyof ListGitlabUsersUsersGetErrors];
+
+export type ListGitlabUsersUsersGetResponses = {
+    /**
+     * Response List Gitlab Users Users  Get
+     *
+     * Successful Response
+     */
+    200: Array<GitLabUser>;
+};
+
+export type ListGitlabUsersUsersGetResponse =
+    ListGitlabUsersUsersGetResponses[keyof ListGitlabUsersUsersGetResponses];
+
+export type GetGitlabUserUsersUserIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * User Id
+         *
+         * The ID of the GitLab user to retrieve.
+         */
+        user_id: number;
+    };
+    query?: never;
+    url: "/users/{user_id}";
+};
+
+export type GetGitlabUserUsersUserIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Bad Gateway
+     */
+    502: ErrorResponseModel;
+};
+
+export type GetGitlabUserUsersUserIdGetError =
+    GetGitlabUserUsersUserIdGetErrors[keyof GetGitlabUserUsersUserIdGetErrors];
+
+export type GetGitlabUserUsersUserIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: GitLabUser;
+};
+
+export type GetGitlabUserUsersUserIdGetResponse =
+    GetGitlabUserUsersUserIdGetResponses[keyof GetGitlabUserUsersUserIdGetResponses];
+
+export type GetUserTimelogsUsersUsernameTimelogsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Username
+         *
+         * The username of the user to retrieve timelogs for.
+         */
+        username: string;
+    };
+    query: {
+        /**
+         * Start Time
+         *
+         * The start date for the timelog period.
+         */
+        start_time: string;
+        /**
+         * End Time
+         *
+         * The end date for the timelog period.
+         */
+        end_time: string;
+        /**
+         * First
+         *
+         * Number of timelogs to retrieve per page.
+         */
+        first?: number;
+        /**
+         * After
+         *
+         * Cursor for pagination to fetch the next set of timelogs.
+         */
+        after?: string | null;
+    };
+    url: "/users/{username}/timelogs";
+};
+
+export type GetUserTimelogsUsersUsernameTimelogsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Bad Gateway
+     */
+    502: ErrorResponseModel;
+};
+
+export type GetUserTimelogsUsersUsernameTimelogsGetError =
+    GetUserTimelogsUsersUsernameTimelogsGetErrors[keyof GetUserTimelogsUsersUsernameTimelogsGetErrors];
+
+export type GetUserTimelogsUsersUsernameTimelogsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: TimelogData;
+};
+
+export type GetUserTimelogsUsersUsernameTimelogsGetResponse =
+    GetUserTimelogsUsersUsernameTimelogsGetResponses[keyof GetUserTimelogsUsersUsernameTimelogsGetResponses];
 
 export type HealthHealthGetData = {
     body?: never;

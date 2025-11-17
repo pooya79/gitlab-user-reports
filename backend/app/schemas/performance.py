@@ -54,6 +54,8 @@ class UserPerformanceRequest(BaseModel):
 
 class ProjectInfo(BaseModel):
     id: int
+    name: str
+    avatar_url: str | None = None
     web_url: str
     full_path: str
     name_with_namespace: str
@@ -96,6 +98,9 @@ class MergeRequestDetails(BaseModel):
     web_url: str
     state: str
     created_at: datetime
+    total_commits: int
+    total_additions: int
+    total_deletions: int
 
     commits_count: int
     commits: list[Commit]  # List of commits
@@ -105,7 +110,11 @@ class ProjectPerformanceResponse(BaseModel):
     """Response model for project-scoped user performance data."""
 
     user_email: str
+    project_id: int
+    project_name: str
     project_path_name: str
+    avatar_url: str | None = None
+    web_url: str
     since: datetime
     until: datetime
     total_commits: int
@@ -124,16 +133,36 @@ class ProjectPerformanceResponse(BaseModel):
     merge_requests: list[MergeRequestDetails]
 
 
+class IssueInfo(BaseModel):
+    iid: str
+    title: str
+    webUrl: str
+    state: str
+    reference: str
+
+
+class MergeRequestInfo(BaseModel):
+    iid: str
+    title: str
+    webUrl: str
+    state: str
+    reference: str
+
+
+class ProjectTimelogs(BaseModel):
+    project: ProjectInfo
+    timelogs: list[TimelogNode]
+    total_time_spent_hours: float
+
+
 class TimelogNode(BaseModel):
     id: int
     project: ProjectInfo
     time_spent: int  # in seconds
     spent_at: str  # ISO datetime string
     summary: str | None = None
-    issue_iid: int | None = None
-    issue_title: str | None = None
-    mr_iid: int | None = None
-    mr_title: str | None = None
+    issue: IssueInfo | None = None
+    merge_request: MergeRequestInfo | None = None
 
     @field_validator("id", mode="before")
     def convert_id(cls, v):
@@ -147,6 +176,7 @@ class TimeSpentStats(BaseModel):
     total_time_logged_hours: float = Field(..., ge=0.0)
 
     time_spent_per_day: dict[str, float]  # date string to hours logged mapping
+    project_time_spent: dict[str, float]  # project path to hours logged mapping
 
     timelog_entries: list[TimelogNode]
 

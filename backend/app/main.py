@@ -30,6 +30,7 @@ app = FastAPI(
     debug=settings.debug,
     lifespan=lifespan,
     docs_url="/api/docs",
+    openapi_url="/api/openapi.json",
 )
 
 

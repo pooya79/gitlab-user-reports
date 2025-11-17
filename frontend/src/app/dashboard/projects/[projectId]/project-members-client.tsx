@@ -176,7 +176,7 @@ export default function ProjectMembersClient({
                     >
                         <Link href="/dashboard">
                             <ArrowLeft className="size-4" />
-                            Back to projects
+                            Back to dashboard
                         </Link>
                     </Button>
                     <Badge className="w-fit">Project #{projectId}</Badge>
@@ -265,9 +265,7 @@ function MemberRow({
 }) {
     const router = useRouter();
     const navigateToMember = useCallback(() => {
-        void router.push(
-            `/dashboard/projects/${projectId}/users/${member.id}`,
-        );
+        void router.push(`/dashboard/projects/${projectId}/users/${member.id}`);
     }, [member.id, projectId, router]);
 
     return (

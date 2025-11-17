@@ -6,17 +6,26 @@ import type {
     CheckGitlabTokenAuthGitlabTokenCheckPostData,
     CheckGitlabTokenAuthGitlabTokenCheckPostErrors,
     CheckGitlabTokenAuthGitlabTokenCheckPostResponses,
+    GetGitlabUserUsersUserIdGetData,
+    GetGitlabUserUsersUserIdGetErrors,
+    GetGitlabUserUsersUserIdGetResponses,
     GetProfileAuthMeGetData,
     GetProfileAuthMeGetErrors,
     GetProfileAuthMeGetResponses,
     GetProjectMembersGitlabProjectsProjectIdMembersGetData,
     GetProjectMembersGitlabProjectsProjectIdMembersGetErrors,
     GetProjectMembersGitlabProjectsProjectIdMembersGetResponses,
-    GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData,
-    GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors,
-    GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses,
+    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData,
+    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors,
+    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses,
+    GetUserTimelogsUsersUsernameTimelogsGetData,
+    GetUserTimelogsUsersUsernameTimelogsGetErrors,
+    GetUserTimelogsUsersUsernameTimelogsGetResponses,
     HealthHealthGetData,
     HealthHealthGetResponses,
+    ListGitlabUsersUsersGetData,
+    ListGitlabUsersUsersGetErrors,
+    ListGitlabUsersUsersGetResponses,
     ListProjectsGitlabProjectsGetData,
     ListProjectsGitlabProjectsGetErrors,
     ListProjectsGitlabProjectsGetResponses,
@@ -25,9 +34,9 @@ import type {
     LoginAuthLoginPostResponses,
     LogoutAuthLogoutPostData,
     LogoutAuthLogoutPostResponses,
-    RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData,
-    RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors,
-    RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses,
+    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData,
+    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors,
+    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses,
     UpdateGitlabConfigurationAuthGitlabPostData,
     UpdateGitlabConfigurationAuthGitlabPostErrors,
     UpdateGitlabConfigurationAuthGitlabPostResponses,
@@ -188,16 +197,16 @@ export const getProfileAuthMeGet = <ThrowOnError extends boolean = false>(
  *
  * Return cached performance data if present.
  */
-export const getUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGet =
+export const getUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGet =
     <ThrowOnError extends boolean = false>(
         options: Options<
-            GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData,
+            GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData,
             ThrowOnError
         >,
     ) => {
         return (options.client ?? client).get<
-            GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses,
-            GetUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors,
+            GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses,
+            GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors,
             ThrowOnError
         >({
             security: [
@@ -206,7 +215,7 @@ export const getUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerfor
                     type: "http",
                 },
             ],
-            url: "/user-performance/projects/{project_id}/users/{user_id}/performance",
+            url: "/project-user-performance/projects/{project_id}/users/{user_id}/performance",
             ...options,
         });
     };
@@ -216,16 +225,16 @@ export const getUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerfor
  *
  * Recalculate and store fresh performance data.
  */
-export const refreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPost =
+export const refreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPost =
     <ThrowOnError extends boolean = false>(
         options: Options<
-            RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData,
+            RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData,
             ThrowOnError
         >,
     ) => {
         return (options.client ?? client).post<
-            RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses,
-            RefreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors,
+            RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses,
+            RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors,
             ThrowOnError
         >({
             security: [
@@ -234,7 +243,7 @@ export const refreshUserPerformanceUserPerformanceProjectsProjectIdUsersUserIdPe
                     type: "http",
                 },
             ],
-            url: "/user-performance/projects/{project_id}/users/{user_id}/performance/refresh",
+            url: "/project-user-performance/projects/{project_id}/users/{user_id}/performance/refresh",
             ...options,
         });
     };
@@ -290,6 +299,82 @@ export const listProjectsGitlabProjectsGet = <
             },
         ],
         url: "/gitlab/projects",
+        ...options,
+    });
+};
+
+/**
+ * List GitLab Users
+ *
+ * Retrieve a list of GitLab users with optional search and pagination.
+ */
+export const listGitlabUsersUsersGet = <ThrowOnError extends boolean = false>(
+    options?: Options<ListGitlabUsersUsersGetData, ThrowOnError>,
+) => {
+    return (options?.client ?? client).get<
+        ListGitlabUsersUsersGetResponses,
+        ListGitlabUsersUsersGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/users/",
+        ...options,
+    });
+};
+
+/**
+ * Get Gitlab User
+ *
+ * Retrieve a GitLab user by their ID.
+ */
+export const getGitlabUserUsersUserIdGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<GetGitlabUserUsersUserIdGetData, ThrowOnError>,
+) => {
+    return (options.client ?? client).get<
+        GetGitlabUserUsersUserIdGetResponses,
+        GetGitlabUserUsersUserIdGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/users/{user_id}",
+        ...options,
+    });
+};
+
+/**
+ * Get User Timelogs
+ *
+ * Retrieve user timelogs for a specified period.
+ */
+export const getUserTimelogsUsersUsernameTimelogsGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<GetUserTimelogsUsersUsernameTimelogsGetData, ThrowOnError>,
+) => {
+    return (options.client ?? client).get<
+        GetUserTimelogsUsersUsernameTimelogsGetResponses,
+        GetUserTimelogsUsersUsernameTimelogsGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/users/{username}/timelogs",
         ...options,
     });
 };
