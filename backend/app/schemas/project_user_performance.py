@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from typing_extensions import Self
 from datetime import datetime
 
-from pydantic import BaseModel, Field, ValidationInfo, field_validator
+from pydantic import BaseModel, Field, model_validator
 
 
 class UserPerformanceRequest(BaseModel):
@@ -18,13 +19,13 @@ class UserPerformanceRequest(BaseModel):
     end_date: datetime
 
     # Check time interval is less than or equal to 1 week
-    @field_validator("end_date")
-    @classmethod
-    def validate_date_range(cls, end_date: datetime, info: ValidationInfo) -> datetime:
-        start_date = info.data.get("start_date")
-        if start_date and (end_date - start_date).days > 7:
+    @model_validator(mode="after")
+    def validate_time_interval(self) -> UserPerformanceRequest:
+        if self.start_date >= self.end_date:
+            raise ValueError("start_date must be before end_date.")
+        if (self.end_date - self.start_date).days > 7:
             raise ValueError("The date range should not exceed 1 week.")
-        return end_date
+        return self
 
 
 class Commits(BaseModel):

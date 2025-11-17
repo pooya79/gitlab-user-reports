@@ -3,7 +3,7 @@
 from fastapi import APIRouter
 
 from .auth import router as auth_router
-from .user_performance import router as user_performance_router
+from .project_user_performance import router as user_performance_router
 from .gitlab import router as gitlab_router
 from .users import router as users
 

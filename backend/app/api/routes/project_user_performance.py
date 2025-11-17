@@ -22,7 +22,7 @@ from app.api.deps import (
     get_mongo_database,
 )
 from app.schemas import GeneralErrorResponses
-from app.schemas.user_performance import (
+from app.schemas.project_user_performance import (
     UserPerformanceRequest,
     UserPerformanceResponse,
 )
@@ -30,7 +30,9 @@ from app.services import NOW_UTC
 from app.core.config import get_settings
 from app.core.promtps import USER_PERFORMANCE_TEMPLATE
 
-router = APIRouter(prefix="/user-performance", tags=["user-performance"])
+router = APIRouter(
+    prefix="/project-user-performance", tags=["project-user-performance"]
+)
 
 
 def _to_iso_midnight(value) -> str:

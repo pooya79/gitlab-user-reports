@@ -27,8 +27,6 @@ from app.schemas.users import (
     TimelogData,
     TimelogsRequest,
 )
-from app.services import NOW_UTC
-from app.core.config import get_settings
 
 router = APIRouter(prefix="/users", tags=["users"])
 
