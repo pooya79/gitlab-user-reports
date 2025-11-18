@@ -24,13 +24,14 @@ import { clearAccessToken } from "@/lib/auth";
 
 import OverviewTab from "./overview-tab";
 import TimespentTab from "./timespent-tab";
+import AiTab from "./ai-tab";
 import UserSettingsTab from "./settings-tab";
 
 type UserPerformanceDashboardProps = {
     userId: number;
 };
 
-type TabValue = "overview" | "timelogs" | "settings";
+type TabValue = "overview" | "timelogs" | "ai" | "settings";
 
 export default function UserPerformanceDashboard({
     userId,
@@ -176,6 +177,7 @@ export default function UserPerformanceDashboard({
     const tabOptions: Array<{ label: string; value: TabValue }> = [
         { label: "Overview", value: "overview" },
         { label: "Timelogs", value: "timelogs" },
+        { label: "AI", value: "ai" },
         { label: "Settings", value: "settings" },
     ];
 
@@ -185,6 +187,8 @@ export default function UserPerformanceDashboard({
                 return <TimespentTab userId={String(userId)} />;
             case "settings":
                 return <UserSettingsTab userId={String(userId)} />;
+            case "ai":
+                return <AiTab userId={String(userId)} />;
             case "overview":
             default:
                 return (

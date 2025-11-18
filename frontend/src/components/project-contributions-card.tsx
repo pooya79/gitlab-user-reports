@@ -99,7 +99,7 @@ export function ProjectContributionsCard({
                                                 ) : null}
                                                 <AvatarFallback>
                                                     {getInitial(
-                                                        project.project_name,
+                                                        project.project_name
                                                     )}
                                                 </AvatarFallback>
                                             </Avatar>
@@ -115,23 +115,23 @@ export function ProjectContributionsCard({
                                         <div className="flex flex-1 flex-wrap justify-end gap-4 text-sm text-muted-foreground">
                                             <span className="text-foreground font-semibold">
                                                 {numberFormatter.format(
-                                                    project.total_commits,
+                                                    project.total_commits
                                                 )}{" "}
                                                 commits
                                             </span>
                                             <span>
                                                 +
                                                 {numberFormatter.format(
-                                                    project.total_additions,
+                                                    project.total_additions
                                                 )}{" "}
                                                 / -
                                                 {numberFormatter.format(
-                                                    project.total_deletions,
+                                                    project.total_deletions
                                                 )}
                                             </span>
                                             <span>
                                                 {numberFormatter.format(
-                                                    project.total_mr_contributed,
+                                                    project.total_mr_contributed
                                                 )}{" "}
                                                 MRs
                                             </span>
@@ -140,26 +140,6 @@ export function ProjectContributionsCard({
                                 </AccordionTrigger>
                                 <AccordionContent className="px-0">
                                     <div className="space-y-4 border-t pt-4">
-                                        <div className="flex flex-wrap gap-4 text-xs text-muted-foreground sm:text-sm">
-                                            <span>
-                                                Total changes:{" "}
-                                                {numberFormatter.format(
-                                                    project.total_changes,
-                                                )}
-                                            </span>
-                                            <span>
-                                                Additions:{" "}
-                                                {numberFormatter.format(
-                                                    project.total_additions,
-                                                )}
-                                            </span>
-                                            <span>
-                                                Deletions:{" "}
-                                                {numberFormatter.format(
-                                                    project.total_deletions,
-                                                )}
-                                            </span>
-                                        </div>
                                         {project.merge_requests.length ? (
                                             <div className="space-y-3">
                                                 {project.merge_requests.map(
@@ -178,7 +158,7 @@ export function ProjectContributionsCard({
                                                                     <p className="text-xs text-muted-foreground">
                                                                         Created{" "}
                                                                         {formatDate(
-                                                                            mr.created_at,
+                                                                            mr.created_at
                                                                         )}{" "}
                                                                         · MR #
                                                                         {mr.iid}
@@ -195,22 +175,27 @@ export function ProjectContributionsCard({
                                                                 {mr.description}
                                                             </p>
                                                             <div className="flex flex-wrap justify-between pt-3 text-xs text-muted-foreground">
-                                                                <div>
+                                                                <div className="flex gap-4">
                                                                     <span>
                                                                         Commits:{" "}
                                                                         {numberFormatter.format(
-                                                                            mr.total_commits,
+                                                                            mr.total_commits
                                                                         )}
                                                                     </span>
                                                                     <span>
-                                                                        +
-                                                                        {numberFormatter.format(
-                                                                            mr.total_additions,
-                                                                        )}{" "}
-                                                                        / -
-                                                                        {numberFormatter.format(
-                                                                            mr.total_deletions,
-                                                                        )}
+                                                                        <span className="text-green-600">
+                                                                            +
+                                                                            {numberFormatter.format(
+                                                                                mr.total_additions
+                                                                            )}
+                                                                        </span>
+                                                                        {" / "}
+                                                                        <span className="text-red-600">
+                                                                            -
+                                                                            {numberFormatter.format(
+                                                                                mr.total_deletions
+                                                                            )}
+                                                                        </span>
                                                                     </span>
                                                                 </div>
                                                                 <Button
@@ -231,7 +216,7 @@ export function ProjectContributionsCard({
                                                                 </Button>
                                                             </div>
                                                         </div>
-                                                    ),
+                                                    )
                                                 )}
                                             </div>
                                         ) : (

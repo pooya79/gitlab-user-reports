@@ -380,13 +380,6 @@ def summarize_user_performance(
     """Build an aggregated view of a developer's performance across projects."""
     user = gitlab_client.users.get(user_id)
     user_email = user.email
-    user_info = UserInfo(
-        id=user.id,
-        name=user.name,
-        username=user.username,
-        avatarUrl=user.avatar_url,
-        webPath=user.web_url,
-    )
 
     # Fetch and summarize events
     events = _fetch_user_events(user=user, start=start_date, end=end_date)
@@ -431,20 +424,3 @@ def summarize_user_performance(
             daily_deletions[date_str] += dels
         for date_str, changes in project_stats.daily_changes.items():
             daily_changes[date_str] += changes
-
-    return GeneralUserPerformance(
-        user_info=user_info,
-        start_date=start_date,
-        end_date=end_date,
-        total_commits=total_commits,
-        total_additions=total_additions,
-        total_deletions=total_deletions,
-        total_changes=total_additions + total_deletions,
-        code_review_stats=code_review_stats,
-        project_performances=project_performances,
-        daily_commit_counts=dict(daily_commit_counts),
-        daily_additions=dict(daily_additions),
-        daily_deletions=dict(daily_deletions),
-        daily_changes=dict(daily_changes),
-        calculated_at=dt.datetime.now(_UTC),
-    )
