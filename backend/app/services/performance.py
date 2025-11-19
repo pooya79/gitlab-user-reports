@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 from typing import Iterable
 import requests
@@ -35,6 +35,11 @@ class PerformanceComputationError(RuntimeError):
     """Raised when GitLab data cannot be aggregated."""
 
 
+def _to_date(dt_obj: datetime) -> datetime:
+    """Convert a datetime to a date with time set to midnight UTC."""
+    return datetime(dt_obj.year, dt_obj.month, dt_obj.day, tzinfo=_UTC)
+
+
 def _parse_gitlab_datetime(value: str) -> datetime:
     """Convert GitLab ISO datetime strings into aware UTC datetimes."""
     if value.endswith("Z"):
@@ -42,7 +47,7 @@ def _parse_gitlab_datetime(value: str) -> datetime:
     parsed = datetime.fromisoformat(value)
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=_UTC)
-    return parsed.astimezone(_UTC)
+    return _to_date(parsed.astimezone(_UTC))
 
 
 def _fetch_user_events(
@@ -129,8 +134,9 @@ def get_project_performance_stats(
     try:
         commits = project.commits.list(
             all=True,
+            get_all=True,
             since=since.isoformat(),
-            until=until.isoformat(),
+            until=(until + timedelta(days=get_settings().safe_date_offset)).isoformat(),
             author=user_email,
             with_stats=True,
         )
@@ -140,6 +146,7 @@ def get_project_performance_stats(
             if commit.author_email == user_email
             and _parse_gitlab_datetime(commit.authored_date) >= since
             and _parse_gitlab_datetime(commit.authored_date) <= until
+            and len(commit.parent_ids) < 2  # Exclude merge commits
         ]
     except GitlabError as exc:
         raise PerformanceComputationError(
