@@ -63,17 +63,28 @@ def init_db() -> None:
         name="project_mr_timestamp_idx",
     )
 
-    user_performance = db["user_performance"]
-    user_performance.create_index(
+    performance_cache = db["performance_cache"]
+    performance_cache.create_index(
         [
-            ("username", 1),
-            ("project_path_name", 1),
-            ("since", 1),
-            ("until", 1),
+            ("user_id", 1),
+            ("type", 1),
+            ("start_date", 1),
+            ("end_date", 1),
+        ],
+        name="user_date_range_idx",
+    )
+    performance_cache.create_index(
+        [
+            ("user_id", 1),
+            ("project_id", 1),
+            ("type", 1),
+            ("start_date", 1),
+            ("end_date", 1),
         ],
         unique=True,
         name="user_project_date_range_idx",
     )
+    performance_cache.create_index("expires_at", expireAfterSeconds=0)
 
     auth_session = db["auth_session"]
     auth_session.create_index("jti", unique=True)

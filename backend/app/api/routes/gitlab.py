@@ -27,8 +27,9 @@ router = APIRouter(prefix="/gitlab", tags=["gitlab"])
     "/projects/{project_id}/members",
     response_model=list[MembersResponse],
     responses={
-        401: GeneralErrorResponses().UNAUTHORIZED,
-        404: GeneralErrorResponses().NOT_FOUND,
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        404: GeneralErrorResponses.NOT_FOUND,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
     },
 )
 def get_project_members(
@@ -69,8 +70,9 @@ def get_project_members(
     "/projects",
     response_model=list[ProjectsResponse],
     responses={
-        401: GeneralErrorResponses().UNAUTHORIZED,
-        502: GeneralErrorResponses().BAD_GATEWAY,
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
+        502: GeneralErrorResponses.BAD_GATEWAY,
     },
 )
 def list_projects(

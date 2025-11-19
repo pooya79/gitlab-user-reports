@@ -218,15 +218,17 @@ class ProjectPerformanceResponse(ProjectPerformanceShort):
 
 class TimeSpentStats(BaseModel):
     """Time-spent related activity such as logged time per day and per project."""
+    
+    user_id: int
+    username: str
 
-    username: str = Field(..., description="Username of the GitLab user.")
-    total_time_logged_hours: float = Field(..., ge=0.0)
+    daily_project_time_spent: list[tuple[datetime, str, float]]  # date → project name → hours
 
-    # Per-day and per-project time spent (hours)
-    time_spent_per_day: dict[str, float]
-    project_time_spent: dict[str, float]
+    total_time_spent_hours: float
+    mr_contributed: int
+    issue_contributed: int
 
-    timelog_entries: list[TimelogNode]
+    project_timelogs: list[ProjectTimelogs]
 
 
 class CodeReviewStats(BaseModel):

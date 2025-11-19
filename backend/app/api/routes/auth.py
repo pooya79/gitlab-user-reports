@@ -49,8 +49,9 @@ def _ensure_gitlab_payload_coherence(payload: LoginRequest) -> None:
     "/login",
     response_model=LoginResponse,
     responses={
-        401: GeneralErrorResponses().UNAUTHORIZED,
-        400: GeneralErrorResponses().BAD_REQUEST,
+        400: GeneralErrorResponses.BAD_REQUEST,
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
     },
 )
 async def login(
@@ -154,7 +155,14 @@ async def login(
     )
 
 
-@router.post("/logout", response_model=LogoutResponse)
+@router.post(
+    "/logout",
+    response_model=LogoutResponse,
+    responses={
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
+    },
+)
 async def logout(
     user_context: AuthContext = Depends(get_user),
     mongo_db: Database = Depends(get_mongo_database),
@@ -172,7 +180,9 @@ async def logout(
     "/gitlab",
     response_model=GitLabConfigResponse,
     responses={
-        400: GeneralErrorResponses().BAD_REQUEST,
+        400: GeneralErrorResponses.BAD_REQUEST,
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
     },
 )
 async def update_gitlab_configuration(
@@ -215,8 +225,9 @@ async def update_gitlab_configuration(
     "/gitlab/token-check",
     response_model=GitlabTokenCheckResponse,
     responses={
-        400: GeneralErrorResponses().BAD_REQUEST,
-        401: GeneralErrorResponses().UNAUTHORIZED,
+        400: GeneralErrorResponses.BAD_REQUEST,
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
     },
 )
 async def check_gitlab_token(
@@ -245,7 +256,8 @@ async def check_gitlab_token(
     "/me",
     response_model=UserProfileResponse,
     responses={
-        401: GeneralErrorResponses().UNAUTHORIZED,
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
     },
 )
 async def get_profile(

@@ -22,7 +22,7 @@ type ProjectInfo = {
     name: string;
     avatar_url?: string | null;
     web_url: string;
-    full_path: string;
+    path_with_namespace: string;
     name_with_namespace: string;
 };
 
@@ -176,7 +176,7 @@ export function ProjectTimespentCard({
                                                         ) : null}
                                                         <AvatarFallback>
                                                             {getInitials(
-                                                                project.name,
+                                                                project.name
                                                             )}
                                                         </AvatarFallback>
                                                     </Avatar>
@@ -185,14 +185,14 @@ export function ProjectTimespentCard({
                                                             {project.name}
                                                         </p>
                                                         <p className="text-muted-foreground text-sm">
-                                                            {project.full_path}
+                                                            {project.path_with_namespace}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-1 flex-wrap items-center justify-end gap-3 text-sm text-muted-foreground">
                                                     <span className="text-foreground font-semibold">
                                                         {hourFormatter.format(
-                                                            total_time_spent_hours,
+                                                            total_time_spent_hours
                                                         )}{" "}
                                                         hrs logged
                                                     </span>
@@ -228,7 +228,7 @@ export function ProjectTimespentCard({
                                                     {timelogs.map((log) => {
                                                         const target =
                                                             getTimelogTarget(
-                                                                log,
+                                                                log
                                                             );
 
                                                         return (
@@ -258,12 +258,12 @@ export function ProjectTimespentCard({
                                                                     <div className="flex flex-col items-end gap-1 text-xs text-muted-foreground">
                                                                         <span>
                                                                             {formatDateTime(
-                                                                                log.spent_at,
+                                                                                log.spent_at
                                                                             )}
                                                                         </span>
                                                                         <span className="rounded-full bg-muted px-2 py-0.5 font-mono">
                                                                             {formatDuration(
-                                                                                log.time_spent,
+                                                                                log.time_spent
                                                                             )}
                                                                         </span>
                                                                     </div>
@@ -359,7 +359,7 @@ export function ProjectTimespentCard({
                                                     Total logged:{" "}
                                                     <span className="font-semibold text-foreground">
                                                         {hourFormatter.format(
-                                                            total_time_spent_hours,
+                                                            total_time_spent_hours
                                                         )}{" "}
                                                         hrs
                                                     </span>
@@ -390,7 +390,7 @@ export function ProjectTimespentCard({
                                         </AccordionContent>
                                     </AccordionItem>
                                 );
-                            },
+                            }
                         )}
                     </Accordion>
                 ) : (

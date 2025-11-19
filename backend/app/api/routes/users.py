@@ -36,6 +36,7 @@ router = APIRouter(prefix="/users", tags=["users"])
     response_model=list[GitLabUser],
     summary="List GitLab Users",
     responses={
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
         502: GeneralErrorResponses.BAD_GATEWAY,  # GitLab users fetch failure
     },
 )
@@ -66,8 +67,12 @@ def list_gitlab_users(
 
     return [GitLabUser(**user.__dict__["_attrs"]) for user in users]
 
+
 @router.get(
-    "/{user_id}", response_model=GitLabUser, responses={
+    "/{user_id}",
+    response_model=GitLabUser,
+    responses={
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
         502: GeneralErrorResponses.BAD_GATEWAY,  # GitLab user fetch failure
     },
 )
@@ -92,6 +97,7 @@ def get_gitlab_user(
     "/{username}/timelogs",
     response_model=TimelogData,
     responses={
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
         502: GeneralErrorResponses.BAD_GATEWAY,  # GitLab timelogs fetch failure
     },
 )

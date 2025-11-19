@@ -2,39 +2,44 @@
 
 from __future__ import annotations
 
-import datetime as dt
+from datetime import datetime, timezone
 from collections import defaultdict
 from typing import Iterable
 import requests
+from pydantic import ValidationError
 
 import gitlab
 from gitlab.exceptions import GitlabError
 
 from app.core.config import get_settings
 from app.schemas.performance import (
-    UserInfo,
+    extract_numeric_id,
+    IssueInfo,
+    MergeRequestInfo,
     ProjectInfo,
-    Commit,
+    CommitInfo,
     MergeRequestDetails,
     ProjectPerformanceResponse,
+    ProjectPerformanceShort,
     TimelogNode,
+    ProjectTimelogs,
     TimeSpentStats,
     CodeReviewStats,
     GeneralUserPerformance,
 )
 
-_UTC = dt.timezone.utc
+_UTC = timezone.utc
 
 
 class PerformanceComputationError(RuntimeError):
     """Raised when GitLab data cannot be aggregated."""
 
 
-def _parse_gitlab_datetime(value: str) -> dt.datetime:
+def _parse_gitlab_datetime(value: str) -> datetime:
     """Convert GitLab ISO datetime strings into aware UTC datetimes."""
     if value.endswith("Z"):
         value = value[:-1] + "+00:00"
-    parsed = dt.datetime.fromisoformat(value)
+    parsed = datetime.fromisoformat(value)
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=_UTC)
     return parsed.astimezone(_UTC)
@@ -43,8 +48,8 @@ def _parse_gitlab_datetime(value: str) -> dt.datetime:
 def _fetch_user_events(
     *,
     user: gitlab.v4.objects.User,
-    start: dt.datetime,
-    end: dt.datetime,
+    start: datetime,
+    end: datetime,
 ) -> list[gitlab.v4.objects.Event]:
     """Load all events for the user within the provided window."""
     try:
@@ -107,8 +112,8 @@ def get_project_performance_stats(
     gitlab_client: gitlab.Gitlab,
     user_email: str,
     project_id: int,
-    since: dt.datetime,
-    until: dt.datetime,
+    since: datetime,
+    until: datetime,
 ) -> ProjectPerformanceResponse:
     """Collect performance stats for a specific project."""
     # Fetch project
@@ -150,10 +155,10 @@ def get_project_performance_stats(
     ] = {}  # mr_iid -> (mr_details, [commit_ids])
     total_additions = 0
     total_deletions = 0
-    daily_commit_counts: dict[str, int] = defaultdict(int)
-    daily_additions: dict[str, int] = defaultdict(int)
-    daily_deletions: dict[str, int] = defaultdict(int)
-    daily_changes: dict[str, int] = defaultdict(int)
+    daily_commit_counts: dict[datetime, int] = defaultdict(int)
+    daily_additions: dict[datetime, int] = defaultdict(int)
+    daily_deletions: dict[datetime, int] = defaultdict(int)
+    daily_changes: dict[datetime, int] = defaultdict(int)
 
     for commit in sorted_commits:
         num_additions = commit.stats.get("additions", 0)
@@ -162,12 +167,10 @@ def get_project_performance_stats(
         total_additions += num_additions
         total_deletions += num_deletions
         authored_date = _parse_gitlab_datetime(commit.authored_date)
-        date_str = authored_date.date().isoformat()
-        daily_commit_counts[date_str] += 1
-        daily_additions[date_str] += num_additions
-        daily_deletions[date_str] += num_deletions
-        daily_changes[date_str] += num_additions + num_deletions
-
+        daily_commit_counts[authored_date] += 1
+        daily_additions[authored_date] += num_additions
+        daily_deletions[authored_date] += num_deletions
+        daily_changes[authored_date] += num_additions + num_deletions
         try:
             mrs = commit.merge_requests()
             for mr in mrs:
@@ -196,7 +199,7 @@ def get_project_performance_stats(
                 created_at=_parse_gitlab_datetime(mr_details["created_at"]),
                 commits_count=mr_details["commits_count"],
                 commits=[
-                    Commit(
+                    CommitInfo(
                         title=commit.title,
                         message=commit.message,
                         web_url=commit.web_url,
@@ -224,7 +227,7 @@ def get_project_performance_stats(
         daily_additions=dict(daily_additions),
         daily_deletions=dict(daily_deletions),
         daily_changes=dict(daily_changes),
-        calculated_at=dt.datetime.now(_UTC),
+        calculated_at=datetime.now(_UTC),
         merge_requests=merge_request_details,
     )
 
@@ -233,10 +236,10 @@ def get_time_spent_stats(
     gitlab_token: str,
     gitlab_base_url: str,
     username: str,
-    start_time: dt.datetime,
-    end_time: dt.datetime,
+    start_time: datetime,
+    end_time: datetime,
     first: int = 100,
-    after: int = 1,
+    after: str | None = None,
 ) -> TimeSpentStats:
     """Collect time spent statistics for the user."""
 
@@ -259,7 +262,7 @@ def get_time_spent_stats(
             endTime: $endTime
             projectId: $projectId
             groupId: $groupId
-            username: $username
+            userId: $userId
             first: $first
             last: $last
             after: $after
@@ -269,104 +272,274 @@ def get_time_spent_stats(
             count
             totalSpentTime
             nodes {
-            id
-            project {
                 id
-                webUrl
-                fullPath
-                nameWithNamespace
-            }
-            timeSpent
-            user {
-                id
-                name
-                username
-                avatarUrl
-                webPath
-            }
-            spentAt
-            note {
-                id
-                body
-            }
-            summary
-            issue {
-                iid
-                title
-                webUrl
-                state
-                reference
-            }
-            mergeRequest {
-                iid
-                title
-                webUrl
-                state
-                reference
-            }
+                project {
+                    id
+                    name
+                    webUrl
+                    avatarUrl
+                    fullPath
+                    nameWithNamespace
+                }
+                timeSpent
+                user {
+                    id
+                    name
+                    username
+                    avatarUrl
+                    webPath
+                }
+                spentAt
+                note {
+                    id
+                    body
+                }
+                summary
+                issue {
+                    iid
+                    title
+                    webUrl
+                    state
+                    reference
+                }
+                mergeRequest {
+                    iid
+                    title
+                    webUrl
+                    state
+                    reference
+                }
             }
             pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
             }
         }
-        }
-    """
-
-    variables = {
-        "username": username,
-        "startTime": start_time.isoformat(),
-        "endTime": end_time.isoformat(),
-        "first": first,
-        "after": after,
     }
+    """
 
     headers = {
         "Authorization": f"Bearer {gitlab_token}",
         "Content-Type": "application/json",
     }
 
-    try:
-        response = requests.post(
-            graph_ql_url, json={"query": query, "variables": variables}, headers=headers
-        )
-    except requests.RequestException as exc:
-        raise PerformanceComputationError("Failed to fetch time spent data") from exc
+    all_nodes: list[dict] = []
+    total_spent_seconds = 0
 
-    if response.status_code != 200:
-        raise PerformanceComputationError(
-            f"GraphQL query failed with status code {response.status_code}"
+    cursor = after
+    while True:
+        variables = {
+            "username": username,
+            "startTime": start_time.isoformat(),
+            "endTime": end_time.isoformat(),
+            "first": first,
+            "after": cursor,
+            "projectId": None,
+            "groupId": None,
+            "last": None,
+            "before": None,
+        }
+
+        try:
+            response = requests.post(
+                graph_ql_url,
+                json={"query": query, "variables": variables},
+                headers=headers,
+            )
+        except requests.RequestException as exc:
+            raise PerformanceComputationError(
+                "Failed to fetch time spent data"
+            ) from exc
+
+        if response.status_code != 200:
+            raise PerformanceComputationError(
+                f"GraphQL query failed with status code {response.status_code}"
+            )
+
+        try:
+            payload = response.json()
+        except ValueError as exc:
+            raise PerformanceComputationError(
+                "Invalid JSON response from GitLab"
+            ) from exc
+
+        if "errors" in payload:
+            raise PerformanceComputationError(
+                f"GraphQL returned errors: {payload['errors']}"
+            )
+
+        data = payload.get("data", {})
+        timelogs_data = data.get("timelogs")
+        if timelogs_data is None:
+            # No timelogs field at all → treat as empty
+            break
+
+        nodes = timelogs_data.get("nodes") or []
+        all_nodes.extend(nodes)
+
+        total_spent_seconds += timelogs_data.get("totalSpentTime") or 0
+
+        page_info = timelogs_data.get("pageInfo") or {}
+        if not page_info.get("hasNextPage"):
+            break
+
+        cursor = page_info.get("endCursor")
+        if not cursor:
+            break
+
+    # No timelogs → return empty stats
+    if not all_nodes:
+        return TimeSpentStats(
+            user_id=0,
+            username=username,
+            daily_project_time_spent=[],
+            total_time_spent_hours=0.0,
+            mr_contributed=0,
+            issue_contributed=0,
+            project_timelogs=[],
         )
 
+    # Build TimelogNode objects
     timelog_nodes: list[TimelogNode] = []
-    time_spent_per_day: dict[str, float] = defaultdict(float)
-    for node in response.json().get("data", {}).get("timelogs", {}).get("nodes", []):
-        timelog_nodes.append(
-            TimelogNode(
-                id=node["id"],
-                project=node["project"],
-                time_spent=node["timeSpent"],
-                spent_at=node["spentAt"],
+
+    for node in all_nodes:
+        project_raw = node.get("project") or {}
+
+        project = ProjectInfo(
+            id=project_raw.get("id"),
+            name=project_raw.get("name"),
+            avatar_url=project_raw.get("avatarUrl"),
+            web_url=project_raw.get("webUrl"),
+            path_with_namespace=project_raw.get("fullPath"),
+            name_with_namespace=project_raw.get("nameWithNamespace"),
+        )
+
+        issue_obj = None
+        if node.get("issue"):
+            issue_raw = node["issue"]
+            issue_obj = IssueInfo(
+                iid=issue_raw.get("iid"),
+                title=issue_raw.get("title"),
+                web_url=issue_raw.get("webUrl"),
+                state=issue_raw.get("state"),
+                reference=issue_raw.get("reference"),
+            )
+
+        mr_obj = None
+        if node.get("mergeRequest"):
+            mr_raw = node["mergeRequest"]
+            mr_obj = MergeRequestInfo(
+                iid=mr_raw.get("iid"),
+                title=mr_raw.get("title"),
+                web_url=mr_raw.get("webUrl"),
+                state=mr_raw.get("state"),
+                reference=mr_raw.get("reference"),
+            )
+
+        try:
+            timelog = TimelogNode(
+                id=node.get("id"),
+                project=project,
+                time_spent=node.get("timeSpent") or 0,
+                spent_at=node.get("spentAt"),
                 summary=node.get("summary"),
-                issue_iid=node.get("issue", {}).get("iid"),
-                issue_title=node.get("issue", {}).get("title"),
-                mr_iid=node.get("mergeRequest", {}).get("iid"),
-                mr_title=node.get("mergeRequest", {}).get("title"),
+                issue=issue_obj,
+                merge_request=mr_obj,
+            )
+        except ValidationError as exc:
+            # Skip malformed nodes rather than failing the whole computation
+            # (or log this somewhere if you prefer)
+            continue
+
+        timelog_nodes.append(timelog)
+
+    if not timelog_nodes:
+        return TimeSpentStats(
+            user_id=0,
+            username=username,
+            daily_project_time_spent=[],
+            total_time_spent_hours=0.0,
+            mr_contributed=0,
+            issue_contributed=0,
+            project_timelogs=[],
+        )
+
+    # User ID from first timelog's user
+    first_user = all_nodes[0].get("user") or {}
+    user_id = extract_numeric_id(first_user.get("id", "0"))
+
+    # Aggregate: daily_project_time_spent
+    # key: (date, project_name) → hours
+    daily_proj_hours: dict[tuple[datetime, str], float] = defaultdict(float)
+
+    for tl in timelog_nodes:
+        # group by UTC date (drop time)
+        day = tl.spent_at.date()
+        # Represent as datetime at midnight UTC for the model's datetime type
+        day_dt = datetime(day.year, day.month, day.day, tzinfo=tl.spent_at.tzinfo)
+        hours = tl.time_spent / 3600.0
+        daily_proj_hours[(day_dt, tl.project.name)] += hours
+
+    daily_project_time_spent: list[tuple[datetime, str, float]] = [
+        (day_dt, project_name, hours)
+        for (day_dt, project_name), hours in sorted(
+            daily_proj_hours.items(), key=lambda x: (x[0][0], x[0][1])
+        )
+    ]
+
+    # Aggregate: project_timelogs
+    project_groups: dict[int, list[TimelogNode]] = defaultdict(list)
+    project_info_map: dict[int, ProjectInfo] = {}
+
+    for tl in timelog_nodes:
+        pid = tl.project.id
+        project_groups[pid].append(tl)
+        project_info_map[pid] = tl.project
+
+    project_timelogs: list[ProjectTimelogs] = []
+    for pid, tls in project_groups.items():
+        total_hours = sum(tl.time_spent for tl in tls) / 3600.0
+        # sort timelogs by spent_at descending
+        tls_sorted = sorted(tls, key=lambda x: x.spent_at, reverse=True)
+        project_timelogs.append(
+            ProjectTimelogs(
+                project=project_info_map[pid],
+                timelogs=tls_sorted,
+                total_time_spent_hours=total_hours,
             )
         )
-        spent_date = _parse_gitlab_datetime(node["spentAt"]).date().isoformat()
-        time_spent_per_day[spent_date] += node["timeSpent"] / 3600.0  # convert to hours
+
+    # Unique issues / MRs contributed to
+    issue_ids = {
+        (tl.issue.reference if tl.issue else None)
+        for tl in timelog_nodes
+        if tl.issue is not None
+    }
+    issue_ids.discard(None)
+
+    mr_ids = {
+        (tl.merge_request.reference if tl.merge_request else None)
+        for tl in timelog_nodes
+        if tl.merge_request is not None
+    }
+    mr_ids.discard(None)
+
+    # Total hours (prefer GraphQL aggregate if available, otherwise recompute)
+    if total_spent_seconds == 0:
+        total_spent_seconds = sum(tl.time_spent for tl in timelog_nodes)
+
+    total_time_spent_hours = total_spent_seconds / 3600.0
 
     return TimeSpentStats(
+        user_id=user_id,
         username=username,
-        timelog_entries=timelog_nodes,
-        total_time_logged_hours=float(
-            response.json().get("data", {}).get("timelogs", {}).get("totalSpentTime", 0)
-        )
-        / 3600.0,
-        time_spent_per_day=time_spent_per_day,
+        daily_project_time_spent=daily_project_time_spent,
+        total_time_spent_hours=total_time_spent_hours,
+        mr_contributed=len(mr_ids),
+        issue_contributed=len(issue_ids),
+        project_timelogs=project_timelogs,
     )
 
 
@@ -374,8 +547,8 @@ def summarize_user_performance(
     *,
     gitlab_client: gitlab.Gitlab,
     user_id: int,
-    start_date: dt.datetime,
-    end_date: dt.datetime,
+    start_date: datetime,
+    end_date: datetime,
 ) -> GeneralUserPerformance:
     """Build an aggregated view of a developer's performance across projects."""
     user = gitlab_client.users.get(user_id)
@@ -390,18 +563,10 @@ def summarize_user_performance(
     total_commits = 0
     total_additions = 0
     total_deletions = 0
-    daily_commit_counts: dict[str, int] = defaultdict(
-        int
-    )  # date string to commit count mapping
-    daily_additions: dict[str, int] = defaultdict(
-        int
-    )  # date string to additions count mapping
-    daily_deletions: dict[str, int] = defaultdict(
-        int
-    )  # date string to deletions count mapping
-    daily_changes: dict[str, int] = defaultdict(
-        int
-    )  # date string to changes count mapping
+    daily_commit_counts: dict[datetime, int] = defaultdict(int)
+    daily_additions: dict[str, int] = defaultdict(int)
+    daily_deletions: dict[str, int] = defaultdict(int)
+    daily_changes: dict[str, int] = defaultdict(int)
     for project_id in involved_project_ids:
         project_stats = get_project_performance_stats(
             gitlab_client=gitlab_client,
@@ -416,11 +581,45 @@ def summarize_user_performance(
         total_additions += project_stats.total_additions
         total_deletions += project_stats.total_deletions
 
-        for date_str, count in project_stats.daily_commit_counts.items():
-            daily_commit_counts[date_str] += count
-        for date_str, adds in project_stats.daily_additions.items():
-            daily_additions[date_str] += adds
-        for date_str, dels in project_stats.daily_deletions.items():
-            daily_deletions[date_str] += dels
-        for date_str, changes in project_stats.daily_changes.items():
-            daily_changes[date_str] += changes
+        for date, count in project_stats.daily_commit_counts.items():
+            daily_commit_counts[date] += count
+        for date, adds in project_stats.daily_additions.items():
+            daily_additions[date] += adds
+        for date, dels in project_stats.daily_deletions.items():
+            daily_deletions[date] += dels
+        for date, changes in project_stats.daily_changes.items():
+            daily_changes[date] += changes
+
+    total_changes = total_additions + total_deletions
+
+    return GeneralUserPerformance(
+        userd_id=user.id,
+        username=user.username,
+        commits=total_commits,
+        additions=total_additions,
+        deletions=total_deletions,
+        changes=total_changes,
+        mr_contributed=sum(pp.mr_contributed for pp in project_performances),
+        approvals_given=code_review_stats.approvals_given,
+        review_merge_requests=code_review_stats.reviewed_merge_requests,
+        review_comments=code_review_stats.review_comments,
+        notes_authored=code_review_stats.notes_authored,
+        daily_commit_counts=dict(daily_commit_counts),
+        daily_additions=dict(daily_additions),
+        daily_deletions=dict(daily_deletions),
+        daily_changes=dict(daily_changes),
+        project_performances=[
+            ProjectPerformanceShort(
+                user_email=pp.user_email,
+                project_path_name=pp.project_path_name,
+                since=pp.since,
+                until=pp.until,
+                total_commits=pp.total_commits,
+                total_additions=pp.total_additions,
+                total_deletions=pp.total_deletions,
+                total_changes=pp.total_changes,
+                total_mr_contributed=pp.total_mr_contributed,
+            )
+            for pp in project_performances
+        ],
+    )

@@ -146,7 +146,7 @@ export default function DashboardPage() {
                     }
                     setProjectError(
                         detail ||
-                            "We could not load projects. Please try again.",
+                            "We could not load projects. Please try again."
                     );
                     setProjectHasMore(false);
                     return;
@@ -154,7 +154,7 @@ export default function DashboardPage() {
 
                 const data = (res.data as Project[]) ?? [];
                 setProjects((prev) =>
-                    projectPage === 1 ? data : [...prev, ...data],
+                    projectPage === 1 ? data : [...prev, ...data]
                 );
                 setProjectHasMore(data.length === PER_PAGE);
                 projectQueryKeyRef.current = queryKey;
@@ -163,7 +163,7 @@ export default function DashboardPage() {
                     setProjectError(
                         err instanceof Error
                             ? err.message
-                            : "Unexpected error while loading projects.",
+                            : "Unexpected error while loading projects."
                     );
                 }
             } finally {
@@ -225,6 +225,7 @@ export default function DashboardPage() {
                         typeof res.error?.detail === "string"
                             ? res.error.detail
                             : (res.error as { detail?: string })?.detail;
+
                     if (detail === "gitlab_token_required") {
                         setFailed(true);
                         return;
@@ -233,7 +234,7 @@ export default function DashboardPage() {
                         clearAccessToken();
                     }
                     setUserError(
-                        detail || "We could not load users. Please try again.",
+                        detail || "We could not load users. Please try again."
                     );
                     setUserHasMore(false);
                     return;
@@ -241,7 +242,7 @@ export default function DashboardPage() {
 
                 const data = (res.data as GitLabUser[]) ?? [];
                 setUsers((prev) =>
-                    userPage === 1 ? data : [...prev, ...data],
+                    userPage === 1 ? data : [...prev, ...data]
                 );
                 setUserHasMore(data.length === PER_PAGE);
                 userQueryKeyRef.current = queryKey;
@@ -250,7 +251,7 @@ export default function DashboardPage() {
                     setUserError(
                         err instanceof Error
                             ? err.message
-                            : "Unexpected error while loading users.",
+                            : "Unexpected error while loading users."
                     );
                 }
             } finally {
@@ -294,7 +295,7 @@ export default function DashboardPage() {
 
     const projectVisibleCount = useMemo(
         () => projects.length,
-        [projects.length],
+        [projects.length]
     );
     const userVisibleCount = useMemo(() => users.length, [users.length]);
     const showProjectSkeleton =
@@ -357,7 +358,7 @@ export default function DashboardPage() {
                                         value={userSearchTerm}
                                         onChange={(event) =>
                                             setUserSearchTerm(
-                                                event.target.value,
+                                                event.target.value
                                             )
                                         }
                                     />
@@ -368,7 +369,7 @@ export default function DashboardPage() {
                                     className={cn(
                                         "rounded-full",
                                         humansOnly &&
-                                            "shadow-sm shadow-primary/30",
+                                            "shadow-sm shadow-primary/30"
                                     )}
                                     onClick={() =>
                                         setHumansOnly((prev) => !prev)
@@ -445,7 +446,7 @@ export default function DashboardPage() {
                                         value={projectSearchTerm}
                                         onChange={(event) =>
                                             setProjectSearchTerm(
-                                                event.target.value,
+                                                event.target.value
                                             )
                                         }
                                     />
@@ -458,7 +459,7 @@ export default function DashboardPage() {
                                     className={cn(
                                         "rounded-full",
                                         membershipOnly &&
-                                            "shadow-sm shadow-primary/30",
+                                            "shadow-sm shadow-primary/30"
                                     )}
                                     onClick={() =>
                                         setMembershipOnly((prev) => !prev)
@@ -541,7 +542,7 @@ function TabButton({
             variant={isActive ? "secondary" : "ghost"}
             className={cn(
                 "rounded-full px-4 py-2 text-sm",
-                isActive && "shadow-sm",
+                isActive && "shadow-sm"
             )}
             onClick={onClick}
         >
@@ -715,7 +716,7 @@ function ProjectCard({ project }: { project: Project }) {
                             window.open(
                                 project.web_url,
                                 "_blank",
-                                "noreferrer",
+                                "noreferrer"
                             );
                         }}
                     >
@@ -733,7 +734,7 @@ function ProjectSkeletonGrid() {
         <div className="grid gap-4 md:grid-cols-2">
             {Array.from(
                 { length: 4 },
-                (_, index) => `project-skeleton-${index}`,
+                (_, index) => `project-skeleton-${index}`
             ).map((key) => (
                 <div
                     key={key}
@@ -751,7 +752,7 @@ function UserSkeletonList() {
         <div className="space-y-3">
             {Array.from(
                 { length: 5 },
-                (_, index) => `user-skeleton-${index}`,
+                (_, index) => `user-skeleton-${index}`
             ).map((key) => (
                 <div
                     key={key}
@@ -812,7 +813,7 @@ function getInitials(name: string, username: string) {
     }
     const parts = trimmed.split(/\s+/);
     const first = parts[0]?.[0] ?? "";
-    const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? "") : "";
+    const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? "" : "";
     const fallback = (first + last).trim() || trimmed.slice(0, 2);
     return fallback.toUpperCase();
 }
@@ -844,6 +845,6 @@ function useInfiniteObserver({
                 observerRef.current.observe(node);
             }
         },
-        [hasMore, loading, onIntersect],
+        [hasMore, loading, onIntersect]
     );
 }
