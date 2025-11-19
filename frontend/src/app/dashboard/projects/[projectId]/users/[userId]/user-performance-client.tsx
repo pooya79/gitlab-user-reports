@@ -119,7 +119,7 @@
 //     const [loading, setLoading] = useState(false);
 //     const [refreshing, setRefreshing] = useState(false);
 //     const [error, setError] = useState<string | null>(null);
-//     const { setFailed } = useGitlabTokenStore();
+//     const { setGitlabTokenFailed } = useGitlabTokenStore();
 
 //     const weekParams = useMemo(() => {
 //         if (!selectedWeek?.from || !selectedWeek?.to) {
@@ -198,7 +198,7 @@
 //                             : (res.error as { detail?: string })?.detail;
 
 //                     if (detail === "gitlab_token_required") {
-//                         setFailed(true);
+//                         setGitlabTokenFailed(true);
 //                         return null;
 //                     }
 //                     if (detail === "login_required") {
@@ -251,7 +251,7 @@
 //                 }
 //             }
 //         },
-//         [projectId, userId, weekParams, setFailed],
+//         [projectId, userId, weekParams, setGitlabTokenFailed],
 //     );
 
 //     useEffect(() => {

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { format, formatDistanceToNow } from "date-fns";
+import { endOfWeek, format, formatDistanceToNow, startOfWeek } from "date-fns";
+import type { DateRange } from "react-day-picker";
 import { ArrowLeft, ExternalLink, Loader2, Shield } from "lucide-react";
 
 import { getGitlabUserUsersUserIdGet, type GitLabUser } from "@/client";
@@ -41,7 +42,11 @@ export default function UserPerformanceDashboard({
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<TabValue>("overview");
-    const { setFailed } = useGitlabTokenStore();
+    const [overviewError, setOverviewError] = useState<string | null>(null);
+    const [selectedWeek, setSelectedWeek] = useState<DateRange>(() =>
+        getDefaultWeekRange(),
+    );
+    const { setGitlabTokenFailed } = useGitlabTokenStore();
 
     useEffect(() => {
         if (!isValidUserId) {
@@ -73,7 +78,7 @@ export default function UserPerformanceDashboard({
                             : (res.error as { detail?: string })?.detail;
 
                     if (detail === "gitlab_token_required") {
-                        setFailed(true);
+                        setGitlabTokenFailed(true);
                     }
 
                     if (detail === "login_required") {
@@ -108,7 +113,7 @@ export default function UserPerformanceDashboard({
         fetchUser();
 
         return () => controller.abort();
-    }, [isValidUserId, setFailed, userId]);
+    }, [isValidUserId, setGitlabTokenFailed, userId]);
 
     const createdAtLabel = useMemo(() => {
         if (!user?.created_at) {
@@ -193,13 +198,14 @@ export default function UserPerformanceDashboard({
             default:
                 return (
                     <OverviewTab
-                        loading={loading}
                         userId={userId}
                         username={user?.username}
+                        onErrorChange={setOverviewError}
+                        dateRange={selectedWeek}
                     />
                 );
         }
-    }, [activeTab, loading, user?.username, userId]);
+    }, [activeTab, selectedWeek, user?.username, userId]);
 
     const showSkeleton = loading && !user && !error;
 
@@ -334,6 +340,11 @@ export default function UserPerformanceDashboard({
                         {error}
                     </div>
                 )}
+                {overviewError && !error && (
+                    <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                        {overviewError}
+                    </div>
+                )}
 
                 <Card>
                     <CardHeader className="gap-2">
@@ -371,7 +382,16 @@ export default function UserPerformanceDashboard({
                             {/* Push this to the right */}
                             <div className="ml-auto">
                                 <WeekPicker
-                                    onChange={(value) => console.log(value)}
+                                    value={selectedWeek}
+                                    onChange={(value) => {
+                                        if (value?.from && value?.to) {
+                                            setSelectedWeek(value);
+                                        } else {
+                                            setSelectedWeek(
+                                                getDefaultWeekRange(),
+                                            );
+                                        }
+                                    }}
                                 />
                             </div>
                         </div>
@@ -409,4 +429,12 @@ function UserSummarySkeleton() {
             </CardFooter>
         </Card>
     );
+}
+
+function getDefaultWeekRange(): DateRange {
+    const today = new Date();
+    return {
+        from: startOfWeek(today, { weekStartsOn: 1 }),
+        to: endOfWeek(today, { weekStartsOn: 1 }),
+    };
 }

@@ -33,7 +33,7 @@ export default function GitlabConfigPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [valid, setValid] = useState<boolean | null>(null);
-    const { setFailed } = useGitlabTokenStore();
+    const { setGitlabTokenFailed } = useGitlabTokenStore();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -70,7 +70,7 @@ export default function GitlabConfigPage() {
             }
 
             // On success, redirect to dashboard
-            setFailed(false);
+            setGitlabTokenFailed(false);
             router.push("/dashboard");
         } catch (err) {
             // Handle client-side or validation errors

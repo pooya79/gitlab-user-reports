@@ -21,7 +21,7 @@ import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
 export function UserAvatar() {
     const router = useRouter();
     const [userInfo, setUserInfo] = useState<GitlabUserInfo | null>(null);
-    const { setFailed } = useGitlabTokenStore();
+    const { setGitlabTokenFailed } = useGitlabTokenStore();
 
     const fetchUserInfo = async () => {
         try {
@@ -33,7 +33,7 @@ export function UserAvatar() {
                         ? res.error.detail
                         : (res.error as { detail?: string })?.detail;
                 if (detail === "gitlab_token_required") {
-                    setFailed(true);
+                    setGitlabTokenFailed(true);
                     return;
                 }
                 if (detail === "login_required") {

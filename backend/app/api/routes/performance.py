@@ -74,7 +74,7 @@ async def get_user_performance(
 
     # Get user performance if no valid cache
     if not performance_data:
-        performance_data = await summarize_user_performance(
+        performance_data = summarize_user_performance(
             gitlab_client=auth_context.gitlab_client,
             user_id=payload.user_id,
             start_date=payload.start_date,
@@ -88,7 +88,7 @@ async def get_user_performance(
                 "type": "general",
                 "start_date": payload.start_date,
                 "end_date": payload.end_date,
-                "data": performance_data.dict(),
+                "data": performance_data.model_dump(),
                 "expires_at": dt.datetime.now(dt.timezone.utc)
                 + dt.timedelta(seconds=get_settings().performance_cache_expiry_seconds),
             }
@@ -149,7 +149,7 @@ async def get_project_performance(
     else:
         try:
             # Get user email
-            user_email = await auth_context.gitlab_client.users.get(
+            user_email = auth_context.gitlab_client.users.get(
                 payload.user_id
             ).email
         except AttributeError as e:
@@ -159,12 +159,26 @@ async def get_project_performance(
             ) from e
 
         # Get project performance
-        performance_data = await get_project_performance_stats(
+        performance_data = get_project_performance_stats(
             gitlab_client=auth_context.gitlab_client,
             user_email=user_email,
             project_id=project_id,
             since=payload.start_date,
             until=payload.end_date,
+        )
+
+        # Store in cache
+        cache_collection.insert_one(
+            {
+                "user_id": payload.user_id,
+                "project_id": payload.project_id,
+                "type": "project",
+                "start_date": payload.start_date,
+                "end_date": payload.end_date,
+                "data": performance_data.model_dump(),
+                "expires_at": dt.datetime.now(dt.timezone.utc)
+                + dt.timedelta(seconds=get_settings().performance_cache_expiry_seconds),
+            }
         )
     return performance_data
 
@@ -222,10 +236,23 @@ async def get_time_spent_statistics(
         ) from e
 
     # Get time spent statistics
-    time_spent_stats = await get_time_spent_stats(
+    time_spent_stats = get_time_spent_stats(
         gitlab_client=auth_context.gitlab_client,
         username=username,
         start_date=payload.start_date,
         end_date=payload.end_date,
+    )
+
+    # Store in cache
+    cache_collection.insert_one(
+        {
+            "user_id": payload.user_id,
+            "type": "time_spent",
+            "start_date": payload.start_date,
+            "end_date": payload.end_date,
+            "data": time_spent_stats.model_dump(),
+            "expires_at": dt.datetime.now(dt.timezone.utc)
+            + dt.timedelta(seconds=get_settings().performance_cache_expiry_seconds),
+        }
     )
     return time_spent_stats

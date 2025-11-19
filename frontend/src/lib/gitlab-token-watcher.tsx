@@ -6,26 +6,26 @@ import { useRouter } from "next/navigation";
 
 // ---------- Zustand Store ----------
 interface GitlabTokenState {
-    failed: boolean;
-    setFailed: (value: boolean) => void;
+    gitlabTokenFailed: boolean;
+    setGitlabTokenFailed: (value: boolean) => void;
 }
 
 export const useGitlabTokenStore = create<GitlabTokenState>((set) => ({
-    failed: false,
-    setFailed: (value) => set({ failed: value }),
+    gitlabTokenFailed: false,
+    setGitlabTokenFailed: (value) => set({ gitlabTokenFailed: value }),
 }));
 
 // ---------- Watcher Component ----------
 export function GitlabTokenWatcher() {
     const router = useRouter();
-    const { failed, setFailed } = useGitlabTokenStore();
+    const { gitlabTokenFailed, setGitlabTokenFailed } = useGitlabTokenStore();
 
     useEffect(() => {
-        if (failed) {
-            setFailed(false); // reset to prevent repeat
+        if (gitlabTokenFailed) {
+            setGitlabTokenFailed(false); // reset to prevent repeat
             router.push("/gitlab-config");
         }
-    }, [failed, setFailed, router]);
+    }, [gitlabTokenFailed, setGitlabTokenFailed, router]);
 
     return null;
 }

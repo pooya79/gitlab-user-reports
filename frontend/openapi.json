@@ -50,6 +50,16 @@
                             }
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
                     "401": {
                         "description": "Invalid credentials",
                         "content": {
@@ -60,8 +70,8 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "500": {
+                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -96,6 +106,26 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/LogoutResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
                                 }
                             }
                         }
@@ -137,6 +167,26 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -210,6 +260,16 @@
                             }
                         }
                     },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
                     "422": {
                         "description": "Validation Error",
                         "content": {
@@ -254,197 +314,6 @@
                                 }
                             }
                         }
-                    }
-                },
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ]
-            }
-        },
-        "/project-user-performance/projects/{project_id}/users/{user_id}/performance": {
-            "get": {
-                "tags": ["project-user-performance"],
-                "summary": "Get cached user performance data",
-                "description": "Return cached performance data if present.",
-                "operationId": "get_user_performance_project_user_performance_projects__project_id__users__user_id__performance_get",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "description": "GitLab user ID",
-                            "title": "User Id"
-                        },
-                        "description": "GitLab user ID"
-                    },
-                    {
-                        "name": "project_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "description": "GitLab project ID or path",
-                            "title": "Project Id"
-                        },
-                        "description": "GitLab project ID or path"
-                    },
-                    {
-                        "name": "start_date",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Start date",
-                            "title": "Start Date"
-                        },
-                        "description": "Start date"
-                    },
-                    {
-                        "name": "end_date",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "End date",
-                            "title": "End Date"
-                        },
-                        "description": "End date"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserPerformanceResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid credentials",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseModel"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseModel"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/project-user-performance/projects/{project_id}/users/{user_id}/performance/refresh": {
-            "post": {
-                "tags": ["project-user-performance"],
-                "summary": "Recalculate and update user performance data",
-                "description": "Recalculate and store fresh performance data.",
-                "operationId": "refresh_user_performance_project_user_performance_projects__project_id__users__user_id__performance_refresh_post",
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "description": "GitLab user ID",
-                            "title": "User Id"
-                        },
-                        "description": "GitLab user ID"
-                    },
-                    {
-                        "name": "project_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "description": "GitLab project ID or path",
-                            "title": "Project Id"
-                        },
-                        "description": "GitLab project ID or path"
-                    },
-                    {
-                        "name": "start_date",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Start date",
-                            "title": "Start Date"
-                        },
-                        "description": "Start date"
-                    },
-                    {
-                        "name": "end_date",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "End date",
-                            "title": "End Date"
-                        },
-                        "description": "End date"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserPerformanceResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid credentials",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponseModel"
-                                }
-                            }
-                        }
                     },
                     "500": {
                         "description": "Internal Server Error",
@@ -455,18 +324,13 @@
                                 }
                             }
                         }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
             }
         },
         "/gitlab/projects/{project_id}/members": {
@@ -565,6 +429,16 @@
                     },
                     "404": {
                         "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -687,6 +561,16 @@
                             }
                         }
                     },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
                     "502": {
                         "description": "Bad Gateway",
                         "content": {
@@ -792,6 +676,16 @@
                             }
                         }
                     },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
                     "502": {
                         "description": "Bad Gateway",
                         "content": {
@@ -846,6 +740,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/GitLabUser"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
                                 }
                             }
                         }
@@ -962,8 +866,325 @@
                             }
                         }
                     },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
                     "502": {
                         "description": "Bad Gateway",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/performance/users/{user_id}": {
+            "get": {
+                "tags": ["performance"],
+                "summary": "Get User Performance",
+                "description": "Calculate and retrieve user performance data over a specified time period.",
+                "operationId": "get_user_performance_performance_users__user_id__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "The ID of the GitLab user.",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the GitLab user."
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The start date for the performance period in ISO format.",
+                            "title": "Start Date"
+                        },
+                        "description": "The start date for the performance period in ISO format."
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The end date for the performance period in ISO format.",
+                            "title": "End Date"
+                        },
+                        "description": "The end date for the performance period in ISO format."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GeneralUserPerformance"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/performance/project/{project_id}/users/{user_id}": {
+            "get": {
+                "tags": ["performance"],
+                "summary": "Get Project Performance",
+                "description": "Calculate and retrieve project performance data over a specified time period.",
+                "operationId": "get_project_performance_performance_project__project_id__users__user_id__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "The ID of the GitLab project.",
+                            "title": "Project Id"
+                        },
+                        "description": "The ID of the GitLab project."
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "The ID of the GitLab user.",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the GitLab user."
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The start date for the performance period in ISO format.",
+                            "title": "Start Date"
+                        },
+                        "description": "The start date for the performance period in ISO format."
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The end date for the performance period in ISO format.",
+                            "title": "End Date"
+                        },
+                        "description": "The end date for the performance period in ISO format."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProjectPerformanceResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/performanceusers/{user_id}/time-spent": {
+            "get": {
+                "tags": ["performance"],
+                "summary": "Get Time Spent Statistics",
+                "description": "Retrieve time spent statistics for a user over a specified time period.",
+                "operationId": "get_time_spent_statistics_performanceusers__user_id__time_spent_get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "The ID of the GitLab user.",
+                            "title": "User Id"
+                        },
+                        "description": "The ID of the GitLab user."
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The start date for the time spent period in ISO format.",
+                            "title": "Start Date"
+                        },
+                        "description": "The start date for the time spent period in ISO format."
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The end date for the time spent period in ISO format.",
+                            "title": "End Date"
+                        },
+                        "description": "The end date for the time spent period in ISO format."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TimeSpentStats"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1012,7 +1233,7 @@
     },
     "components": {
         "schemas": {
-            "Commits": {
+            "CommitInfo": {
                 "properties": {
                     "title": {
                         "type": "string",
@@ -1049,8 +1270,8 @@
                     "additions",
                     "deletions"
                 ],
-                "title": "Commits",
-                "description": "Details of a Commit."
+                "title": "CommitInfo",
+                "description": "Single commit details."
             },
             "ErrorResponseModel": {
                 "properties": {
@@ -1063,6 +1284,122 @@
                 "required": ["detail"],
                 "title": "ErrorResponseModel",
                 "description": "Standard error response model."
+            },
+            "GeneralUserPerformance": {
+                "properties": {
+                    "userd_id": {
+                        "type": "integer",
+                        "title": "Userd Id"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "commits": {
+                        "type": "integer",
+                        "title": "Commits"
+                    },
+                    "additions": {
+                        "type": "integer",
+                        "title": "Additions"
+                    },
+                    "deletions": {
+                        "type": "integer",
+                        "title": "Deletions"
+                    },
+                    "changes": {
+                        "type": "integer",
+                        "title": "Changes"
+                    },
+                    "mr_contributed": {
+                        "type": "integer",
+                        "title": "Mr Contributed"
+                    },
+                    "approvals_given": {
+                        "type": "integer",
+                        "title": "Approvals Given"
+                    },
+                    "review_merge_requests": {
+                        "type": "integer",
+                        "title": "Review Merge Requests"
+                    },
+                    "review_comments": {
+                        "type": "integer",
+                        "title": "Review Comments"
+                    },
+                    "notes_authored": {
+                        "type": "integer",
+                        "title": "Notes Authored"
+                    },
+                    "daily_commit_counts": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "propertyNames": {
+                            "format": "date-time"
+                        },
+                        "type": "object",
+                        "title": "Daily Commit Counts"
+                    },
+                    "daily_additions": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "propertyNames": {
+                            "format": "date-time"
+                        },
+                        "type": "object",
+                        "title": "Daily Additions"
+                    },
+                    "daily_deletions": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "propertyNames": {
+                            "format": "date-time"
+                        },
+                        "type": "object",
+                        "title": "Daily Deletions"
+                    },
+                    "daily_changes": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "propertyNames": {
+                            "format": "date-time"
+                        },
+                        "type": "object",
+                        "title": "Daily Changes"
+                    },
+                    "project_performances": {
+                        "items": {
+                            "$ref": "#/components/schemas/ProjectPerformanceShort"
+                        },
+                        "type": "array",
+                        "title": "Project Performances"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "userd_id",
+                    "username",
+                    "commits",
+                    "additions",
+                    "deletions",
+                    "changes",
+                    "mr_contributed",
+                    "approvals_given",
+                    "review_merge_requests",
+                    "review_comments",
+                    "notes_authored",
+                    "daily_commit_counts",
+                    "daily_additions",
+                    "daily_deletions",
+                    "daily_changes",
+                    "project_performances"
+                ],
+                "title": "GeneralUserPerformance",
+                "description": "Top-level structure returned by the performance service."
             },
             "GitLabConfigRequest": {
                 "properties": {
@@ -1305,33 +1642,6 @@
                 "type": "object",
                 "title": "HTTPValidationError"
             },
-            "IssueInfo": {
-                "properties": {
-                    "iid": {
-                        "type": "string",
-                        "title": "Iid"
-                    },
-                    "title": {
-                        "type": "string",
-                        "title": "Title"
-                    },
-                    "webUrl": {
-                        "type": "string",
-                        "title": "Weburl"
-                    },
-                    "state": {
-                        "type": "string",
-                        "title": "State"
-                    },
-                    "reference": {
-                        "type": "string",
-                        "title": "Reference"
-                    }
-                },
-                "type": "object",
-                "required": ["iid", "title", "webUrl", "state", "reference"],
-                "title": "IssueInfo"
-            },
             "LoginRequest": {
                 "properties": {
                     "username": {
@@ -1499,7 +1809,7 @@
                 "title": "MembersResponse",
                 "description": "Response schema for GitLab project members."
             },
-            "MergeRequestInfo": {
+            "MergeRequestDetails": {
                 "properties": {
                     "iid": {
                         "type": "string",
@@ -1520,48 +1830,44 @@
                     "reference": {
                         "type": "string",
                         "title": "Reference"
-                    }
-                },
-                "type": "object",
-                "required": ["iid", "title", "webUrl", "state", "reference"],
-                "title": "MergeRequestInfo"
-            },
-            "MrDetails": {
-                "properties": {
-                    "iid": {
-                        "type": "integer",
-                        "title": "Iid"
-                    },
-                    "title": {
-                        "type": "string",
-                        "title": "Title"
                     },
                     "description": {
                         "type": "string",
                         "title": "Description"
-                    },
-                    "web_url": {
-                        "type": "string",
-                        "title": "Web Url"
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
                         "title": "Created At"
                     },
-                    "state": {
-                        "type": "string",
-                        "title": "State"
+                    "total_commits": {
+                        "type": "integer",
+                        "title": "Total Commits"
+                    },
+                    "total_additions": {
+                        "type": "integer",
+                        "title": "Total Additions"
+                    },
+                    "total_deletions": {
+                        "type": "integer",
+                        "title": "Total Deletions"
                     },
                     "commits_count": {
                         "type": "integer",
                         "title": "Commits Count"
                     },
                     "commits": {
-                        "items": {
-                            "$ref": "#/components/schemas/Commits"
-                        },
-                        "type": "array",
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "$ref": "#/components/schemas/CommitInfo"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Commits"
                     }
                 },
@@ -1569,15 +1875,18 @@
                 "required": [
                     "iid",
                     "title",
-                    "description",
-                    "web_url",
-                    "created_at",
+                    "webUrl",
                     "state",
-                    "commits_count",
-                    "commits"
+                    "reference",
+                    "description",
+                    "created_at",
+                    "total_commits",
+                    "total_additions",
+                    "total_deletions",
+                    "commits_count"
                 ],
-                "title": "MrDetails",
-                "description": "Details of a Merge Request."
+                "title": "MergeRequestDetails",
+                "description": "Detailed information about a merge request and its commits."
             },
             "NoteInfo": {
                 "properties": {
@@ -1631,28 +1940,275 @@
                 "required": ["hasNextPage", "hasPreviousPage"],
                 "title": "PageInfo"
             },
-            "ProjectInfo": {
+            "ProjectPerformanceResponse": {
                 "properties": {
                     "id": {
                         "type": "integer",
                         "title": "Id"
                     },
-                    "webUrl": {
+                    "name": {
                         "type": "string",
-                        "title": "Weburl"
+                        "title": "Name"
                     },
-                    "fullPath": {
-                        "type": "string",
-                        "title": "Fullpath"
+                    "avatar_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Avatar Url"
                     },
-                    "nameWithNamespace": {
+                    "web_url": {
                         "type": "string",
-                        "title": "Namewithnamespace"
+                        "title": "Web Url"
+                    },
+                    "path_with_namespace": {
+                        "type": "string",
+                        "title": "Path With Namespace"
+                    },
+                    "name_with_namespace": {
+                        "type": "string",
+                        "title": "Name With Namespace"
+                    },
+                    "since": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Since"
+                    },
+                    "until": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Until"
+                    },
+                    "commits": {
+                        "type": "integer",
+                        "title": "Commits"
+                    },
+                    "additions": {
+                        "type": "integer",
+                        "title": "Additions"
+                    },
+                    "deletions": {
+                        "type": "integer",
+                        "title": "Deletions"
+                    },
+                    "changes": {
+                        "type": "integer",
+                        "title": "Changes"
+                    },
+                    "mr_contributed": {
+                        "type": "integer",
+                        "title": "Mr Contributed"
+                    },
+                    "calculated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Calculated At"
+                    },
+                    "merge_requests": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "$ref": "#/components/schemas/MergeRequestDetails"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Merge Requests"
+                    },
+                    "daily_commit_counts": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "propertyNames": {
+                            "format": "date-time"
+                        },
+                        "type": "object",
+                        "title": "Daily Commit Counts"
+                    },
+                    "daily_additions": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "propertyNames": {
+                            "format": "date-time"
+                        },
+                        "type": "object",
+                        "title": "Daily Additions"
+                    },
+                    "daily_deletions": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "propertyNames": {
+                            "format": "date-time"
+                        },
+                        "type": "object",
+                        "title": "Daily Deletions"
+                    },
+                    "daily_changes": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "propertyNames": {
+                            "format": "date-time"
+                        },
+                        "type": "object",
+                        "title": "Daily Changes"
                     }
                 },
                 "type": "object",
-                "required": ["id", "webUrl", "fullPath", "nameWithNamespace"],
-                "title": "ProjectInfo"
+                "required": [
+                    "id",
+                    "name",
+                    "web_url",
+                    "path_with_namespace",
+                    "name_with_namespace",
+                    "since",
+                    "until",
+                    "commits",
+                    "additions",
+                    "deletions",
+                    "changes",
+                    "mr_contributed",
+                    "calculated_at",
+                    "daily_commit_counts",
+                    "daily_additions",
+                    "daily_deletions",
+                    "daily_changes"
+                ],
+                "title": "ProjectPerformanceResponse",
+                "description": "Project-scoped performance metrics for a user."
+            },
+            "ProjectPerformanceShort": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "avatar_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Avatar Url"
+                    },
+                    "web_url": {
+                        "type": "string",
+                        "title": "Web Url"
+                    },
+                    "path_with_namespace": {
+                        "type": "string",
+                        "title": "Path With Namespace"
+                    },
+                    "name_with_namespace": {
+                        "type": "string",
+                        "title": "Name With Namespace"
+                    },
+                    "since": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Since"
+                    },
+                    "until": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Until"
+                    },
+                    "commits": {
+                        "type": "integer",
+                        "title": "Commits"
+                    },
+                    "additions": {
+                        "type": "integer",
+                        "title": "Additions"
+                    },
+                    "deletions": {
+                        "type": "integer",
+                        "title": "Deletions"
+                    },
+                    "changes": {
+                        "type": "integer",
+                        "title": "Changes"
+                    },
+                    "mr_contributed": {
+                        "type": "integer",
+                        "title": "Mr Contributed"
+                    },
+                    "calculated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Calculated At"
+                    },
+                    "merge_requests": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "$ref": "#/components/schemas/MergeRequestDetails"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Merge Requests"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "web_url",
+                    "path_with_namespace",
+                    "name_with_namespace",
+                    "since",
+                    "until",
+                    "commits",
+                    "additions",
+                    "deletions",
+                    "changes",
+                    "mr_contributed",
+                    "calculated_at"
+                ],
+                "title": "ProjectPerformanceShort",
+                "description": "Short summary of project-scoped performance metrics for a user."
+            },
+            "ProjectTimelogs": {
+                "properties": {
+                    "project": {
+                        "$ref": "#/components/schemas/app__schemas__performance__ProjectInfo"
+                    },
+                    "timelogs": {
+                        "items": {
+                            "$ref": "#/components/schemas/app__schemas__performance__TimelogNode"
+                        },
+                        "type": "array",
+                        "title": "Timelogs"
+                    },
+                    "total_time_spent_hours": {
+                        "type": "number",
+                        "title": "Total Time Spent Hours"
+                    }
+                },
+                "type": "object",
+                "required": ["project", "timelogs", "total_time_spent_hours"],
+                "title": "ProjectTimelogs",
+                "description": "Timelog aggregation for a single project."
             },
             "ProjectsResponse": {
                 "properties": {
@@ -1730,6 +2286,70 @@
                 "title": "ProjectsResponse",
                 "description": "Response schema for GitLab projects."
             },
+            "TimeSpentStats": {
+                "properties": {
+                    "user_id": {
+                        "type": "integer",
+                        "title": "User Id"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "daily_project_time_spent": {
+                        "items": {
+                            "prefixItems": [
+                                {
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ],
+                            "type": "array",
+                            "maxItems": 3,
+                            "minItems": 3
+                        },
+                        "type": "array",
+                        "title": "Daily Project Time Spent"
+                    },
+                    "total_time_spent_hours": {
+                        "type": "number",
+                        "title": "Total Time Spent Hours"
+                    },
+                    "mr_contributed": {
+                        "type": "integer",
+                        "title": "Mr Contributed"
+                    },
+                    "issue_contributed": {
+                        "type": "integer",
+                        "title": "Issue Contributed"
+                    },
+                    "project_timelogs": {
+                        "items": {
+                            "$ref": "#/components/schemas/ProjectTimelogs"
+                        },
+                        "type": "array",
+                        "title": "Project Timelogs"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_id",
+                    "username",
+                    "daily_project_time_spent",
+                    "total_time_spent_hours",
+                    "mr_contributed",
+                    "issue_contributed",
+                    "project_timelogs"
+                ],
+                "title": "TimeSpentStats",
+                "description": "Time-spent related activity such as logged time per day and per project."
+            },
             "TimelogData": {
                 "properties": {
                     "count": {
@@ -1742,7 +2362,7 @@
                     },
                     "nodes": {
                         "items": {
-                            "$ref": "#/components/schemas/TimelogNode"
+                            "$ref": "#/components/schemas/app__schemas__users__TimelogNode"
                         },
                         "type": "array",
                         "title": "Nodes"
@@ -1754,72 +2374,6 @@
                 "type": "object",
                 "required": ["count", "totalSpentTime", "nodes", "pageInfo"],
                 "title": "TimelogData"
-            },
-            "TimelogNode": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "title": "Id"
-                    },
-                    "project": {
-                        "$ref": "#/components/schemas/ProjectInfo"
-                    },
-                    "timeSpent": {
-                        "type": "integer",
-                        "title": "Timespent"
-                    },
-                    "user": {
-                        "$ref": "#/components/schemas/UserInfo"
-                    },
-                    "spentAt": {
-                        "type": "string",
-                        "title": "Spentat"
-                    },
-                    "note": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/components/schemas/NoteInfo"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ]
-                    },
-                    "summary": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Summary"
-                    },
-                    "issue": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/components/schemas/IssueInfo"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ]
-                    },
-                    "mergeRequest": {
-                        "anyOf": [
-                            {
-                                "$ref": "#/components/schemas/MergeRequestInfo"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ]
-                    }
-                },
-                "type": "object",
-                "required": ["id", "project", "timeSpent", "user", "spentAt"],
-                "title": "TimelogNode"
             },
             "UserInfo": {
                 "properties": {
@@ -1861,118 +2415,6 @@
                 "type": "object",
                 "required": ["id", "name", "username"],
                 "title": "UserInfo"
-            },
-            "UserPerformanceResponse": {
-                "properties": {
-                    "username": {
-                        "type": "string",
-                        "title": "Username"
-                    },
-                    "project_path_name": {
-                        "type": "string",
-                        "title": "Project Path Name"
-                    },
-                    "since": {
-                        "type": "string",
-                        "format": "date-time",
-                        "title": "Since"
-                    },
-                    "until": {
-                        "type": "string",
-                        "format": "date-time",
-                        "title": "Until"
-                    },
-                    "total_commits": {
-                        "type": "integer",
-                        "title": "Total Commits"
-                    },
-                    "total_additions": {
-                        "type": "integer",
-                        "title": "Total Additions"
-                    },
-                    "total_deletions": {
-                        "type": "integer",
-                        "title": "Total Deletions"
-                    },
-                    "total_changes": {
-                        "type": "integer",
-                        "title": "Total Changes"
-                    },
-                    "total_mr_contributed": {
-                        "type": "integer",
-                        "title": "Total Mr Contributed"
-                    },
-                    "daily_commit_counts": {
-                        "additionalProperties": {
-                            "type": "integer"
-                        },
-                        "type": "object",
-                        "title": "Daily Commit Counts"
-                    },
-                    "daily_additions": {
-                        "additionalProperties": {
-                            "type": "integer"
-                        },
-                        "type": "object",
-                        "title": "Daily Additions"
-                    },
-                    "daily_deletions": {
-                        "additionalProperties": {
-                            "type": "integer"
-                        },
-                        "type": "object",
-                        "title": "Daily Deletions"
-                    },
-                    "daily_changes": {
-                        "additionalProperties": {
-                            "type": "integer"
-                        },
-                        "type": "object",
-                        "title": "Daily Changes"
-                    },
-                    "merge_requests": {
-                        "items": {
-                            "$ref": "#/components/schemas/MrDetails"
-                        },
-                        "type": "array",
-                        "title": "Merge Requests"
-                    },
-                    "llm_prompt_suggestion": {
-                        "type": "string",
-                        "title": "Llm Prompt Suggestion"
-                    },
-                    "prompt_tokens": {
-                        "type": "integer",
-                        "title": "Prompt Tokens"
-                    },
-                    "calculated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "title": "Calculated At"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "username",
-                    "project_path_name",
-                    "since",
-                    "until",
-                    "total_commits",
-                    "total_additions",
-                    "total_deletions",
-                    "total_changes",
-                    "total_mr_contributed",
-                    "daily_commit_counts",
-                    "daily_additions",
-                    "daily_deletions",
-                    "daily_changes",
-                    "merge_requests",
-                    "llm_prompt_suggestion",
-                    "prompt_tokens",
-                    "calculated_at"
-                ],
-                "title": "UserPerformanceResponse",
-                "description": "Response model for user performance data."
             },
             "UserProfileResponse": {
                 "properties": {
@@ -2037,6 +2479,305 @@
                 "type": "object",
                 "required": ["loc", "msg", "type"],
                 "title": "ValidationError"
+            },
+            "app__schemas__performance__IssueInfo": {
+                "properties": {
+                    "iid": {
+                        "type": "string",
+                        "title": "Iid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "title": "Reference"
+                    }
+                },
+                "type": "object",
+                "required": ["iid", "title", "webUrl", "state", "reference"],
+                "title": "IssueInfo",
+                "description": "Minimal issue reference used in timelog entries."
+            },
+            "app__schemas__performance__MergeRequestInfo": {
+                "properties": {
+                    "iid": {
+                        "type": "string",
+                        "title": "Iid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "title": "Reference"
+                    }
+                },
+                "type": "object",
+                "required": ["iid", "title", "webUrl", "state", "reference"],
+                "title": "MergeRequestInfo",
+                "description": "Minimal merge request reference used in timelog entries."
+            },
+            "app__schemas__performance__ProjectInfo": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "avatar_url": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Avatar Url"
+                    },
+                    "web_url": {
+                        "type": "string",
+                        "title": "Web Url"
+                    },
+                    "path_with_namespace": {
+                        "type": "string",
+                        "title": "Path With Namespace"
+                    },
+                    "name_with_namespace": {
+                        "type": "string",
+                        "title": "Name With Namespace"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "web_url",
+                    "path_with_namespace",
+                    "name_with_namespace"
+                ],
+                "title": "ProjectInfo",
+                "description": "Basic information about a GitLab project."
+            },
+            "app__schemas__performance__TimelogNode": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "project": {
+                        "$ref": "#/components/schemas/app__schemas__performance__ProjectInfo"
+                    },
+                    "time_spent": {
+                        "type": "integer",
+                        "title": "Time Spent"
+                    },
+                    "spent_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Spent At"
+                    },
+                    "summary": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Summary"
+                    },
+                    "issue": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/app__schemas__performance__IssueInfo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "merge_request": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/app__schemas__performance__MergeRequestInfo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": ["id", "project", "time_spent", "spent_at"],
+                "title": "TimelogNode",
+                "description": "Single timelog entry for a project/issue/MR."
+            },
+            "app__schemas__users__IssueInfo": {
+                "properties": {
+                    "iid": {
+                        "type": "string",
+                        "title": "Iid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "title": "Reference"
+                    }
+                },
+                "type": "object",
+                "required": ["iid", "title", "webUrl", "state", "reference"],
+                "title": "IssueInfo"
+            },
+            "app__schemas__users__MergeRequestInfo": {
+                "properties": {
+                    "iid": {
+                        "type": "string",
+                        "title": "Iid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "title": "Reference"
+                    }
+                },
+                "type": "object",
+                "required": ["iid", "title", "webUrl", "state", "reference"],
+                "title": "MergeRequestInfo"
+            },
+            "app__schemas__users__ProjectInfo": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "fullPath": {
+                        "type": "string",
+                        "title": "Fullpath"
+                    },
+                    "nameWithNamespace": {
+                        "type": "string",
+                        "title": "Namewithnamespace"
+                    }
+                },
+                "type": "object",
+                "required": ["id", "webUrl", "fullPath", "nameWithNamespace"],
+                "title": "ProjectInfo"
+            },
+            "app__schemas__users__TimelogNode": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "project": {
+                        "$ref": "#/components/schemas/app__schemas__users__ProjectInfo"
+                    },
+                    "timeSpent": {
+                        "type": "integer",
+                        "title": "Timespent"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserInfo"
+                    },
+                    "spentAt": {
+                        "type": "string",
+                        "title": "Spentat"
+                    },
+                    "note": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/NoteInfo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "summary": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Summary"
+                    },
+                    "issue": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/app__schemas__users__IssueInfo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "mergeRequest": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/app__schemas__users__MergeRequestInfo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": ["id", "project", "timeSpent", "user", "spentAt"],
+                "title": "TimelogNode"
             }
         },
         "securitySchemes": {

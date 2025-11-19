@@ -116,6 +116,7 @@ def get_project_performance_stats(
     until: datetime,
 ) -> ProjectPerformanceResponse:
     """Collect performance stats for a specific project."""
+
     # Fetch project
     try:
         project = gitlab_client.projects.get(project_id)
@@ -145,36 +146,43 @@ def get_project_performance_stats(
             f"Failed to fetch commits for project ID {project_id}"
         ) from exc
 
-    # Fetching merge requests related to each commit and compute stats
+    # Sort commits by authored date
     sorted_commits = sorted(
         user_commits,
         key=lambda c: _parse_gitlab_datetime(c.authored_date),
     )
-    merge_requests: dict[
-        int : (dict, list[int])
-    ] = {}  # mr_iid -> (mr_details, [commit_ids])
+
+    # mr_iid -> (mr_details_dict, [commit_ids_for_this_user])
+    merge_requests: dict[int, tuple[dict, list[str]]] = {}
+
     total_additions = 0
     total_deletions = 0
+
     daily_commit_counts: dict[datetime, int] = defaultdict(int)
     daily_additions: dict[datetime, int] = defaultdict(int)
     daily_deletions: dict[datetime, int] = defaultdict(int)
     daily_changes: dict[datetime, int] = defaultdict(int)
 
     for commit in sorted_commits:
-        num_additions = commit.stats.get("additions", 0)
-        num_deletions = commit.stats.get("deletions", 0)
+        stats = commit.stats or {}
+        num_additions = stats.get("additions", 0)
+        num_deletions = stats.get("deletions", 0)
 
         total_additions += num_additions
         total_deletions += num_deletions
-        authored_date = _parse_gitlab_datetime(commit.authored_date)
-        daily_commit_counts[authored_date] += 1
-        daily_additions[authored_date] += num_additions
-        daily_deletions[authored_date] += num_deletions
-        daily_changes[authored_date] += num_additions + num_deletions
+
+        authored_dt = _parse_gitlab_datetime(commit.authored_date)
+        # If you prefer day-level buckets, use authored_dt.date() instead
+        daily_commit_counts[authored_dt] += 1
+        daily_additions[authored_dt] += num_additions
+        daily_deletions[authored_dt] += num_deletions
+        daily_changes[authored_dt] += num_additions + num_deletions
+
+        # Collect MRs per commit
         try:
             mrs = commit.merge_requests()
             for mr in mrs:
-                mr_iid = mr["iid"]
+                mr_iid = int(mr["iid"])
                 if mr_iid not in merge_requests:
                     merge_requests[mr_iid] = (mr, [])
                 merge_requests[mr_iid][1].append(commit.id)
@@ -186,49 +194,72 @@ def get_project_performance_stats(
     total_commits = len(user_commits)
     total_changes = total_additions + total_deletions
 
-    merge_request_details = [MergeRequestDetails]
-    for mr in merge_requests.values():
-        mr_details, commit_ids = mr
+    merge_request_details: list[MergeRequestDetails] = []
+
+    for mr_details, commit_ids in merge_requests.values():
+        # User's commits in this MR
+        mr_user_commits = [commit for commit in user_commits if commit.id in commit_ids]
+
+        mr_total_additions = sum(
+            (commit.stats or {}).get("additions", 0) for commit in mr_user_commits
+        )
+        mr_total_deletions = sum(
+            (commit.stats or {}).get("deletions", 0) for commit in mr_user_commits
+        )
+
         merge_request_details.append(
             MergeRequestDetails(
-                iid=mr_details["iid"],
+                iid=str(mr_details["iid"]),
                 title=mr_details["title"],
-                description=mr_details["description"],
+                description=mr_details.get("description") or "",
                 web_url=mr_details["web_url"],
                 state=mr_details["state"],
+                reference=(
+                    mr_details.get("reference")
+                    or mr_details.get("references", {}).get("full", "")
+                ),
                 created_at=_parse_gitlab_datetime(mr_details["created_at"]),
-                commits_count=mr_details["commits_count"],
+                total_commits=len(mr_user_commits),
+                total_additions=mr_total_additions,
+                total_deletions=mr_total_deletions,
+                commits_count=mr_details.get("commits_count", len(mr_user_commits)),
                 commits=[
                     CommitInfo(
                         title=commit.title,
                         message=commit.message,
                         web_url=commit.web_url,
                         authored_date=_parse_gitlab_datetime(commit.authored_date),
-                        additions=commit.stats["additions"],
-                        deletions=commit.stats["deletions"],
+                        additions=(commit.stats or {}).get("additions", 0),
+                        deletions=(commit.stats or {}).get("deletions", 0),
                     )
-                    for commit in user_commits
-                    if commit.id in commit_ids
-                ],
+                    for commit in mr_user_commits
+                ]
+                or None,
             )
         )
 
     return ProjectPerformanceResponse(
-        user_email=user_email,
-        project_path_name=project.path_with_namespace,
+        id=project.id,
+        name=project.name,
+        avatar_url=getattr(project, "avatar_url", None),
+        web_url=project.web_url,
+        path_with_namespace=project.path_with_namespace,
+        name_with_namespace=project.name_with_namespace,
         since=since,
         until=until,
-        total_commits=total_commits,
-        total_additions=total_additions,
-        total_deletions=total_deletions,
-        total_changes=total_changes,
-        total_mr_contributed=len(merge_requests),
+        commits=total_commits,
+        additions=total_additions,
+        deletions=total_deletions,
+        changes=total_changes,
+        mr_contributed=len(merge_requests),
+        calculated_at=datetime.now(_UTC),
+        merge_requests=merge_request_details or None,
+        # ProjectPerformanceResponse extra fields
+        user_email=user_email,
         daily_commit_counts=dict(daily_commit_counts),
         daily_additions=dict(daily_additions),
         daily_deletions=dict(daily_deletions),
         daily_changes=dict(daily_changes),
-        calculated_at=datetime.now(_UTC),
-        merge_requests=merge_request_details,
     )
 
 
@@ -577,9 +608,9 @@ def summarize_user_performance(
         )
         project_performances.append(project_stats)
 
-        total_commits += project_stats.total_commits
-        total_additions += project_stats.total_additions
-        total_deletions += project_stats.total_deletions
+        total_commits += project_stats.commits
+        total_additions += project_stats.additions
+        total_deletions += project_stats.deletions
 
         for date, count in project_stats.daily_commit_counts.items():
             daily_commit_counts[date] += count
@@ -610,15 +641,21 @@ def summarize_user_performance(
         daily_changes=dict(daily_changes),
         project_performances=[
             ProjectPerformanceShort(
-                user_email=pp.user_email,
-                project_path_name=pp.project_path_name,
+                id=pp.id,
+                name=pp.name,
+                avatar_url=pp.avatar_url,
+                web_url=pp.web_url,
+                path_with_namespace=pp.path_with_namespace,
+                name_with_namespace=pp.name_with_namespace,
                 since=pp.since,
                 until=pp.until,
-                total_commits=pp.total_commits,
-                total_additions=pp.total_additions,
-                total_deletions=pp.total_deletions,
-                total_changes=pp.total_changes,
-                total_mr_contributed=pp.total_mr_contributed,
+                commits=pp.commits,
+                additions=pp.additions,
+                deletions=pp.deletions,
+                changes=pp.changes,
+                mr_contributed=pp.mr_contributed,
+                calculated_at=pp.calculated_at,
+                merge_requests=pp.merge_requests,
             )
             for pp in project_performances
         ],

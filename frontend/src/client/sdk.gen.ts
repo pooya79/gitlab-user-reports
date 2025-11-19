@@ -15,9 +15,15 @@ import type {
     GetProjectMembersGitlabProjectsProjectIdMembersGetData,
     GetProjectMembersGitlabProjectsProjectIdMembersGetErrors,
     GetProjectMembersGitlabProjectsProjectIdMembersGetResponses,
-    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData,
-    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors,
-    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses,
+    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetData,
+    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors,
+    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses,
+    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData,
+    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors,
+    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses,
+    GetUserPerformancePerformanceUsersUserIdGetData,
+    GetUserPerformancePerformanceUsersUserIdGetErrors,
+    GetUserPerformancePerformanceUsersUserIdGetResponses,
     GetUserTimelogsUsersUsernameTimelogsGetData,
     GetUserTimelogsUsersUsernameTimelogsGetErrors,
     GetUserTimelogsUsersUsernameTimelogsGetResponses,
@@ -33,10 +39,8 @@ import type {
     LoginAuthLoginPostErrors,
     LoginAuthLoginPostResponses,
     LogoutAuthLogoutPostData,
+    LogoutAuthLogoutPostErrors,
     LogoutAuthLogoutPostResponses,
-    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData,
-    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors,
-    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses,
     UpdateGitlabConfigurationAuthGitlabPostData,
     UpdateGitlabConfigurationAuthGitlabPostErrors,
     UpdateGitlabConfigurationAuthGitlabPostResponses,
@@ -91,7 +95,7 @@ export const logoutAuthLogoutPost = <ThrowOnError extends boolean = false>(
 ) => {
     return (options?.client ?? client).post<
         LogoutAuthLogoutPostResponses,
-        unknown,
+        LogoutAuthLogoutPostErrors,
         ThrowOnError
     >({
         security: [
@@ -191,62 +195,6 @@ export const getProfileAuthMeGet = <ThrowOnError extends boolean = false>(
         ...options,
     });
 };
-
-/**
- * Get cached user performance data
- *
- * Return cached performance data if present.
- */
-export const getUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGet =
-    <ThrowOnError extends boolean = false>(
-        options: Options<
-            GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData,
-            ThrowOnError
-        >,
-    ) => {
-        return (options.client ?? client).get<
-            GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses,
-            GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors,
-            ThrowOnError
-        >({
-            security: [
-                {
-                    scheme: "bearer",
-                    type: "http",
-                },
-            ],
-            url: "/project-user-performance/projects/{project_id}/users/{user_id}/performance",
-            ...options,
-        });
-    };
-
-/**
- * Recalculate and update user performance data
- *
- * Recalculate and store fresh performance data.
- */
-export const refreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPost =
-    <ThrowOnError extends boolean = false>(
-        options: Options<
-            RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData,
-            ThrowOnError
-        >,
-    ) => {
-        return (options.client ?? client).post<
-            RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses,
-            RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors,
-            ThrowOnError
-        >({
-            security: [
-                {
-                    scheme: "bearer",
-                    type: "http",
-                },
-            ],
-            url: "/project-user-performance/projects/{project_id}/users/{user_id}/performance/refresh",
-            ...options,
-        });
-    };
 
 /**
  * Get Project Members
@@ -375,6 +323,93 @@ export const getUserTimelogsUsersUsernameTimelogsGet = <
             },
         ],
         url: "/users/{username}/timelogs",
+        ...options,
+    });
+};
+
+/**
+ * Get User Performance
+ *
+ * Calculate and retrieve user performance data over a specified time period.
+ */
+export const getUserPerformancePerformanceUsersUserIdGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        GetUserPerformancePerformanceUsersUserIdGetData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).get<
+        GetUserPerformancePerformanceUsersUserIdGetResponses,
+        GetUserPerformancePerformanceUsersUserIdGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/performance/users/{user_id}",
+        ...options,
+    });
+};
+
+/**
+ * Get Project Performance
+ *
+ * Calculate and retrieve project performance data over a specified time period.
+ */
+export const getProjectPerformancePerformanceProjectProjectIdUsersUserIdGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).get<
+        GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses,
+        GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/performance/project/{project_id}/users/{user_id}",
+        ...options,
+    });
+};
+
+/**
+ * Get Time Spent Statistics
+ *
+ * Retrieve time spent statistics for a user over a specified time period.
+ */
+export const getTimeSpentStatisticsPerformanceusersUserIdTimeSpentGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).get<
+        GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses,
+        GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/performanceusers/{user_id}/time-spent",
         ...options,
     });
 };

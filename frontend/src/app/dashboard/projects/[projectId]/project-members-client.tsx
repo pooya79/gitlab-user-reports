@@ -39,7 +39,7 @@ export default function ProjectMembersClient({
     const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const lastQueryKeyRef = useRef<string | null>(null);
-    const { setFailed } = useGitlabTokenStore();
+    const { setGitlabTokenFailed } = useGitlabTokenStore();
 
     useEffect(() => {
         const handle = setTimeout(() => {
@@ -93,7 +93,7 @@ export default function ProjectMembersClient({
                             ? res.error.detail
                             : (res.error as { detail?: string })?.detail;
                     if (detail === "gitlab_token_required") {
-                        setFailed(true);
+                        setGitlabTokenFailed(true);
                     }
                     if (detail === "login_required") {
                         clearAccessToken();

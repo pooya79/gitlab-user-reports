@@ -4,7 +4,14 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+    field_serializer,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -215,14 +222,47 @@ class ProjectPerformanceResponse(ProjectPerformanceShort):
     daily_deletions: dict[datetime, int]
     daily_changes: dict[datetime, int]
 
+    @field_serializer(
+        "daily_commit_counts",
+        "daily_additions",
+        "daily_deletions",
+        "daily_changes",
+    )
+    def _serialize_daily_maps(self, value: dict[datetime, int]) -> dict[str, int]:
+        # Mongo-safe: string keys
+        return {k.isoformat(): v for k, v in value.items()}
+
+    @field_validator(
+        "daily_commit_counts",
+        "daily_additions",
+        "daily_deletions",
+        "daily_changes",
+        mode="before",
+    )
+    @classmethod
+    def _parse_daily_maps(cls, v):
+        # When loading from Mongo, keys are strings
+        if isinstance(v, dict):
+            out: dict[datetime, int] = {}
+            for k, val in v.items():
+                if isinstance(k, datetime):
+                    dt = k
+                else:
+                    dt = datetime.fromisoformat(k)
+                out[dt] = val
+            return out
+        return v
+
 
 class TimeSpentStats(BaseModel):
     """Time-spent related activity such as logged time per day and per project."""
-    
+
     user_id: int
     username: str
 
-    daily_project_time_spent: list[tuple[datetime, str, float]]  # date → project name → hours
+    daily_project_time_spent: list[
+        tuple[datetime, str, float]
+    ]  # date → project name → hours
 
     total_time_spent_hours: float
     mr_contributed: int
@@ -265,3 +305,34 @@ class GeneralUserPerformance(BaseModel):
 
     # Per-project performance
     project_performances: list[ProjectPerformanceShort]
+
+    @field_serializer(
+        "daily_commit_counts",
+        "daily_additions",
+        "daily_deletions",
+        "daily_changes",
+    )
+    def _serialize_daily_maps(self, value: dict[datetime, int]) -> dict[str, int]:
+        # Mongo-safe: string keys
+        return {k.isoformat(): v for k, v in value.items()}
+
+    @field_validator(
+        "daily_commit_counts",
+        "daily_additions",
+        "daily_deletions",
+        "daily_changes",
+        mode="before",
+    )
+    @classmethod
+    def _parse_daily_maps(cls, v):
+        # When loading from Mongo, keys are strings
+        if isinstance(v, dict):
+            out: dict[datetime, int] = {}
+            for k, val in v.items():
+                if isinstance(k, datetime):
+                    dt = k
+                else:
+                    dt = datetime.fromisoformat(k)
+                out[dt] = val
+            return out
+        return v

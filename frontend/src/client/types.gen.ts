@@ -5,11 +5,11 @@ export type ClientOptions = {
 };
 
 /**
- * Commits
+ * CommitInfo
  *
- * Details of a Commit.
+ * Single commit details.
  */
-export type Commits = {
+export type CommitInfo = {
     /**
      * Title
      */
@@ -46,6 +46,86 @@ export type ErrorResponseModel = {
      * Detail
      */
     detail: string;
+};
+
+/**
+ * GeneralUserPerformance
+ *
+ * Top-level structure returned by the performance service.
+ */
+export type GeneralUserPerformance = {
+    /**
+     * Userd Id
+     */
+    userd_id: number;
+    /**
+     * Username
+     */
+    username: string;
+    /**
+     * Commits
+     */
+    commits: number;
+    /**
+     * Additions
+     */
+    additions: number;
+    /**
+     * Deletions
+     */
+    deletions: number;
+    /**
+     * Changes
+     */
+    changes: number;
+    /**
+     * Mr Contributed
+     */
+    mr_contributed: number;
+    /**
+     * Approvals Given
+     */
+    approvals_given: number;
+    /**
+     * Review Merge Requests
+     */
+    review_merge_requests: number;
+    /**
+     * Review Comments
+     */
+    review_comments: number;
+    /**
+     * Notes Authored
+     */
+    notes_authored: number;
+    /**
+     * Daily Commit Counts
+     */
+    daily_commit_counts: {
+        [key: string]: number;
+    };
+    /**
+     * Daily Additions
+     */
+    daily_additions: {
+        [key: string]: number;
+    };
+    /**
+     * Daily Deletions
+     */
+    daily_deletions: {
+        [key: string]: number;
+    };
+    /**
+     * Daily Changes
+     */
+    daily_changes: {
+        [key: string]: number;
+    };
+    /**
+     * Project Performances
+     */
+    project_performances: Array<ProjectPerformanceShort>;
 };
 
 /**
@@ -209,32 +289,6 @@ export type HttpValidationError = {
 };
 
 /**
- * IssueInfo
- */
-export type IssueInfo = {
-    /**
-     * Iid
-     */
-    iid: string;
-    /**
-     * Title
-     */
-    title: string;
-    /**
-     * Weburl
-     */
-    webUrl: string;
-    /**
-     * State
-     */
-    state: string;
-    /**
-     * Reference
-     */
-    reference: string;
-};
-
-/**
  * LoginRequest
  *
  * Incoming payload for user login or first-time bootstrap.
@@ -361,9 +415,11 @@ export type MembersResponse = {
 };
 
 /**
- * MergeRequestInfo
+ * MergeRequestDetails
+ *
+ * Detailed information about a merge request and its commits.
  */
-export type MergeRequestInfo = {
+export type MergeRequestDetails = {
     /**
      * Iid
      */
@@ -384,38 +440,26 @@ export type MergeRequestInfo = {
      * Reference
      */
     reference: string;
-};
-
-/**
- * MrDetails
- *
- * Details of a Merge Request.
- */
-export type MrDetails = {
-    /**
-     * Iid
-     */
-    iid: number;
-    /**
-     * Title
-     */
-    title: string;
     /**
      * Description
      */
     description: string;
     /**
-     * Web Url
-     */
-    web_url: string;
-    /**
      * Created At
      */
     created_at: string;
     /**
-     * State
+     * Total Commits
      */
-    state: string;
+    total_commits: number;
+    /**
+     * Total Additions
+     */
+    total_additions: number;
+    /**
+     * Total Deletions
+     */
+    total_deletions: number;
     /**
      * Commits Count
      */
@@ -423,7 +467,7 @@ export type MrDetails = {
     /**
      * Commits
      */
-    commits: Array<Commits>;
+    commits?: Array<CommitInfo> | null;
 };
 
 /**
@@ -463,25 +507,180 @@ export type PageInfo = {
 };
 
 /**
- * ProjectInfo
+ * ProjectPerformanceResponse
+ *
+ * Project-scoped performance metrics for a user.
  */
-export type ProjectInfo = {
+export type ProjectPerformanceResponse = {
     /**
      * Id
      */
     id: number;
     /**
-     * Weburl
+     * Name
      */
-    webUrl: string;
+    name: string;
     /**
-     * Fullpath
+     * Avatar Url
      */
-    fullPath: string;
+    avatar_url?: string | null;
     /**
-     * Namewithnamespace
+     * Web Url
      */
-    nameWithNamespace: string;
+    web_url: string;
+    /**
+     * Path With Namespace
+     */
+    path_with_namespace: string;
+    /**
+     * Name With Namespace
+     */
+    name_with_namespace: string;
+    /**
+     * Since
+     */
+    since: string;
+    /**
+     * Until
+     */
+    until: string;
+    /**
+     * Commits
+     */
+    commits: number;
+    /**
+     * Additions
+     */
+    additions: number;
+    /**
+     * Deletions
+     */
+    deletions: number;
+    /**
+     * Changes
+     */
+    changes: number;
+    /**
+     * Mr Contributed
+     */
+    mr_contributed: number;
+    /**
+     * Calculated At
+     */
+    calculated_at: string;
+    /**
+     * Merge Requests
+     */
+    merge_requests?: Array<MergeRequestDetails> | null;
+    /**
+     * Daily Commit Counts
+     */
+    daily_commit_counts: {
+        [key: string]: number;
+    };
+    /**
+     * Daily Additions
+     */
+    daily_additions: {
+        [key: string]: number;
+    };
+    /**
+     * Daily Deletions
+     */
+    daily_deletions: {
+        [key: string]: number;
+    };
+    /**
+     * Daily Changes
+     */
+    daily_changes: {
+        [key: string]: number;
+    };
+};
+
+/**
+ * ProjectPerformanceShort
+ *
+ * Short summary of project-scoped performance metrics for a user.
+ */
+export type ProjectPerformanceShort = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Avatar Url
+     */
+    avatar_url?: string | null;
+    /**
+     * Web Url
+     */
+    web_url: string;
+    /**
+     * Path With Namespace
+     */
+    path_with_namespace: string;
+    /**
+     * Name With Namespace
+     */
+    name_with_namespace: string;
+    /**
+     * Since
+     */
+    since: string;
+    /**
+     * Until
+     */
+    until: string;
+    /**
+     * Commits
+     */
+    commits: number;
+    /**
+     * Additions
+     */
+    additions: number;
+    /**
+     * Deletions
+     */
+    deletions: number;
+    /**
+     * Changes
+     */
+    changes: number;
+    /**
+     * Mr Contributed
+     */
+    mr_contributed: number;
+    /**
+     * Calculated At
+     */
+    calculated_at: string;
+    /**
+     * Merge Requests
+     */
+    merge_requests?: Array<MergeRequestDetails> | null;
+};
+
+/**
+ * ProjectTimelogs
+ *
+ * Timelog aggregation for a single project.
+ */
+export type ProjectTimelogs = {
+    project: AppSchemasPerformanceProjectInfo;
+    /**
+     * Timelogs
+     */
+    timelogs: Array<AppSchemasPerformanceTimelogNode>;
+    /**
+     * Total Time Spent Hours
+     */
+    total_time_spent_hours: number;
 };
 
 /**
@@ -547,6 +746,42 @@ export type ProjectsResponse = {
 };
 
 /**
+ * TimeSpentStats
+ *
+ * Time-spent related activity such as logged time per day and per project.
+ */
+export type TimeSpentStats = {
+    /**
+     * User Id
+     */
+    user_id: number;
+    /**
+     * Username
+     */
+    username: string;
+    /**
+     * Daily Project Time Spent
+     */
+    daily_project_time_spent: Array<[string, string, number]>;
+    /**
+     * Total Time Spent Hours
+     */
+    total_time_spent_hours: number;
+    /**
+     * Mr Contributed
+     */
+    mr_contributed: number;
+    /**
+     * Issue Contributed
+     */
+    issue_contributed: number;
+    /**
+     * Project Timelogs
+     */
+    project_timelogs: Array<ProjectTimelogs>;
+};
+
+/**
  * TimelogData
  */
 export type TimelogData = {
@@ -561,35 +796,8 @@ export type TimelogData = {
     /**
      * Nodes
      */
-    nodes: Array<TimelogNode>;
+    nodes: Array<AppSchemasUsersTimelogNode>;
     pageInfo: PageInfo;
-};
-
-/**
- * TimelogNode
- */
-export type TimelogNode = {
-    /**
-     * Id
-     */
-    id: number;
-    project: ProjectInfo;
-    /**
-     * Timespent
-     */
-    timeSpent: number;
-    user: UserInfo;
-    /**
-     * Spentat
-     */
-    spentAt: string;
-    note?: NoteInfo | null;
-    /**
-     * Summary
-     */
-    summary?: string | null;
-    issue?: IssueInfo | null;
-    mergeRequest?: MergeRequestInfo | null;
 };
 
 /**
@@ -616,90 +824,6 @@ export type UserInfo = {
      * Webpath
      */
     webPath?: string | null;
-};
-
-/**
- * UserPerformanceResponse
- *
- * Response model for user performance data.
- */
-export type UserPerformanceResponse = {
-    /**
-     * Username
-     */
-    username: string;
-    /**
-     * Project Path Name
-     */
-    project_path_name: string;
-    /**
-     * Since
-     */
-    since: string;
-    /**
-     * Until
-     */
-    until: string;
-    /**
-     * Total Commits
-     */
-    total_commits: number;
-    /**
-     * Total Additions
-     */
-    total_additions: number;
-    /**
-     * Total Deletions
-     */
-    total_deletions: number;
-    /**
-     * Total Changes
-     */
-    total_changes: number;
-    /**
-     * Total Mr Contributed
-     */
-    total_mr_contributed: number;
-    /**
-     * Daily Commit Counts
-     */
-    daily_commit_counts: {
-        [key: string]: number;
-    };
-    /**
-     * Daily Additions
-     */
-    daily_additions: {
-        [key: string]: number;
-    };
-    /**
-     * Daily Deletions
-     */
-    daily_deletions: {
-        [key: string]: number;
-    };
-    /**
-     * Daily Changes
-     */
-    daily_changes: {
-        [key: string]: number;
-    };
-    /**
-     * Merge Requests
-     */
-    merge_requests: Array<MrDetails>;
-    /**
-     * Llm Prompt Suggestion
-     */
-    llm_prompt_suggestion: string;
-    /**
-     * Prompt Tokens
-     */
-    prompt_tokens: number;
-    /**
-     * Calculated At
-     */
-    calculated_at: string;
 };
 
 /**
@@ -737,6 +861,222 @@ export type ValidationError = {
     type: string;
 };
 
+/**
+ * IssueInfo
+ *
+ * Minimal issue reference used in timelog entries.
+ */
+export type AppSchemasPerformanceIssueInfo = {
+    /**
+     * Iid
+     */
+    iid: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Weburl
+     */
+    webUrl: string;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Reference
+     */
+    reference: string;
+};
+
+/**
+ * MergeRequestInfo
+ *
+ * Minimal merge request reference used in timelog entries.
+ */
+export type AppSchemasPerformanceMergeRequestInfo = {
+    /**
+     * Iid
+     */
+    iid: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Weburl
+     */
+    webUrl: string;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Reference
+     */
+    reference: string;
+};
+
+/**
+ * ProjectInfo
+ *
+ * Basic information about a GitLab project.
+ */
+export type AppSchemasPerformanceProjectInfo = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Avatar Url
+     */
+    avatar_url?: string | null;
+    /**
+     * Web Url
+     */
+    web_url: string;
+    /**
+     * Path With Namespace
+     */
+    path_with_namespace: string;
+    /**
+     * Name With Namespace
+     */
+    name_with_namespace: string;
+};
+
+/**
+ * TimelogNode
+ *
+ * Single timelog entry for a project/issue/MR.
+ */
+export type AppSchemasPerformanceTimelogNode = {
+    /**
+     * Id
+     */
+    id: number;
+    project: AppSchemasPerformanceProjectInfo;
+    /**
+     * Time Spent
+     */
+    time_spent: number;
+    /**
+     * Spent At
+     */
+    spent_at: string;
+    /**
+     * Summary
+     */
+    summary?: string | null;
+    issue?: AppSchemasPerformanceIssueInfo | null;
+    merge_request?: AppSchemasPerformanceMergeRequestInfo | null;
+};
+
+/**
+ * IssueInfo
+ */
+export type AppSchemasUsersIssueInfo = {
+    /**
+     * Iid
+     */
+    iid: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Weburl
+     */
+    webUrl: string;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Reference
+     */
+    reference: string;
+};
+
+/**
+ * MergeRequestInfo
+ */
+export type AppSchemasUsersMergeRequestInfo = {
+    /**
+     * Iid
+     */
+    iid: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Weburl
+     */
+    webUrl: string;
+    /**
+     * State
+     */
+    state: string;
+    /**
+     * Reference
+     */
+    reference: string;
+};
+
+/**
+ * ProjectInfo
+ */
+export type AppSchemasUsersProjectInfo = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Weburl
+     */
+    webUrl: string;
+    /**
+     * Fullpath
+     */
+    fullPath: string;
+    /**
+     * Namewithnamespace
+     */
+    nameWithNamespace: string;
+};
+
+/**
+ * TimelogNode
+ */
+export type AppSchemasUsersTimelogNode = {
+    /**
+     * Id
+     */
+    id: number;
+    project: AppSchemasUsersProjectInfo;
+    /**
+     * Timespent
+     */
+    timeSpent: number;
+    user: UserInfo;
+    /**
+     * Spentat
+     */
+    spentAt: string;
+    note?: NoteInfo | null;
+    /**
+     * Summary
+     */
+    summary?: string | null;
+    issue?: AppSchemasUsersIssueInfo | null;
+    mergeRequest?: AppSchemasUsersMergeRequestInfo | null;
+};
+
 export type LoginAuthLoginPostData = {
     body: LoginRequest;
     headers?: {
@@ -763,6 +1103,10 @@ export type LoginAuthLoginPostErrors = {
      * Validation Error
      */
     422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
 };
 
 export type LoginAuthLoginPostError =
@@ -784,6 +1128,20 @@ export type LogoutAuthLogoutPostData = {
     query?: never;
     url: "/auth/logout";
 };
+
+export type LogoutAuthLogoutPostErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+};
+
+export type LogoutAuthLogoutPostError =
+    LogoutAuthLogoutPostErrors[keyof LogoutAuthLogoutPostErrors];
 
 export type LogoutAuthLogoutPostResponses = {
     /**
@@ -808,9 +1166,17 @@ export type UpdateGitlabConfigurationAuthGitlabPostErrors = {
      */
     400: ErrorResponseModel;
     /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
      * Validation Error
      */
     422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
 };
 
 export type UpdateGitlabConfigurationAuthGitlabPostError =
@@ -846,6 +1212,10 @@ export type CheckGitlabTokenAuthGitlabTokenCheckPostErrors = {
      * Validation Error
      */
     422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
 };
 
 export type CheckGitlabTokenAuthGitlabTokenCheckPostError =
@@ -873,6 +1243,10 @@ export type GetProfileAuthMeGetErrors = {
      * Invalid credentials
      */
     401: ErrorResponseModel;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
 };
 
 export type GetProfileAuthMeGetError =
@@ -887,134 +1261,6 @@ export type GetProfileAuthMeGetResponses = {
 
 export type GetProfileAuthMeGetResponse =
     GetProfileAuthMeGetResponses[keyof GetProfileAuthMeGetResponses];
-
-export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetData =
-    {
-        body?: never;
-        path: {
-            /**
-             * User Id
-             *
-             * GitLab user ID
-             */
-            user_id: number;
-            /**
-             * Project Id
-             *
-             * GitLab project ID or path
-             */
-            project_id: string;
-        };
-        query: {
-            /**
-             * Start Date
-             *
-             * Start date
-             */
-            start_date: string;
-            /**
-             * End Date
-             *
-             * End date
-             */
-            end_date: string;
-        };
-        url: "/project-user-performance/projects/{project_id}/users/{user_id}/performance";
-    };
-
-export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors =
-    {
-        /**
-         * Invalid credentials
-         */
-        401: ErrorResponseModel;
-        /**
-         * Resource not found
-         */
-        404: ErrorResponseModel;
-        /**
-         * Validation Error
-         */
-        422: HttpValidationError;
-    };
-
-export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetError =
-    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors[keyof GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetErrors];
-
-export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses =
-    {
-        /**
-         * Successful Response
-         */
-        200: UserPerformanceResponse;
-    };
-
-export type GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponse =
-    GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses[keyof GetUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceGetResponses];
-
-export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostData =
-    {
-        body?: never;
-        path: {
-            /**
-             * User Id
-             *
-             * GitLab user ID
-             */
-            user_id: number;
-            /**
-             * Project Id
-             *
-             * GitLab project ID or path
-             */
-            project_id: string;
-        };
-        query: {
-            /**
-             * Start Date
-             *
-             * Start date
-             */
-            start_date: string;
-            /**
-             * End Date
-             *
-             * End date
-             */
-            end_date: string;
-        };
-        url: "/project-user-performance/projects/{project_id}/users/{user_id}/performance/refresh";
-    };
-
-export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors =
-    {
-        /**
-         * Invalid credentials
-         */
-        401: ErrorResponseModel;
-        /**
-         * Validation Error
-         */
-        422: HttpValidationError;
-        /**
-         * Internal Server Error
-         */
-        500: ErrorResponseModel;
-    };
-
-export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostError =
-    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors[keyof RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostErrors];
-
-export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses =
-    {
-        /**
-         * Successful Response
-         */
-        200: UserPerformanceResponse;
-    };
-
-export type RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponse =
-    RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses[keyof RefreshUserPerformanceProjectUserPerformanceProjectsProjectIdUsersUserIdPerformanceRefreshPostResponses];
 
 export type GetProjectMembersGitlabProjectsProjectIdMembersGetData = {
     body?: never;
@@ -1062,6 +1308,10 @@ export type GetProjectMembersGitlabProjectsProjectIdMembersGetErrors = {
      * Validation Error
      */
     422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
 };
 
 export type GetProjectMembersGitlabProjectsProjectIdMembersGetError =
@@ -1121,6 +1371,10 @@ export type ListProjectsGitlabProjectsGetErrors = {
      */
     422: HttpValidationError;
     /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+    /**
      * Bad Gateway
      */
     502: ErrorResponseModel;
@@ -1179,6 +1433,10 @@ export type ListGitlabUsersUsersGetErrors = {
      */
     422: HttpValidationError;
     /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+    /**
      * Bad Gateway
      */
     502: ErrorResponseModel;
@@ -1218,6 +1476,10 @@ export type GetGitlabUserUsersUserIdGetErrors = {
      * Validation Error
      */
     422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
     /**
      * Bad Gateway
      */
@@ -1282,6 +1544,10 @@ export type GetUserTimelogsUsersUsernameTimelogsGetErrors = {
      */
     422: HttpValidationError;
     /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+    /**
      * Bad Gateway
      */
     502: ErrorResponseModel;
@@ -1299,6 +1565,189 @@ export type GetUserTimelogsUsersUsernameTimelogsGetResponses = {
 
 export type GetUserTimelogsUsersUsernameTimelogsGetResponse =
     GetUserTimelogsUsersUsernameTimelogsGetResponses[keyof GetUserTimelogsUsersUsernameTimelogsGetResponses];
+
+export type GetUserPerformancePerformanceUsersUserIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * User Id
+         *
+         * The ID of the GitLab user.
+         */
+        user_id: number;
+    };
+    query: {
+        /**
+         * Start Date
+         *
+         * The start date for the performance period in ISO format.
+         */
+        start_date: string;
+        /**
+         * End Date
+         *
+         * The end date for the performance period in ISO format.
+         */
+        end_date: string;
+    };
+    url: "/performance/users/{user_id}";
+};
+
+export type GetUserPerformancePerformanceUsersUserIdGetErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+};
+
+export type GetUserPerformancePerformanceUsersUserIdGetError =
+    GetUserPerformancePerformanceUsersUserIdGetErrors[keyof GetUserPerformancePerformanceUsersUserIdGetErrors];
+
+export type GetUserPerformancePerformanceUsersUserIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: GeneralUserPerformance;
+};
+
+export type GetUserPerformancePerformanceUsersUserIdGetResponse =
+    GetUserPerformancePerformanceUsersUserIdGetResponses[keyof GetUserPerformancePerformanceUsersUserIdGetResponses];
+
+export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetData =
+    {
+        body?: never;
+        path: {
+            /**
+             * Project Id
+             *
+             * The ID of the GitLab project.
+             */
+            project_id: number;
+            /**
+             * User Id
+             *
+             * The ID of the GitLab user.
+             */
+            user_id: number;
+        };
+        query: {
+            /**
+             * Start Date
+             *
+             * The start date for the performance period in ISO format.
+             */
+            start_date: string;
+            /**
+             * End Date
+             *
+             * The end date for the performance period in ISO format.
+             */
+            end_date: string;
+        };
+        url: "/performance/project/{project_id}/users/{user_id}";
+    };
+
+export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors =
+    {
+        /**
+         * Invalid credentials
+         */
+        401: ErrorResponseModel;
+        /**
+         * Resource not found
+         */
+        404: ErrorResponseModel;
+        /**
+         * Validation Error
+         */
+        422: HttpValidationError;
+        /**
+         * Internal Server Error
+         */
+        500: ErrorResponseModel;
+    };
+
+export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetError =
+    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors[keyof GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors];
+
+export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses =
+    {
+        /**
+         * Successful Response
+         */
+        200: ProjectPerformanceResponse;
+    };
+
+export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponse =
+    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses[keyof GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses];
+
+export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData = {
+    body?: never;
+    path: {
+        /**
+         * User Id
+         *
+         * The ID of the GitLab user.
+         */
+        user_id: number;
+    };
+    query: {
+        /**
+         * Start Date
+         *
+         * The start date for the time spent period in ISO format.
+         */
+        start_date: string;
+        /**
+         * End Date
+         *
+         * The end date for the time spent period in ISO format.
+         */
+        end_date: string;
+    };
+    url: "/performanceusers/{user_id}/time-spent";
+};
+
+export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Resource not found
+     */
+    404: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+};
+
+export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetError =
+    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors[keyof GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors];
+
+export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses =
+    {
+        /**
+         * Successful Response
+         */
+        200: TimeSpentStats;
+    };
+
+export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponse =
+    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses[keyof GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses];
 
 export type HealthHealthGetData = {
     body?: never;
