@@ -91,3 +91,6 @@ def init_db() -> None:
     auth_session.create_index("expires_at", expireAfterSeconds=0)
 
     app_user_config = db["app_user_config"]
+
+    user_performance_settings = db["user_performance_settings"]
+    user_performance_settings.create_index("user_id", unique=True)

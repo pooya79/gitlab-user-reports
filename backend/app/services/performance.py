@@ -115,12 +115,14 @@ def _summarize_events(
 
 def get_project_performance_stats(
     gitlab_client: gitlab.Gitlab,
-    user_email: str,
+    user_emails: str | list[str],
     project_id: int,
     since: datetime,
     until: datetime,
 ) -> ProjectPerformanceResponse:
     """Collect performance stats for a specific project."""
+    if isinstance(user_emails, str):
+        user_emails = [user_emails]
 
     # Fetch project
     try:
@@ -130,20 +132,26 @@ def get_project_performance_stats(
             f"Failed to load project with ID {project_id}"
         ) from exc
 
-    # Fetch commits by the user
+    # Fetch commits by the user_emails (A user can have multiple emails that have committed by)
     try:
-        commits = project.commits.list(
-            all=True,
-            get_all=True,
-            since=since.isoformat(),
-            until=(until + timedelta(days=get_settings().safe_date_offset)).isoformat(),
-            author=user_email,
-            with_stats=True,
-        )
+        commits = []
+        for user_email in user_emails:
+            commits.extend(
+                project.commits.list(
+                    all=True,
+                    get_all=True,
+                    since=since.isoformat(),
+                    until=(
+                        until + timedelta(days=get_settings().safe_date_offset)
+                    ).isoformat(),
+                    author=user_email,
+                    with_stats=True,
+                )
+            )
         user_commits = [
             commit
             for commit in commits
-            if commit.author_email == user_email
+            if commit.author_email in user_emails
             and _parse_gitlab_datetime(commit.authored_date) >= since
             and _parse_gitlab_datetime(commit.authored_date) <= until
             and len(commit.parent_ids) < 2  # Exclude merge commits
@@ -585,10 +593,11 @@ def summarize_user_performance(
     user_id: int,
     start_date: datetime,
     end_date: datetime,
+    additional_user_emails: list[str] = [],
 ) -> GeneralUserPerformance:
     """Build an aggregated view of a developer's performance across projects."""
     user = gitlab_client.users.get(user_id)
-    user_email = user.email
+    user_emails = [user.email] + additional_user_emails
 
     # Fetch and summarize events
     events = _fetch_user_events(user=user, start=start_date, end=end_date)
@@ -606,7 +615,7 @@ def summarize_user_performance(
     for project_id in involved_project_ids:
         project_stats = get_project_performance_stats(
             gitlab_client=gitlab_client,
-            user_email=user_email,
+            user_emails=user_emails,
             project_id=project_id,
             since=start_date,
             until=end_date,

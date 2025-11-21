@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { listGitlabUsersUsersGet, type GitLabUser } from "@/client";
 import { cn } from "@/lib/utils";
@@ -260,86 +261,77 @@ function UserCard({ user }: { user: GitLabUser }) {
     }, [router, user.id]);
 
     return (
-        <Card
-            role="button"
-            tabIndex={0}
-            onClick={navigateToUserPage}
-            onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    navigateToUserPage();
-                }
-            }}
-            className="border cursor-pointer hover:shadow-lg bg-background/90 shadow-sm"
-        >
-            <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-4">
-                    <Avatar className="size-14 border text-base font-semibold uppercase text-muted-foreground">
-                        {user.avatar_url ? (
-                            <AvatarImage
-                                src={user.avatar_url}
-                                alt={`${user.name} avatar`}
-                            />
-                        ) : null}
-                        <AvatarFallback>{initials}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                        <p className="text-lg font-semibold leading-tight">
-                            {user.name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                            @{user.username}
-                        </p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                            <Badge variant="outline" className="capitalize">
-                                {user.state}
-                            </Badge>
-                            {user.bot ? (
-                                <Badge variant="secondary">Bot</Badge>
-                            ) : (
-                                <Badge variant="secondary">Human</Badge>
-                            )}
-                            {user.is_admin && (
-                                <Badge className="inline-flex items-center gap-1">
-                                    <ShieldCheck className="size-3.5" />
-                                    Admin
+        <Link href={`/dashboard/users/${user.id}`}>
+            <Card className="border cursor-pointer hover:shadow-lg bg-background/90 shadow-sm">
+                <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-4">
+                        <Avatar className="size-14 border text-base font-semibold uppercase text-muted-foreground">
+                            {user.avatar_url ? (
+                                <AvatarImage
+                                    src={user.avatar_url}
+                                    alt={`${user.name} avatar`}
+                                />
+                            ) : null}
+                            <AvatarFallback>{initials}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <p className="text-lg font-semibold leading-tight">
+                                {user.name}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                                @{user.username}
+                            </p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                                <Badge variant="outline" className="capitalize">
+                                    {user.state}
                                 </Badge>
-                            )}
+                                {user.bot ? (
+                                    <Badge variant="secondary">Bot</Badge>
+                                ) : (
+                                    <Badge variant="secondary">Human</Badge>
+                                )}
+                                {user.is_admin && (
+                                    <Badge className="inline-flex items-center gap-1">
+                                        <ShieldCheck className="size-3.5" />
+                                        Admin
+                                    </Badge>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:items-end sm:text-right">
-                    {email ? (
-                        <p className="inline-flex items-center gap-1">
-                            <Mail className="size-3.5" />
-                            <span className="truncate">{email}</span>
+                    <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:items-end sm:text-right">
+                        {email ? (
+                            <p className="inline-flex items-center gap-1">
+                                <Mail className="size-3.5" />
+                                <span className="truncate">{email}</span>
+                            </p>
+                        ) : (
+                            <p>No email on record</p>
+                        )}
+                        <p>Joined {joinedLabel}</p>
+                        <p>
+                            Last seen{" "}
+                            {lastSeenLabel ? lastSeenLabel : "not available"}
                         </p>
-                    ) : (
-                        <p>No email on record</p>
-                    )}
-                    <p>Joined {joinedLabel}</p>
-                    <p>
-                        Last seen{" "}
-                        {lastSeenLabel ? lastSeenLabel : "not available"}
-                    </p>
-                </div>
-            </CardContent>
-            <CardFooter className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-                <span>ID #{user.id}</span>
-                <Button
-                    type="button"
-                    variant="link"
-                    size="sm"
-                    className="inline-flex items-center gap-1"
-                    onClick={() => {
-                        window.open(user.web_url, "_blank", "noreferrer");
-                    }}
-                >
-                    View profile
-                    <ExternalLink className="size-3.5" />
-                </Button>
-            </CardFooter>
-        </Card>
+                    </div>
+                </CardContent>
+                <CardFooter className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+                    <span>ID #{user.id}</span>
+                    <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
+                        className="inline-flex items-center gap-1"
+                        onClick={() => {
+                            window.open(user.web_url, "_blank", "noreferrer");
+                        }}
+                    >
+                        View profile
+                        <ExternalLink className="size-3.5" />
+                    </Button>
+                </CardFooter>
+            </Card>
+        </Link>
     );
 }
 

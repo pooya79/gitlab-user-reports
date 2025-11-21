@@ -336,3 +336,16 @@ class GeneralUserPerformance(BaseModel):
                 out[dt] = val
             return out
         return v
+
+
+# ---------------------------------------------------------------------------
+# Settings
+# ---------------------------------------------------------------------------
+class UserPerfomanceSettingsRequest(BaseModel):
+    additional_user_emails: list[
+        str
+    ] = []  # Additional emails associated with the user for performance tracking
+
+
+class UserPerformanceSettings(UserPerfomanceSettingsRequest):
+    user_id: int

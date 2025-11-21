@@ -145,13 +145,7 @@ export default function TimespentTab({
         fetchTimeSpent();
 
         return () => controller.abort();
-    }, [
-        endDate,
-        onErrorChange,
-        setGitlabTokenFailed,
-        startDate,
-        userId,
-    ]);
+    }, [endDate, onErrorChange, setGitlabTokenFailed, startDate, userId]);
 
     const chartData = useMemo<DailyProjectTimespentDatum[]>(() => {
         if (!timeSpent?.daily_project_time_spent?.length) {

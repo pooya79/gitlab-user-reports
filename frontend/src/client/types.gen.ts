@@ -827,6 +827,30 @@ export type UserInfo = {
 };
 
 /**
+ * UserPerfomanceSettingsRequest
+ */
+export type UserPerfomanceSettingsRequest = {
+    /**
+     * Additional User Emails
+     */
+    additional_user_emails?: Array<string>;
+};
+
+/**
+ * UserPerformanceSettings
+ */
+export type UserPerformanceSettings = {
+    /**
+     * Additional User Emails
+     */
+    additional_user_emails?: Array<string>;
+    /**
+     * User Id
+     */
+    user_id: number;
+};
+
+/**
  * UserProfileResponse
  *
  * Basic profile snapshot for the single configured user.
@@ -1748,6 +1772,90 @@ export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses =
 
 export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponse =
     GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses[keyof GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses];
+
+export type GetUserSettingsPerformanceUsersUserIdSettingsGetData = {
+    body?: never;
+    path: {
+        /**
+         * User Id
+         */
+        user_id: number;
+    };
+    query?: never;
+    url: "/performance/users/{user_id}/settings";
+};
+
+export type GetUserSettingsPerformanceUsersUserIdSettingsGetErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Resource not found
+     */
+    404: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+};
+
+export type GetUserSettingsPerformanceUsersUserIdSettingsGetError =
+    GetUserSettingsPerformanceUsersUserIdSettingsGetErrors[keyof GetUserSettingsPerformanceUsersUserIdSettingsGetErrors];
+
+export type GetUserSettingsPerformanceUsersUserIdSettingsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: UserPerformanceSettings;
+};
+
+export type GetUserSettingsPerformanceUsersUserIdSettingsGetResponse =
+    GetUserSettingsPerformanceUsersUserIdSettingsGetResponses[keyof GetUserSettingsPerformanceUsersUserIdSettingsGetResponses];
+
+export type SetUserSettingsPerformanceUsersUserIdSettingsPostData = {
+    body: UserPerfomanceSettingsRequest;
+    path: {
+        /**
+         * User Id
+         */
+        user_id: number;
+    };
+    query?: never;
+    url: "/performance/users/{user_id}/settings";
+};
+
+export type SetUserSettingsPerformanceUsersUserIdSettingsPostErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+};
+
+export type SetUserSettingsPerformanceUsersUserIdSettingsPostError =
+    SetUserSettingsPerformanceUsersUserIdSettingsPostErrors[keyof SetUserSettingsPerformanceUsersUserIdSettingsPostErrors];
+
+export type SetUserSettingsPerformanceUsersUserIdSettingsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: UserPerformanceSettings;
+};
+
+export type SetUserSettingsPerformanceUsersUserIdSettingsPostResponse =
+    SetUserSettingsPerformanceUsersUserIdSettingsPostResponses[keyof SetUserSettingsPerformanceUsersUserIdSettingsPostResponses];
 
 export type HealthHealthGetData = {
     body?: never;

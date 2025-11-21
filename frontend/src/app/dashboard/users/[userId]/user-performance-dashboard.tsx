@@ -199,7 +199,12 @@ export default function UserPerformanceDashboard({
                     />
                 );
             case "settings":
-                return <UserSettingsTab userId={String(userId)} />;
+                return (
+                    <UserSettingsTab
+                        userId={String(userId)}
+                        username={user?.username}
+                    />
+                );
             case "ai":
                 return <AiTab userId={String(userId)} />;
             case "overview":

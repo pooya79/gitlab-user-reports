@@ -24,6 +24,9 @@ import type {
     GetUserPerformancePerformanceUsersUserIdGetData,
     GetUserPerformancePerformanceUsersUserIdGetErrors,
     GetUserPerformancePerformanceUsersUserIdGetResponses,
+    GetUserSettingsPerformanceUsersUserIdSettingsGetData,
+    GetUserSettingsPerformanceUsersUserIdSettingsGetErrors,
+    GetUserSettingsPerformanceUsersUserIdSettingsGetResponses,
     GetUserTimelogsUsersUsernameTimelogsGetData,
     GetUserTimelogsUsersUsernameTimelogsGetErrors,
     GetUserTimelogsUsersUsernameTimelogsGetResponses,
@@ -41,6 +44,9 @@ import type {
     LogoutAuthLogoutPostData,
     LogoutAuthLogoutPostErrors,
     LogoutAuthLogoutPostResponses,
+    SetUserSettingsPerformanceUsersUserIdSettingsPostData,
+    SetUserSettingsPerformanceUsersUserIdSettingsPostErrors,
+    SetUserSettingsPerformanceUsersUserIdSettingsPostResponses,
     UpdateGitlabConfigurationAuthGitlabPostData,
     UpdateGitlabConfigurationAuthGitlabPostErrors,
     UpdateGitlabConfigurationAuthGitlabPostResponses,
@@ -411,6 +417,64 @@ export const getTimeSpentStatisticsPerformanceusersUserIdTimeSpentGet = <
         ],
         url: "/performanceusers/{user_id}/time-spent",
         ...options,
+    });
+};
+
+/**
+ * Get User Settings
+ */
+export const getUserSettingsPerformanceUsersUserIdSettingsGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        GetUserSettingsPerformanceUsersUserIdSettingsGetData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).get<
+        GetUserSettingsPerformanceUsersUserIdSettingsGetResponses,
+        GetUserSettingsPerformanceUsersUserIdSettingsGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/performance/users/{user_id}/settings",
+        ...options,
+    });
+};
+
+/**
+ * Set User Settings
+ */
+export const setUserSettingsPerformanceUsersUserIdSettingsPost = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        SetUserSettingsPerformanceUsersUserIdSettingsPostData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).post<
+        SetUserSettingsPerformanceUsersUserIdSettingsPostResponses,
+        SetUserSettingsPerformanceUsersUserIdSettingsPostErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/performance/users/{user_id}/settings",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
     });
 };
 

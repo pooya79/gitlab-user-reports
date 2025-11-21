@@ -21,6 +21,8 @@ from app.schemas.performance import (
     ProjectPerformanceResponse,
     GeneralUserPerformance,
     TimeSpentStats,
+    UserPerfomanceSettingsRequest,
+    UserPerformanceSettings,
 )
 from app.services.performance import (
     summarize_user_performance,
@@ -74,11 +76,20 @@ async def get_user_performance(
 
     # Get user performance if no valid cache
     if not performance_data:
+        # Get user settings
+        user_settings_collection = mongo_db["user_performance_settings"]
+        user_settings = user_settings_collection.find_one({"user_id": payload.user_id})
+
+        additional_user_emails = (
+            user_settings.get("additional_user_emails", []) if user_settings else []
+        )
+
         performance_data = summarize_user_performance(
             gitlab_client=auth_context.gitlab_client,
             user_id=payload.user_id,
             start_date=payload.start_date,
             end_date=payload.end_date,
+            additional_user_emails=additional_user_emails,
         )
 
         # Store in cache
@@ -159,7 +170,7 @@ async def get_project_performance(
         # Get project performance
         performance_data = get_project_performance_stats(
             gitlab_client=auth_context.gitlab_client,
-            user_email=user_email,
+            user_emails=user_email,
             project_id=project_id,
             since=payload.start_date,
             until=payload.end_date,
@@ -256,3 +267,56 @@ async def get_time_spent_statistics(
         }
     )
     return time_spent_stats
+
+
+@router.get(
+    "/users/{user_id}/settings",
+    response_model=UserPerformanceSettings,
+    responses={
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        404: GeneralErrorResponses.NOT_FOUND,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
+    },
+)
+def get_user_settings(
+    user_id: int,
+    auth_context: AuthContext = Depends(get_auth_context),
+    mongo_db: Database = Depends(get_mongo_database),
+) -> UserPerformanceSettings:
+    # Fetch user settings from the database
+    user_settings_collection = mongo_db["user_performance_settings"]
+    user_settings_data = user_settings_collection.find_one({"user_id": user_id})
+
+    if not user_settings_data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User settings not found or was not set for user ID {user_id}",
+        )
+    return UserPerformanceSettings(**user_settings_data)
+
+
+@router.post(
+    "/users/{user_id}/settings",
+    response_model=UserPerformanceSettings,
+    responses={
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
+    },
+)
+def set_user_settings(
+    user_id: int,
+    settings: UserPerfomanceSettingsRequest,
+    auth_context: AuthContext = Depends(get_auth_context),
+    mongo_db: Database = Depends(get_mongo_database),
+) -> UserPerformanceSettings:
+    # Save or update user settings in the database
+    user_settings_collection = mongo_db["user_performance_settings"]
+    user_settings_collection.update_one(
+        {"user_id": user_id}, {"$set": settings.dict()}, upsert=True
+    )
+
+    # Remove every performance cache entry for this user
+    cache_collection = mongo_db["performance_cache"]
+    cache_collection.delete_many({"user_id": user_id})
+
+    return UserPerformanceSettings(user_id=user_id, **settings.dict())
