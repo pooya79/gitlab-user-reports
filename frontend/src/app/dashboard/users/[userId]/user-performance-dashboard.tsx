@@ -43,6 +43,7 @@ export default function UserPerformanceDashboard({
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<TabValue>("overview");
     const [overviewError, setOverviewError] = useState<string | null>(null);
+    const [timelogError, setTimelogError] = useState<string | null>(null);
     const [selectedWeek, setSelectedWeek] = useState<DateRange>(() =>
         getDefaultWeekRange(),
     );
@@ -189,7 +190,14 @@ export default function UserPerformanceDashboard({
     const renderedTab = useMemo(() => {
         switch (activeTab) {
             case "timelogs":
-                return <TimespentTab userId={String(userId)} />;
+                return (
+                    <TimespentTab
+                        userId={String(userId)}
+                        username={user?.username}
+                        dateRange={selectedWeek}
+                        onErrorChange={setTimelogError}
+                    />
+                );
             case "settings":
                 return <UserSettingsTab userId={String(userId)} />;
             case "ai":
@@ -343,6 +351,11 @@ export default function UserPerformanceDashboard({
                 {overviewError && !error && (
                     <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
                         {overviewError}
+                    </div>
+                )}
+                {timelogError && !error && activeTab === "timelogs" && (
+                    <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                        {timelogError}
                     </div>
                 )}
 

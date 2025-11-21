@@ -294,13 +294,13 @@ def get_time_spent_stats(
         $last: Int,
         $before: String,
         $after: String
-        ) {
+    ) {
         timelogs(
             startTime: $startTime
             endTime: $endTime
             projectId: $projectId
             groupId: $groupId
-            userId: $userId
+            username: $username
             first: $first
             last: $last
             after: $after
@@ -313,9 +313,7 @@ def get_time_spent_stats(
                 id
                 project {
                     id
-                    name
                     webUrl
-                    avatarUrl
                     fullPath
                     nameWithNamespace
                 }
@@ -417,7 +415,7 @@ def get_time_spent_stats(
         nodes = timelogs_data.get("nodes") or []
         all_nodes.extend(nodes)
 
-        total_spent_seconds += timelogs_data.get("totalSpentTime") or 0
+        total_spent_seconds += int(timelogs_data.get("totalSpentTime") or 0)
 
         page_info = timelogs_data.get("pageInfo") or {}
         if not page_info.get("hasNextPage"):
@@ -447,7 +445,7 @@ def get_time_spent_stats(
 
         project = ProjectInfo(
             id=project_raw.get("id"),
-            name=project_raw.get("name"),
+            name=(project_raw.get("name") or "Not provided"),
             avatar_url=project_raw.get("avatarUrl"),
             web_url=project_raw.get("webUrl"),
             path_with_namespace=project_raw.get("fullPath"),
@@ -509,7 +507,7 @@ def get_time_spent_stats(
     user_id = extract_numeric_id(first_user.get("id", "0"))
 
     # Aggregate: daily_project_time_spent
-    # key: (date, project_name) → hours
+    # key: (date, project_fullpath) → hours
     daily_proj_hours: dict[tuple[datetime, str], float] = defaultdict(float)
 
     for tl in timelog_nodes:
@@ -518,11 +516,11 @@ def get_time_spent_stats(
         # Represent as datetime at midnight UTC for the model's datetime type
         day_dt = datetime(day.year, day.month, day.day, tzinfo=tl.spent_at.tzinfo)
         hours = tl.time_spent / 3600.0
-        daily_proj_hours[(day_dt, tl.project.name)] += hours
+        daily_proj_hours[(day_dt, tl.project.path_with_namespace)] += hours
 
     daily_project_time_spent: list[tuple[datetime, str, float]] = [
-        (day_dt, project_name, hours)
-        for (day_dt, project_name), hours in sorted(
+        (day_dt, project_fullpath, hours)
+        for (day_dt, project_fullpath), hours in sorted(
             daily_proj_hours.items(), key=lambda x: (x[0][0], x[0][1])
         )
     ]

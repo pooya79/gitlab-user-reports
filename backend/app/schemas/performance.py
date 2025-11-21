@@ -262,7 +262,7 @@ class TimeSpentStats(BaseModel):
 
     daily_project_time_spent: list[
         tuple[datetime, str, float]
-    ]  # date → project name → hours
+    ]  # date → project name (fullpath) → hours
 
     total_time_spent_hours: float
     mr_contributed: int

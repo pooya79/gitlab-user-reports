@@ -1,3 +1,10 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { endOfWeek, startOfWeek } from "date-fns";
+import { Loader2 } from "lucide-react";
+import type { DateRange } from "react-day-picker";
+
 import {
     ProjectTimespentCard,
     type ProjectTimelogs,
@@ -6,244 +13,213 @@ import {
     DailyProjectTimespentChart,
     type DailyProjectTimespentDatum,
 } from "@/components/charts";
+import {
+    getTimeSpentStatisticsPerformanceusersUserIdTimeSpentGet,
+    type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponse,
+} from "@/client";
+import { clearAccessToken } from "@/lib/auth";
+import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
 
 type TimespentTabProps = {
     userId: string;
     username?: string;
+    dateRange?: DateRange;
+    onErrorChange?: (message: string | null) => void;
 };
 
-const MockProjectTimeSpentData: DailyProjectTimespentDatum[] = [
-    { date: new Date(), hours: 2, project: "Backend API" },
-    {
-        date: new Date(Date.now() - 86400000 * 1),
-        hours: 1.5,
-        project: "Backend API",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 2),
-        hours: 3,
-        project: "Backend API",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 3),
-        hours: 0.5,
-        project: "Backend API",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 4),
-        hours: 0,
-        project: "Backend API",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 5),
-        hours: 1,
-        project: "Backend API",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 6),
-        hours: 2.5,
-        project: "Backend API",
-    },
+function getDefaultWeekRange(): DateRange {
+    const today = new Date();
+    return {
+        from: startOfWeek(today, { weekStartsOn: 1 }),
+        to: endOfWeek(today, { weekStartsOn: 1 }),
+    };
+}
 
-    { date: new Date(), hours: 4, project: "Frontend Dashboard" },
-    {
-        date: new Date(Date.now() - 86400000 * 1),
-        hours: 3.5,
-        project: "Frontend Dashboard",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 2),
-        hours: 2,
-        project: "Frontend Dashboard",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 3),
-        hours: 1,
-        project: "Frontend Dashboard",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 4),
-        hours: 0,
-        project: "Frontend Dashboard",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 5),
-        hours: 2.5,
-        project: "Frontend Dashboard",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 6),
-        hours: 3,
-        project: "Frontend Dashboard",
-    },
+export default function TimespentTab({
+    userId,
+    username,
+    dateRange,
+    onErrorChange,
+}: TimespentTabProps) {
+    const [timeSpent, setTimeSpent] =
+        useState<GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponse | null>(
+            null,
+        );
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const { setGitlabTokenFailed } = useGitlabTokenStore();
 
-    { date: new Date(), hours: 1, project: "Mobile App" },
-    {
-        date: new Date(Date.now() - 86400000 * 1),
-        hours: 0.5,
-        project: "Mobile App",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 2),
-        hours: 1.5,
-        project: "Mobile App",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 3),
-        hours: 0.2,
-        project: "Mobile App",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 4),
-        hours: 0,
-        project: "Mobile App",
-    },
-    {
-        date: new Date(Date.now() - 86400000 * 6),
-        hours: 1.2,
-        project: "Mobile App",
-    },
-];
+    const effectiveRange = useMemo<DateRange>(() => {
+        if (dateRange?.from && dateRange?.to) {
+            return dateRange;
+        }
+        return getDefaultWeekRange();
+    }, [dateRange]);
 
-const MockProjectTimelogs: ProjectTimelogs[] = [
-    {
-        project: {
-            id: 101,
-            name: "Backend API",
-            avatar_url: null,
-            web_url: "https://gitlab.com/example/backend-api",
-            path_with_namespace: "example/backend-api",
-            name_with_namespace: "Example / Backend API",
-        },
-        timelogs: [
-            {
-                id: 1,
-                project: {
-                    id: 101,
-                    name: "Backend API",
-                    avatar_url: null,
-                    web_url: "https://gitlab.com/example/backend-api",
-                    path_with_namespace: "example/backend-api",
-                    name_with_namespace: "Example / Backend API",
-                },
-                time_spent: 3600,
-                spent_at: "2025-11-10T09:15:00Z",
-                summary: "Implemented authentication middleware",
-                issue: {
-                    iid: "24",
-                    title: "Add JWT-based authentication",
-                    webUrl: "https://gitlab.com/example/backend-api/-/issues/24",
-                    state: "opened",
-                    reference: "#24",
-                },
-            },
-            {
-                id: 2,
-                project: {
-                    id: 101,
-                    name: "Backend API",
-                    avatar_url: null,
-                    web_url: "https://gitlab.com/example/backend-api",
-                    path_with_namespace: "example/backend-api",
-                    name_with_namespace: "Example / Backend API",
-                },
-                time_spent: 5400,
-                spent_at: "2025-11-10T11:00:00Z",
-                summary: "Review merge request for caching layer",
-                merge_request: {
-                    iid: "13",
-                    title: "Add Redis caching layer",
-                    webUrl: "https://gitlab.com/example/backend-api/-/merge_requests/13",
-                    state: "merged",
-                    reference: "!13",
-                },
-            },
-        ],
-        total_time_spent_hours: (3600 + 5400) / 3600,
-    },
+    const startDate = effectiveRange?.from?.toISOString();
+    const endDate = effectiveRange?.to?.toISOString();
+    const showEmptyState = !loading && !timeSpent && !error;
 
-    {
-        project: {
-            id: 202,
-            name: "Frontend Dashboard",
-            avatar_url: "https://gitlab.com/uploads/frontend.png",
-            web_url: "https://gitlab.com/example/frontend-dashboard",
-            path_with_namespace: "example/frontend-dashboard",
-            name_with_namespace: "Example / Frontend Dashboard",
-        },
-        timelogs: [
-            {
-                id: 3,
-                project: {
-                    id: 202,
-                    name: "Frontend Dashboard",
-                    avatar_url: "https://gitlab.com/uploads/frontend.png",
-                    web_url: "https://gitlab.com/example/frontend-dashboard",
-                    path_with_namespace: "example/frontend-dashboard",
-                    name_with_namespace: "Example / Frontend Dashboard",
-                },
-                time_spent: 7200,
-                spent_at: "2025-11-11T08:00:00Z",
-                summary: "Refactored KPI cards and improved layout",
-                merge_request: {
-                    iid: "42",
-                    title: "Redesign dashboard KPI components",
-                    webUrl: "https://gitlab.com/example/frontend-dashboard/-/merge_requests/42",
-                    state: "opened",
-                    reference: "!42",
-                },
-            },
-            {
-                id: 4,
-                project: {
-                    id: 202,
-                    name: "Frontend Dashboard",
-                    avatar_url: "https://gitlab.com/uploads/frontend.png",
-                    web_url: "https://gitlab.com/example/frontend-dashboard",
-                    path_with_namespace: "example/frontend-dashboard",
-                    name_with_namespace: "Example / Frontend Dashboard",
-                },
-                time_spent: 1800,
-                spent_at: "2025-11-11T10:30:00Z",
-                summary: "Fix chart spacing and alignment",
-                issue: {
-                    iid: "17",
-                    title: "Bar chart has extra left padding",
-                    webUrl: "https://gitlab.com/example/frontend-dashboard/-/issues/17",
-                    state: "closed",
-                    reference: "#17",
-                },
-            },
-        ],
-        total_time_spent_hours: (7200 + 1800) / 3600,
-    },
+    useEffect(() => {
+        const numericUserId = Number.parseInt(userId, 10);
+        if (!Number.isFinite(numericUserId)) {
+            const message = "Invalid user id provided.";
+            setError(message);
+            onErrorChange?.(message);
+            setTimeSpent(null);
+            return;
+        }
+        if (!startDate || !endDate) {
+            setTimeSpent(null);
+            setError(null);
+            onErrorChange?.(null);
+            return;
+        }
 
-    {
-        project: {
-            id: 303,
-            name: "Mobile App",
-            avatar_url: null,
-            web_url: "https://gitlab.com/example/mobile-app",
-            path_with_namespace: "example/mobile-app",
-            name_with_namespace: "Example / Mobile App",
-        },
-        timelogs: [],
-        total_time_spent_hours: 0,
-    },
-];
+        const controller = new AbortController();
 
-export default function TimespentTab({ userId, username }: TimespentTabProps) {
+        const fetchTimeSpent = async () => {
+            setLoading(true);
+            setError(null);
+            onErrorChange?.(null);
+
+            try {
+                const res =
+                    await getTimeSpentStatisticsPerformanceusersUserIdTimeSpentGet(
+                        {
+                            signal: controller.signal,
+                            path: { user_id: numericUserId },
+                            query: {
+                                start_date: startDate,
+                                end_date: endDate,
+                            },
+                        },
+                    );
+
+                if (controller.signal.aborted) {
+                    return;
+                }
+
+                if (res.error) {
+                    const detail =
+                        typeof res.error?.detail === "string"
+                            ? res.error.detail
+                            : (res.error as { detail?: string })?.detail;
+
+                    if (detail === "gitlab_token_required") {
+                        setGitlabTokenFailed(true);
+                    }
+
+                    if (detail === "login_required") {
+                        clearAccessToken();
+                    }
+
+                    const message =
+                        detail ||
+                        "We could not load time spent data. Please try again.";
+                    setError(message);
+                    onErrorChange?.(message);
+                    setTimeSpent(null);
+                    return;
+                }
+
+                setTimeSpent(res.data ?? null);
+                onErrorChange?.(null);
+            } catch (err) {
+                if (!controller.signal.aborted) {
+                    const message =
+                        err instanceof Error
+                            ? err.message
+                            : "Unexpected error while loading time spent data.";
+                    setError(message);
+                    onErrorChange?.(message);
+                    setTimeSpent(null);
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchTimeSpent();
+
+        return () => controller.abort();
+    }, [
+        endDate,
+        onErrorChange,
+        setGitlabTokenFailed,
+        startDate,
+        userId,
+    ]);
+
+    const chartData = useMemo<DailyProjectTimespentDatum[]>(() => {
+        if (!timeSpent?.daily_project_time_spent?.length) {
+            return [];
+        }
+        return timeSpent.daily_project_time_spent
+            .map(([date, project, hours]) => ({
+                date: new Date(date),
+                project,
+                hours,
+            }))
+            .filter(
+                (entry) => !Number.isNaN(entry.date.getTime()) && entry.project,
+            );
+    }, [timeSpent?.daily_project_time_spent]);
+
+    const projectTimelogs = useMemo<ProjectTimelogs[]>(() => {
+        if (!timeSpent?.project_timelogs?.length) {
+            return [];
+        }
+        return timeSpent.project_timelogs;
+    }, [timeSpent?.project_timelogs]);
+
     return (
-        <div className="space-y-3 text-sm text-muted-foreground">
-            <p>
-                Time spent data for{" "}
-                <span className="font-semibold text-foreground">
-                    {username ? `@${username}` : `user #${userId}`}
-                </span>{" "}
-                will live here soon.
-            </p>
-            <DailyProjectTimespentChart data={MockProjectTimeSpentData} />
-            <ProjectTimespentCard projects={MockProjectTimelogs} />
+        <div className="space-y-6">
+            <div className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                    Timelog insights for{" "}
+                    <span className="font-semibold text-foreground">
+                        {username ? `@${username}` : `user #${userId}`}
+                    </span>{" "}
+                    covering the selected week.
+                </p>
+                <p>
+                    Review daily tracked hours across projects and inspect the
+                    underlying time entries linked to issues or merge requests.
+                </p>
+            </div>
+
+            {error ? (
+                <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    {error}
+                </div>
+            ) : null}
+
+            {loading ? (
+                <div className="flex items-center justify-center gap-2 rounded-2xl border bg-muted/20 px-4 py-6 text-sm text-muted-foreground">
+                    <Loader2 className="size-4 animate-spin" />
+                    Loading time spent data
+                </div>
+            ) : null}
+
+            {timeSpent && !loading ? (
+                <>
+                    <DailyProjectTimespentChart data={chartData} />
+                    <ProjectTimespentCard
+                        projects={projectTimelogs}
+                        emptyLabel="No time entries recorded for this period."
+                    />
+                </>
+            ) : null}
+
+            {showEmptyState ? (
+                <div className="rounded-2xl border border-dashed bg-muted/20 px-6 py-12 text-center text-sm text-muted-foreground">
+                    No time spent data available for this user in the selected
+                    range.
+                </div>
+            ) : null}
         </div>
     );
 }

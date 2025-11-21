@@ -149,9 +149,7 @@ async def get_project_performance(
     else:
         try:
             # Get user email
-            user_email = auth_context.gitlab_client.users.get(
-                payload.user_id
-            ).email
+            user_email = auth_context.gitlab_client.users.get(payload.user_id).email
         except AttributeError as e:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -182,6 +180,7 @@ async def get_project_performance(
         )
     return performance_data
 
+
 @router.get(
     "users/{user_id}/time-spent",
     response_model=TimeSpentStats,
@@ -210,7 +209,7 @@ async def get_time_spent_statistics(
         )
     except ValidationError as ve:
         raise RequestValidationError(ve.errors(include_url=False, include_input=False))
-    
+
     # Check cache
     cache_collection = mongo_db["performance_cache"]
     time_spent_data = cache_collection.find_one(
@@ -221,10 +220,10 @@ async def get_time_spent_statistics(
             "end_date": payload.end_date,
         }
     )
-    
+
     if time_spent_data:
         return TimeSpentStats(**time_spent_data["data"])
-    
+
     # Get username
     try:
         user = auth_context.gitlab_client.users.get(payload.user_id)
@@ -237,10 +236,11 @@ async def get_time_spent_statistics(
 
     # Get time spent statistics
     time_spent_stats = get_time_spent_stats(
-        gitlab_client=auth_context.gitlab_client,
+        gitlab_base_url=auth_context.user_config["gitlab_url"],
+        gitlab_token=auth_context.user_config["gitlab_admin_token"],
         username=username,
-        start_date=payload.start_date,
-        end_date=payload.end_date,
+        start_time=payload.start_date,
+        end_time=payload.end_date,
     )
 
     # Store in cache
