@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import datetime as dt
-from collections import defaultdict
 from pydantic import ValidationError
 from fastapi import APIRouter, Path, Query, Depends, HTTPException, status
 from fastapi.exceptions import RequestValidationError
 from pymongo.database import Database
-import gitlab
 
 from app.api.deps import (
     AuthContext,
