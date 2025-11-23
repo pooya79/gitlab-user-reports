@@ -15,7 +15,6 @@ services:
       - localnet
 
   backend:
-    # Build the image from the Dockerfile in the current directory
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -25,9 +24,17 @@ services:
     networks:
       - localnet
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.backend.rule=PathPrefix(`/api`)
-      - traefik.http.services.backend.loadbalancer.server.port=8000
+      - "traefik.enable=true"
+      # It is good practice to explicitly define the entrypoint
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      
+      # OPTIONAL: Uncomment the 2 lines below if your backend code 
+      # does NOT expect '/api' in the URL path.
+      #- "traefik.http.middlewares.api-strip.stripprefix.prefixes=/api"
+      #- "traefik.http.routers.backend.middlewares=api-strip"
+
   mongodb:
     image: mongo:latest
     container_name: mongodb
@@ -41,6 +48,9 @@ services:
     volumes:
       - mongo_data:/data/db
       - mongo_config:/data/configdb
+    # --- FIX: Added network so backend can talk to it ---
+    networks:
+      - localnet
 
   frontend:
     build:
@@ -50,9 +60,11 @@ services:
     networks:
       - localnet
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.frontend.rule=PathPrefix(`/`)
-      - traefik.http.services.frontend.loadbalancer.server.port=3000
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      # Matches everything else
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
 networks:
   localnet:
