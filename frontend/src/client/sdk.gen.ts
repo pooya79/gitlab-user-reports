@@ -6,18 +6,24 @@ import type {
     CheckGitlabTokenAuthGitlabTokenCheckPostData,
     CheckGitlabTokenAuthGitlabTokenCheckPostErrors,
     CheckGitlabTokenAuthGitlabTokenCheckPostResponses,
+    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetData,
+    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors,
+    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses,
     GetGitlabUserUsersUserIdGetData,
     GetGitlabUserUsersUserIdGetErrors,
     GetGitlabUserUsersUserIdGetResponses,
     GetProfileAuthMeGetData,
     GetProfileAuthMeGetErrors,
     GetProfileAuthMeGetResponses,
-    GetProjectMembersGitlabProjectsProjectIdMembersGetData,
-    GetProjectMembersGitlabProjectsProjectIdMembersGetErrors,
-    GetProjectMembersGitlabProjectsProjectIdMembersGetResponses,
-    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetData,
-    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors,
-    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses,
+    GetProjectMembersProjectsProjectIdMembersGetData,
+    GetProjectMembersProjectsProjectIdMembersGetErrors,
+    GetProjectMembersProjectsProjectIdMembersGetResponses,
+    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetData,
+    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors,
+    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses,
+    GetProjectProjectsProjectIdGetData,
+    GetProjectProjectsProjectIdGetErrors,
+    GetProjectProjectsProjectIdGetResponses,
     GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData,
     GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors,
     GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses,
@@ -35,9 +41,9 @@ import type {
     ListGitlabUsersUsersGetData,
     ListGitlabUsersUsersGetErrors,
     ListGitlabUsersUsersGetResponses,
-    ListProjectsGitlabProjectsGetData,
-    ListProjectsGitlabProjectsGetErrors,
-    ListProjectsGitlabProjectsGetResponses,
+    ListProjectsProjectsGetData,
+    ListProjectsProjectsGetErrors,
+    ListProjectsProjectsGetResponses,
     LoginAuthLoginPostData,
     LoginAuthLoginPostErrors,
     LoginAuthLoginPostResponses,
@@ -207,17 +213,17 @@ export const getProfileAuthMeGet = <ThrowOnError extends boolean = false>(
  *
  * Get members of a GitLab project.
  */
-export const getProjectMembersGitlabProjectsProjectIdMembersGet = <
+export const getProjectMembersProjectsProjectIdMembersGet = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetProjectMembersGitlabProjectsProjectIdMembersGetData,
+        GetProjectMembersProjectsProjectIdMembersGetData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).get<
-        GetProjectMembersGitlabProjectsProjectIdMembersGetResponses,
-        GetProjectMembersGitlabProjectsProjectIdMembersGetErrors,
+        GetProjectMembersProjectsProjectIdMembersGetResponses,
+        GetProjectMembersProjectsProjectIdMembersGetErrors,
         ThrowOnError
     >({
         security: [
@@ -226,7 +232,7 @@ export const getProjectMembersGitlabProjectsProjectIdMembersGet = <
                 type: "http",
             },
         ],
-        url: "/gitlab/projects/{project_id}/members",
+        url: "/projects/{project_id}/members",
         ...options,
     });
 };
@@ -236,14 +242,12 @@ export const getProjectMembersGitlabProjectsProjectIdMembersGet = <
  *
  * List GitLab projects with optional search filtering.
  */
-export const listProjectsGitlabProjectsGet = <
-    ThrowOnError extends boolean = false,
->(
-    options?: Options<ListProjectsGitlabProjectsGetData, ThrowOnError>,
+export const listProjectsProjectsGet = <ThrowOnError extends boolean = false>(
+    options?: Options<ListProjectsProjectsGetData, ThrowOnError>,
 ) => {
     return (options?.client ?? client).get<
-        ListProjectsGitlabProjectsGetResponses,
-        ListProjectsGitlabProjectsGetErrors,
+        ListProjectsProjectsGetResponses,
+        ListProjectsProjectsGetErrors,
         ThrowOnError
     >({
         security: [
@@ -252,7 +256,33 @@ export const listProjectsGitlabProjectsGet = <
                 type: "http",
             },
         ],
-        url: "/gitlab/projects",
+        url: "/projects/",
+        ...options,
+    });
+};
+
+/**
+ * Get Project
+ *
+ * Get details of a specific GitLab project.
+ */
+export const getProjectProjectsProjectIdGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<GetProjectProjectsProjectIdGetData, ThrowOnError>,
+) => {
+    return (options.client ?? client).get<
+        GetProjectProjectsProjectIdGetResponses,
+        GetProjectProjectsProjectIdGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/projects/{project_id}",
         ...options,
     });
 };
@@ -367,17 +397,17 @@ export const getUserPerformancePerformanceUsersUserIdGet = <
  *
  * Calculate and retrieve project performance data over a specified time period.
  */
-export const getProjectPerformancePerformanceProjectProjectIdUsersUserIdGet = <
+export const getProjectPerformancePerformanceProjectsProjectIdUsersUserIdGet = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetData,
+        GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).get<
-        GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses,
-        GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors,
+        GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses,
+        GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors,
         ThrowOnError
     >({
         security: [
@@ -386,7 +416,7 @@ export const getProjectPerformancePerformanceProjectProjectIdUsersUserIdGet = <
                 type: "http",
             },
         ],
-        url: "/performance/project/{project_id}/users/{user_id}",
+        url: "/performance/projects/{project_id}/users/{user_id}",
         ...options,
     });
 };
@@ -475,6 +505,35 @@ export const setUserSettingsPerformanceUsersUserIdSettingsPost = <
             "Content-Type": "application/json",
             ...options.headers,
         },
+    });
+};
+
+/**
+ * Get General Project Performance
+ *
+ * Calculate and retrieve general project performance data over a specified time period.
+ */
+export const getGeneralProjectPerformancePerformanceProjectsProjectIdGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        GetGeneralProjectPerformancePerformanceProjectsProjectIdGetData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).get<
+        GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses,
+        GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/performance/projects/{project_id}",
+        ...options,
     });
 };
 

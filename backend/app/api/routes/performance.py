@@ -18,16 +18,19 @@ from app.api.deps import (
 from app.schemas import GeneralErrorResponses
 from app.schemas.performance import (
     UserPerformanceRequest,
+    ProjectPerformanceRequest,
     ProjectPerformanceResponse,
     GeneralUserPerformance,
     TimeSpentStats,
     UserPerfomanceSettingsRequest,
     UserPerformanceSettings,
+    GeneralProjectPerformance,
 )
 from app.services.performance import (
     summarize_user_performance,
     get_project_performance_stats,
     get_time_spent_stats,
+    summarize_project_performance,
 )
 from app.core.config import get_settings
 
@@ -110,7 +113,7 @@ async def get_user_performance(
 
 
 @router.get(
-    "/project/{project_id}/users/{user_id}",
+    "/projects/{project_id}/users/{user_id}",
     response_model=ProjectPerformanceResponse,
     responses={
         401: GeneralErrorResponses.UNAUTHORIZED,
@@ -278,7 +281,7 @@ async def get_time_spent_statistics(
         500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
     },
 )
-def get_user_settings(
+async def get_user_settings(
     user_id: int,
     auth_context: AuthContext = Depends(get_auth_context),
     mongo_db: Database = Depends(get_mongo_database),
@@ -303,7 +306,7 @@ def get_user_settings(
         500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
     },
 )
-def set_user_settings(
+async def set_user_settings(
     user_id: int,
     settings: UserPerfomanceSettingsRequest,
     auth_context: AuthContext = Depends(get_auth_context),
@@ -312,11 +315,79 @@ def set_user_settings(
     # Save or update user settings in the database
     user_settings_collection = mongo_db["user_performance_settings"]
     user_settings_collection.update_one(
-        {"user_id": user_id}, {"$set": settings.dict()}, upsert=True
+        {"user_id": user_id}, {"$set": settings.model_dump()}, upsert=True
     )
 
     # Remove every performance cache entry for this user
     cache_collection = mongo_db["performance_cache"]
     cache_collection.delete_many({"user_id": user_id})
 
-    return UserPerformanceSettings(user_id=user_id, **settings.dict())
+    return UserPerformanceSettings(user_id=user_id, **settings.model_dump())
+
+
+@router.get(
+    "/projects/{project_id}",
+    response_model=GeneralProjectPerformance,
+    responses={
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
+    },
+)
+async def get_general_project_performance(
+    project_id: int = Path(..., description="The ID of the GitLab project."),
+    start_date: dt.datetime = Query(
+        ..., description="The start date for the performance period in ISO format."
+    ),
+    end_date: dt.datetime = Query(
+        ..., description="The end date for the performance period in ISO format."
+    ),
+    auth_context: AuthContext = Depends(get_auth_context),
+    mongo_db: Database = Depends(get_mongo_database),
+) -> GeneralProjectPerformance:
+    """Calculate and retrieve general project performance data over a specified time period."""
+    # Validate input data
+    try:
+        payload = ProjectPerformanceRequest(
+            project_id=project_id,
+            start_date=start_date,
+            end_date=end_date,
+        )
+    except ValidationError as ve:
+        raise RequestValidationError(ve.errors(include_url=False, include_input=False))
+
+    # Check cache
+    cache_collection = mongo_db["performance_cache"]
+    performance_data = cache_collection.find_one(
+        {
+            "project_id": payload.project_id,
+            "type": "general_project",
+            "start_date": payload.start_date,
+            "end_date": payload.end_date,
+        }
+    )
+
+    # Get project performance if no valid cache
+    if performance_data is not None:
+        performance_data = GeneralProjectPerformance(**performance_data["data"])
+    else:
+        # Get project performance
+        performance_data = summarize_project_performance(
+            gitlab_client=auth_context.gitlab_client,
+            project_id=project_id,
+            start_date=payload.start_date,
+            end_date=payload.end_date,
+        )
+
+        # Store in cache
+        cache_collection.insert_one(
+            {
+                "project_id": payload.project_id,
+                "type": "general_project",
+                "start_date": payload.start_date,
+                "end_date": payload.end_date,
+                "data": performance_data.model_dump(),
+                "expires_at": dt.datetime.now(dt.timezone.utc)
+                + dt.timedelta(seconds=get_settings().performance_cache_expiry_seconds),
+            }
+        )
+    return performance_data

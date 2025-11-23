@@ -17,14 +17,14 @@ from app.api.deps import (
     get_auth_context,
 )
 from app.schemas import GeneralErrorResponses
-from app.schemas.gitlab import MembersResponse, ProjectsResponse
+from app.schemas.projects import MembersResponse, ProjectsResponse
 from app.core.config import get_settings
 
-router = APIRouter(prefix="/gitlab", tags=["gitlab"])
+router = APIRouter(prefix="/projects", tags=["projects"])
 
 
 @router.get(
-    "/projects/{project_id}/members",
+    "/{project_id}/members",
     response_model=list[MembersResponse],
     responses={
         401: GeneralErrorResponses.UNAUTHORIZED,
@@ -43,7 +43,9 @@ def get_project_members(
     gitlab_client = auth_context.gitlab_client
     try:
         project = gitlab_client.projects.get(project_id)
-        members = project.members.list(per_page=per_page, page=page, query=search)
+        members = project.members.list(
+            per_page=per_page, page=page, query=search, humans=True
+        )
     except gitlab.exceptions.GitlabGetError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -67,7 +69,7 @@ def get_project_members(
 
 
 @router.get(
-    "/projects",
+    "/",
     response_model=list[ProjectsResponse],
     responses={
         401: GeneralErrorResponses.UNAUTHORIZED,
@@ -120,3 +122,39 @@ def list_projects(
         )
         for project in projects
     ]
+
+
+@router.get(
+    "/{project_id}",
+    response_model=ProjectsResponse,
+    responses={
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        404: GeneralErrorResponses.NOT_FOUND,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
+    },
+)
+def get_project(
+    project_id: int = Path(..., description="GitLab project ID"),
+    auth_context: AuthContext = Depends(get_auth_context),
+) -> ProjectsResponse:
+    """Get details of a specific GitLab project."""
+    gitlab_client = auth_context.gitlab_client
+    try:
+        project = gitlab_client.projects.get(project_id)
+    except gitlab.exceptions.GitlabGetError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project with ID {project_id} not found.",
+        ) from e
+
+    return ProjectsResponse(
+        id=project.id,
+        name=project.name,
+        name_with_namespace=project.name_with_namespace,
+        path_with_namespace=project.path_with_namespace,
+        tag_list=getattr(project, "tag_list", []),
+        topics=getattr(project, "topics", []),
+        web_url=project.web_url,
+        avatar_url=getattr(project, "avatar_url", None),
+        created_at=project.created_at,
+    )

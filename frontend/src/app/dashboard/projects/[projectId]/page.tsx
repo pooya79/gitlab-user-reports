@@ -1,4 +1,4 @@
-import ProjectMembersClient from "./project-members-client";
+import ProjectDashboard from "./project-dashboard";
 
 type PageProps = {
     params: Promise<{
@@ -9,5 +9,5 @@ type PageProps = {
 export default async function ProjectMembersPage({ params }: PageProps) {
     const { projectId } = await params;
     const projectIdNumber = Number.parseInt(projectId, 10);
-    return <ProjectMembersClient projectId={projectIdNumber} />;
+    return <ProjectDashboard projectId={projectIdNumber} />;
 }

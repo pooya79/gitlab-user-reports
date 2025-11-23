@@ -302,7 +302,7 @@ export default function OverviewTab({
 
             {performance && !loading ? (
                 <>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="grid gap-4 lg:grid-cols-2">
                         <DailyCommitChart data={commitChartData} />
                         <DailyLineChangesChart data={lineChangesData} />
                     </div>

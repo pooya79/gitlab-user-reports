@@ -247,7 +247,7 @@ export function ProjectContributionsCard({
                                                 </Button>
                                                 <Button size="sm" asChild>
                                                     <Link
-                                                        href={`/dashboard/projects/${project.project_id}/users/${userId}`}
+                                                        href={`/dashboard/projects/${project.project_id}`}
                                                     >
                                                         More details
                                                     </Link>

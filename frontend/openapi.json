@@ -1,6 +1,9 @@
 {
     "openapi": "3.1.0",
-    "info": { "title": "GitLab User Reports", "version": "0.1.0" },
+    "info": {
+        "title": "GitLab User Reports",
+        "version": "0.1.0"
+    },
     "paths": {
         "/auth/login": {
             "post": {
@@ -14,7 +17,14 @@
                         "in": "header",
                         "required": false,
                         "schema": {
-                            "anyOf": [{ "type": "string" }, { "type": "null" }],
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
                             "title": "User-Agent"
                         }
                     }
@@ -121,7 +131,11 @@
                         }
                     }
                 },
-                "security": [{ "HTTPBearer": [] }]
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
             }
         },
         "/auth/gitlab": {
@@ -192,7 +206,11 @@
                         }
                     }
                 },
-                "security": [{ "HTTPBearer": [] }]
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
             }
         },
         "/auth/gitlab/token-check": {
@@ -263,7 +281,11 @@
                         }
                     }
                 },
-                "security": [{ "HTTPBearer": [] }]
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
             }
         },
         "/auth/me": {
@@ -304,16 +326,24 @@
                         }
                     }
                 },
-                "security": [{ "HTTPBearer": [] }]
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
             }
         },
-        "/gitlab/projects/{project_id}/members": {
+        "/projects/{project_id}/members": {
             "get": {
-                "tags": ["gitlab"],
+                "tags": ["projects"],
                 "summary": "Get Project Members",
                 "description": "Get members of a GitLab project.",
-                "operationId": "get_project_members_gitlab_projects__project_id__members_get",
-                "security": [{ "HTTPBearer": [] }],
+                "operationId": "get_project_members_projects__project_id__members_get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "project_id",
@@ -358,7 +388,14 @@
                         "in": "query",
                         "required": false,
                         "schema": {
-                            "anyOf": [{ "type": "string" }, { "type": "null" }],
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
                             "description": "Filter members by username or name",
                             "title": "Search"
                         },
@@ -375,7 +412,7 @@
                                     "items": {
                                         "$ref": "#/components/schemas/MembersResponse"
                                     },
-                                    "title": "Response Get Project Members Gitlab Projects  Project Id  Members Get"
+                                    "title": "Response Get Project Members Projects  Project Id  Members Get"
                                 }
                             }
                         }
@@ -423,13 +460,17 @@
                 }
             }
         },
-        "/gitlab/projects": {
+        "/projects/": {
             "get": {
-                "tags": ["gitlab"],
+                "tags": ["projects"],
                 "summary": "List Projects",
                 "description": "List GitLab projects with optional search filtering.",
-                "operationId": "list_projects_gitlab_projects_get",
-                "security": [{ "HTTPBearer": [] }],
+                "operationId": "list_projects_projects__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "page",
@@ -463,7 +504,14 @@
                         "in": "query",
                         "required": false,
                         "schema": {
-                            "anyOf": [{ "type": "string" }, { "type": "null" }],
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
                             "description": "Filter projects by name or path",
                             "title": "Search"
                         },
@@ -475,8 +523,12 @@
                         "required": false,
                         "schema": {
                             "anyOf": [
-                                { "type": "boolean" },
-                                { "type": "null" }
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "null"
+                                }
                             ],
                             "description": "Only return projects the authenticated user is a member of",
                             "title": "Membership"
@@ -494,7 +546,7 @@
                                     "items": {
                                         "$ref": "#/components/schemas/ProjectsResponse"
                                     },
-                                    "title": "Response List Projects Gitlab Projects Get"
+                                    "title": "Response List Projects Projects  Get"
                                 }
                             }
                         }
@@ -542,13 +594,95 @@
                 }
             }
         },
+        "/projects/{project_id}": {
+            "get": {
+                "tags": ["projects"],
+                "summary": "Get Project",
+                "description": "Get details of a specific GitLab project.",
+                "operationId": "get_project_projects__project_id__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "GitLab project ID",
+                            "title": "Project Id"
+                        },
+                        "description": "GitLab project ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProjectsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/": {
             "get": {
                 "tags": ["users"],
                 "summary": "List GitLab Users",
                 "description": "Retrieve a list of GitLab users with optional search and pagination.",
                 "operationId": "list_gitlab_users_users__get",
-                "security": [{ "HTTPBearer": [] }],
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "page",
@@ -591,7 +725,14 @@
                         "in": "query",
                         "required": false,
                         "schema": {
-                            "anyOf": [{ "type": "string" }, { "type": "null" }],
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
                             "description": "Search term to filter users by username or name.",
                             "title": "Search"
                         },
@@ -652,7 +793,11 @@
                 "summary": "Get Gitlab User",
                 "description": "Retrieve a GitLab user by their ID.",
                 "operationId": "get_gitlab_user_users__user_id__get",
-                "security": [{ "HTTPBearer": [] }],
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "user_id",
@@ -716,7 +861,11 @@
                 "summary": "Get User Timelogs",
                 "description": "Retrieve user timelogs for a specified period.",
                 "operationId": "get_user_timelogs_users__username__timelogs_get",
-                "security": [{ "HTTPBearer": [] }],
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "username",
@@ -770,7 +919,14 @@
                         "in": "query",
                         "required": false,
                         "schema": {
-                            "anyOf": [{ "type": "string" }, { "type": "null" }],
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
                             "description": "Cursor for pagination to fetch the next set of timelogs.",
                             "title": "After"
                         },
@@ -827,7 +983,11 @@
                 "summary": "Get User Performance",
                 "description": "Calculate and retrieve user performance data over a specified time period.",
                 "operationId": "get_user_performance_performance_users__user_id__get",
-                "security": [{ "HTTPBearer": [] }],
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "user_id",
@@ -909,13 +1069,17 @@
                 }
             }
         },
-        "/performance/project/{project_id}/users/{user_id}": {
+        "/performance/projects/{project_id}/users/{user_id}": {
             "get": {
                 "tags": ["performance"],
                 "summary": "Get Project Performance",
                 "description": "Calculate and retrieve project performance data over a specified time period.",
-                "operationId": "get_project_performance_performance_project__project_id__users__user_id__get",
-                "security": [{ "HTTPBearer": [] }],
+                "operationId": "get_project_performance_performance_projects__project_id__users__user_id__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "project_id",
@@ -1024,7 +1188,11 @@
                 "summary": "Get Time Spent Statistics",
                 "description": "Retrieve time spent statistics for a user over a specified time period.",
                 "operationId": "get_time_spent_statistics_performanceusers__user_id__time_spent_get",
-                "security": [{ "HTTPBearer": [] }],
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "user_id",
@@ -1121,13 +1289,20 @@
                 "tags": ["performance"],
                 "summary": "Get User Settings",
                 "operationId": "get_user_settings_performance_users__user_id__settings_get",
-                "security": [{ "HTTPBearer": [] }],
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
-                        "schema": { "type": "integer", "title": "User Id" }
+                        "schema": {
+                            "type": "integer",
+                            "title": "User Id"
+                        }
                     }
                 ],
                 "responses": {
@@ -1187,13 +1362,20 @@
                 "tags": ["performance"],
                 "summary": "Set User Settings",
                 "operationId": "set_user_settings_performance_users__user_id__settings_post",
-                "security": [{ "HTTPBearer": [] }],
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
-                        "schema": { "type": "integer", "title": "User Id" }
+                        "schema": {
+                            "type": "integer",
+                            "title": "User Id"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -1213,6 +1395,98 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UserPerformanceSettings"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/performance/projects/{project_id}": {
+            "get": {
+                "tags": ["performance"],
+                "summary": "Get General Project Performance",
+                "description": "Calculate and retrieve general project performance data over a specified time period.",
+                "operationId": "get_general_project_performance_performance_projects__project_id__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "The ID of the GitLab project.",
+                            "title": "Project Id"
+                        },
+                        "description": "The ID of the GitLab project."
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The start date for the performance period in ISO format.",
+                            "title": "Start Date"
+                        },
+                        "description": "The start date for the performance period in ISO format."
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "The end date for the performance period in ISO format.",
+                            "title": "End Date"
+                        },
+                        "description": "The end date for the performance period in ISO format."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GeneralProjectPerformance"
                                 }
                             }
                         }
@@ -1279,16 +1553,31 @@
         "schemas": {
             "CommitInfo": {
                 "properties": {
-                    "title": { "type": "string", "title": "Title" },
-                    "message": { "type": "string", "title": "Message" },
-                    "web_url": { "type": "string", "title": "Web Url" },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "message": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "web_url": {
+                        "type": "string",
+                        "title": "Web Url"
+                    },
                     "authored_date": {
                         "type": "string",
                         "format": "date-time",
                         "title": "Authored Date"
                     },
-                    "additions": { "type": "integer", "title": "Additions" },
-                    "deletions": { "type": "integer", "title": "Deletions" }
+                    "additions": {
+                        "type": "integer",
+                        "title": "Additions"
+                    },
+                    "deletions": {
+                        "type": "integer",
+                        "title": "Deletions"
+                    }
                 },
                 "type": "object",
                 "required": [
@@ -1304,21 +1593,121 @@
             },
             "ErrorResponseModel": {
                 "properties": {
-                    "detail": { "type": "string", "title": "Detail" }
+                    "detail": {
+                        "type": "string",
+                        "title": "Detail"
+                    }
                 },
                 "type": "object",
                 "required": ["detail"],
                 "title": "ErrorResponseModel",
                 "description": "Standard error response model."
             },
+            "GeneralProjectPerformance": {
+                "properties": {
+                    "project_id": {
+                        "type": "integer",
+                        "title": "Project Id"
+                    },
+                    "project_name": {
+                        "type": "string",
+                        "title": "Project Name"
+                    },
+                    "commits": {
+                        "type": "integer",
+                        "title": "Commits"
+                    },
+                    "additions": {
+                        "type": "integer",
+                        "title": "Additions"
+                    },
+                    "deletions": {
+                        "type": "integer",
+                        "title": "Deletions"
+                    },
+                    "changes": {
+                        "type": "integer",
+                        "title": "Changes"
+                    },
+                    "contributors": {
+                        "items": {
+                            "$ref": "#/components/schemas/ProjectContributorStats"
+                        },
+                        "type": "array",
+                        "title": "Contributors"
+                    },
+                    "daily_commit_counts": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "type": "object",
+                        "title": "Daily Commit Counts"
+                    },
+                    "daily_additions": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "type": "object",
+                        "title": "Daily Additions"
+                    },
+                    "daily_deletions": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "type": "object",
+                        "title": "Daily Deletions"
+                    },
+                    "daily_changes": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "type": "object",
+                        "title": "Daily Changes"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "project_id",
+                    "project_name",
+                    "commits",
+                    "additions",
+                    "deletions",
+                    "changes",
+                    "contributors",
+                    "daily_commit_counts",
+                    "daily_additions",
+                    "daily_deletions",
+                    "daily_changes"
+                ],
+                "title": "GeneralProjectPerformance",
+                "description": "Top-level structure returned by the performance service for a project."
+            },
             "GeneralUserPerformance": {
                 "properties": {
-                    "userd_id": { "type": "integer", "title": "Userd Id" },
-                    "username": { "type": "string", "title": "Username" },
-                    "commits": { "type": "integer", "title": "Commits" },
-                    "additions": { "type": "integer", "title": "Additions" },
-                    "deletions": { "type": "integer", "title": "Deletions" },
-                    "changes": { "type": "integer", "title": "Changes" },
+                    "userd_id": {
+                        "type": "integer",
+                        "title": "Userd Id"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "commits": {
+                        "type": "integer",
+                        "title": "Commits"
+                    },
+                    "additions": {
+                        "type": "integer",
+                        "title": "Additions"
+                    },
+                    "deletions": {
+                        "type": "integer",
+                        "title": "Deletions"
+                    },
+                    "changes": {
+                        "type": "integer",
+                        "title": "Changes"
+                    },
                     "mr_contributed": {
                         "type": "integer",
                         "title": "Mr Contributed"
@@ -1340,22 +1729,30 @@
                         "title": "Notes Authored"
                     },
                     "daily_commit_counts": {
-                        "additionalProperties": { "type": "integer" },
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
                         "type": "object",
                         "title": "Daily Commit Counts"
                     },
                     "daily_additions": {
-                        "additionalProperties": { "type": "integer" },
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
                         "type": "object",
                         "title": "Daily Additions"
                     },
                     "daily_deletions": {
-                        "additionalProperties": { "type": "integer" },
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
                         "type": "object",
                         "title": "Daily Deletions"
                     },
                     "daily_changes": {
-                        "additionalProperties": { "type": "integer" },
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
                         "type": "object",
                         "title": "Daily Changes"
                     },
@@ -1429,38 +1826,88 @@
             },
             "GitLabUser": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
-                    "username": { "type": "string", "title": "Username" },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
                     "public_email": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Public Email"
                     },
-                    "name": { "type": "string", "title": "Name" },
-                    "state": { "type": "string", "title": "State" },
-                    "locked": { "type": "boolean", "title": "Locked" },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "locked": {
+                        "type": "boolean",
+                        "title": "Locked"
+                    },
                     "avatar_url": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Avatar Url"
                     },
-                    "web_url": { "type": "string", "title": "Web Url" },
+                    "web_url": {
+                        "type": "string",
+                        "title": "Web Url"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
                         "title": "Created At"
                     },
-                    "bot": { "type": "boolean", "title": "Bot" },
+                    "bot": {
+                        "type": "boolean",
+                        "title": "Bot"
+                    },
                     "last_sign_in_at": {
                         "anyOf": [
-                            { "type": "string", "format": "date-time" },
-                            { "type": "null" }
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
                         ],
                         "title": "Last Sign In At"
                     },
                     "email": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Email"
                     },
-                    "is_admin": { "type": "boolean", "title": "Is Admin" }
+                    "is_admin": {
+                        "type": "boolean",
+                        "title": "Is Admin"
+                    }
                 },
                 "type": "object",
                 "required": [
@@ -1482,11 +1929,19 @@
             },
             "GitlabTokenCheckResponse": {
                 "properties": {
-                    "valid": { "type": "boolean", "title": "Valid" },
+                    "valid": {
+                        "type": "boolean",
+                        "title": "Valid"
+                    },
                     "gitlab_user_info": {
                         "anyOf": [
-                            { "additionalProperties": true, "type": "object" },
-                            { "type": "null" }
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
                         ],
                         "title": "Gitlab User Info"
                     }
@@ -1498,20 +1953,52 @@
             },
             "GitlabUserInfo": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
-                    "username": { "type": "string", "title": "Username" },
-                    "name": { "type": "string", "title": "Name" },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
                     "email": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Email"
                     },
-                    "web_url": { "type": "string", "title": "Web Url" },
+                    "web_url": {
+                        "type": "string",
+                        "title": "Web Url"
+                    },
                     "avatar_url": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Avatar Url"
                     },
-                    "state": { "type": "string", "title": "State" },
-                    "is_admin": { "type": "boolean", "title": "Is Admin" }
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "title": "Is Admin"
+                    }
                 },
                 "type": "object",
                 "required": [
@@ -1561,14 +2048,21 @@
                                 "minLength": 1,
                                 "format": "uri"
                             },
-                            { "type": "null" }
+                            {
+                                "type": "null"
+                            }
                         ],
                         "title": "Gitlab Url"
                     },
                     "gitlab_admin_token": {
                         "anyOf": [
-                            { "type": "string", "minLength": 1 },
-                            { "type": "null" }
+                            {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
                         ],
                         "title": "Gitlab Admin Token"
                     }
@@ -1589,7 +2083,10 @@
                         "title": "Token Type",
                         "default": "bearer"
                     },
-                    "username": { "type": "string", "title": "Username" },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
                     "expires_at": {
                         "type": "string",
                         "format": "date-time",
@@ -1601,8 +2098,13 @@
                     },
                     "gitlab_user_info": {
                         "anyOf": [
-                            { "additionalProperties": true, "type": "object" },
-                            { "type": "null" }
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
                         ],
                         "title": "Gitlab User Info"
                     }
@@ -1652,7 +2154,14 @@
                         "description": "Web URL to the user's profile"
                     },
                     "avatar_url": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Avatar Url",
                         "description": "URL to the user's avatar"
                     },
@@ -1687,12 +2196,30 @@
             },
             "MergeRequestDetails": {
                 "properties": {
-                    "iid": { "type": "string", "title": "Iid" },
-                    "title": { "type": "string", "title": "Title" },
-                    "webUrl": { "type": "string", "title": "Weburl" },
-                    "state": { "type": "string", "title": "State" },
-                    "reference": { "type": "string", "title": "Reference" },
-                    "description": { "type": "string", "title": "Description" },
+                    "iid": {
+                        "type": "string",
+                        "title": "Iid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "title": "Reference"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
@@ -1722,7 +2249,9 @@
                                 },
                                 "type": "array"
                             },
-                            { "type": "null" }
+                            {
+                                "type": "null"
+                            }
                         ],
                         "title": "Commits"
                     }
@@ -1746,8 +2275,14 @@
             },
             "NoteInfo": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
-                    "body": { "type": "string", "title": "Body" }
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "body": {
+                        "type": "string",
+                        "title": "Body"
+                    }
                 },
                 "type": "object",
                 "required": ["id", "body"],
@@ -1764,11 +2299,25 @@
                         "title": "Haspreviouspage"
                     },
                     "startCursor": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Startcursor"
                     },
                     "endCursor": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Endcursor"
                     }
                 },
@@ -1776,15 +2325,70 @@
                 "required": ["hasNextPage", "hasPreviousPage"],
                 "title": "PageInfo"
             },
+            "ProjectContributorStats": {
+                "properties": {
+                    "author_name": {
+                        "type": "string",
+                        "title": "Author Name"
+                    },
+                    "author_email": {
+                        "type": "string",
+                        "title": "Author Email"
+                    },
+                    "commits": {
+                        "type": "integer",
+                        "title": "Commits"
+                    },
+                    "additions": {
+                        "type": "integer",
+                        "title": "Additions"
+                    },
+                    "deletions": {
+                        "type": "integer",
+                        "title": "Deletions"
+                    },
+                    "changes": {
+                        "type": "integer",
+                        "title": "Changes"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "author_name",
+                    "author_email",
+                    "commits",
+                    "additions",
+                    "deletions",
+                    "changes"
+                ],
+                "title": "ProjectContributorStats",
+                "description": "Contributor-specific stats within a project. (authors of commits)"
+            },
             "ProjectPerformanceResponse": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
-                    "name": { "type": "string", "title": "Name" },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
                     "avatar_url": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Avatar Url"
                     },
-                    "web_url": { "type": "string", "title": "Web Url" },
+                    "web_url": {
+                        "type": "string",
+                        "title": "Web Url"
+                    },
                     "path_with_namespace": {
                         "type": "string",
                         "title": "Path With Namespace"
@@ -1803,10 +2407,22 @@
                         "format": "date-time",
                         "title": "Until"
                     },
-                    "commits": { "type": "integer", "title": "Commits" },
-                    "additions": { "type": "integer", "title": "Additions" },
-                    "deletions": { "type": "integer", "title": "Deletions" },
-                    "changes": { "type": "integer", "title": "Changes" },
+                    "commits": {
+                        "type": "integer",
+                        "title": "Commits"
+                    },
+                    "additions": {
+                        "type": "integer",
+                        "title": "Additions"
+                    },
+                    "deletions": {
+                        "type": "integer",
+                        "title": "Deletions"
+                    },
+                    "changes": {
+                        "type": "integer",
+                        "title": "Changes"
+                    },
                     "mr_contributed": {
                         "type": "integer",
                         "title": "Mr Contributed"
@@ -1824,27 +2440,37 @@
                                 },
                                 "type": "array"
                             },
-                            { "type": "null" }
+                            {
+                                "type": "null"
+                            }
                         ],
                         "title": "Merge Requests"
                     },
                     "daily_commit_counts": {
-                        "additionalProperties": { "type": "integer" },
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
                         "type": "object",
                         "title": "Daily Commit Counts"
                     },
                     "daily_additions": {
-                        "additionalProperties": { "type": "integer" },
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
                         "type": "object",
                         "title": "Daily Additions"
                     },
                     "daily_deletions": {
-                        "additionalProperties": { "type": "integer" },
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
                         "type": "object",
                         "title": "Daily Deletions"
                     },
                     "daily_changes": {
-                        "additionalProperties": { "type": "integer" },
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
                         "type": "object",
                         "title": "Daily Changes"
                     }
@@ -1874,13 +2500,29 @@
             },
             "ProjectPerformanceShort": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
-                    "name": { "type": "string", "title": "Name" },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
                     "avatar_url": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Avatar Url"
                     },
-                    "web_url": { "type": "string", "title": "Web Url" },
+                    "web_url": {
+                        "type": "string",
+                        "title": "Web Url"
+                    },
                     "path_with_namespace": {
                         "type": "string",
                         "title": "Path With Namespace"
@@ -1899,10 +2541,22 @@
                         "format": "date-time",
                         "title": "Until"
                     },
-                    "commits": { "type": "integer", "title": "Commits" },
-                    "additions": { "type": "integer", "title": "Additions" },
-                    "deletions": { "type": "integer", "title": "Deletions" },
-                    "changes": { "type": "integer", "title": "Changes" },
+                    "commits": {
+                        "type": "integer",
+                        "title": "Commits"
+                    },
+                    "additions": {
+                        "type": "integer",
+                        "title": "Additions"
+                    },
+                    "deletions": {
+                        "type": "integer",
+                        "title": "Deletions"
+                    },
+                    "changes": {
+                        "type": "integer",
+                        "title": "Changes"
+                    },
                     "mr_contributed": {
                         "type": "integer",
                         "title": "Mr Contributed"
@@ -1920,7 +2574,9 @@
                                 },
                                 "type": "array"
                             },
-                            { "type": "null" }
+                            {
+                                "type": "null"
+                            }
                         ],
                         "title": "Merge Requests"
                     }
@@ -1989,13 +2645,17 @@
                         "description": "Project path with namespace"
                     },
                     "tag_list": {
-                        "items": { "type": "string" },
+                        "items": {
+                            "type": "string"
+                        },
                         "type": "array",
                         "title": "Tag List",
                         "description": "List of project tags"
                     },
                     "topics": {
-                        "items": { "type": "string" },
+                        "items": {
+                            "type": "string"
+                        },
                         "type": "array",
                         "title": "Topics",
                         "description": "List of project topics"
@@ -2006,7 +2666,14 @@
                         "description": "Web URL to the project"
                     },
                     "avatar_url": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Avatar Url",
                         "description": "URL to the project's avatar"
                     },
@@ -2033,14 +2700,27 @@
             },
             "TimeSpentStats": {
                 "properties": {
-                    "user_id": { "type": "integer", "title": "User Id" },
-                    "username": { "type": "string", "title": "Username" },
+                    "user_id": {
+                        "type": "integer",
+                        "title": "User Id"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
                     "daily_project_time_spent": {
                         "items": {
                             "prefixItems": [
-                                { "type": "string", "format": "date-time" },
-                                { "type": "string" },
-                                { "type": "number" }
+                                {
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                }
                             ],
                             "type": "array",
                             "maxItems": 3,
@@ -2084,7 +2764,10 @@
             },
             "TimelogData": {
                 "properties": {
-                    "count": { "type": "integer", "title": "Count" },
+                    "count": {
+                        "type": "integer",
+                        "title": "Count"
+                    },
                     "totalSpentTime": {
                         "type": "string",
                         "title": "Totalspenttime"
@@ -2096,7 +2779,9 @@
                         "type": "array",
                         "title": "Nodes"
                     },
-                    "pageInfo": { "$ref": "#/components/schemas/PageInfo" }
+                    "pageInfo": {
+                        "$ref": "#/components/schemas/PageInfo"
+                    }
                 },
                 "type": "object",
                 "required": ["count", "totalSpentTime", "nodes", "pageInfo"],
@@ -2104,15 +2789,38 @@
             },
             "UserInfo": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
-                    "name": { "type": "string", "title": "Name" },
-                    "username": { "type": "string", "title": "Username" },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
                     "avatarUrl": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Avatarurl"
                     },
                     "webPath": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Webpath"
                     }
                 },
@@ -2123,7 +2831,9 @@
             "UserPerfomanceSettingsRequest": {
                 "properties": {
                     "additional_user_emails": {
-                        "items": { "type": "string" },
+                        "items": {
+                            "type": "string"
+                        },
                         "type": "array",
                         "title": "Additional User Emails",
                         "default": []
@@ -2135,12 +2845,17 @@
             "UserPerformanceSettings": {
                 "properties": {
                     "additional_user_emails": {
-                        "items": { "type": "string" },
+                        "items": {
+                            "type": "string"
+                        },
                         "type": "array",
                         "title": "Additional User Emails",
                         "default": []
                     },
-                    "user_id": { "type": "integer", "title": "User Id" }
+                    "user_id": {
+                        "type": "integer",
+                        "title": "User Id"
+                    }
                 },
                 "type": "object",
                 "required": ["user_id"],
@@ -2148,11 +2863,18 @@
             },
             "UserProfileResponse": {
                 "properties": {
-                    "username": { "type": "string", "title": "Username" },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
                     "gitlab_user_info": {
                         "anyOf": [
-                            { "$ref": "#/components/schemas/GitlabUserInfo" },
-                            { "type": "null" }
+                            {
+                                "$ref": "#/components/schemas/GitlabUserInfo"
+                            },
+                            {
+                                "type": "null"
+                            }
                         ]
                     },
                     "gitlab_url": {
@@ -2162,7 +2884,9 @@
                                 "minLength": 1,
                                 "format": "uri"
                             },
-                            { "type": "null" }
+                            {
+                                "type": "null"
+                            }
                         ],
                         "title": "Gitlab Url"
                     }
@@ -2177,15 +2901,25 @@
                     "loc": {
                         "items": {
                             "anyOf": [
-                                { "type": "string" },
-                                { "type": "integer" }
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
                             ]
                         },
                         "type": "array",
                         "title": "Location"
                     },
-                    "msg": { "type": "string", "title": "Message" },
-                    "type": { "type": "string", "title": "Error Type" }
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
                 },
                 "type": "object",
                 "required": ["loc", "msg", "type"],
@@ -2193,11 +2927,26 @@
             },
             "app__schemas__performance__IssueInfo": {
                 "properties": {
-                    "iid": { "type": "string", "title": "Iid" },
-                    "title": { "type": "string", "title": "Title" },
-                    "webUrl": { "type": "string", "title": "Weburl" },
-                    "state": { "type": "string", "title": "State" },
-                    "reference": { "type": "string", "title": "Reference" }
+                    "iid": {
+                        "type": "string",
+                        "title": "Iid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "title": "Reference"
+                    }
                 },
                 "type": "object",
                 "required": ["iid", "title", "webUrl", "state", "reference"],
@@ -2206,11 +2955,26 @@
             },
             "app__schemas__performance__MergeRequestInfo": {
                 "properties": {
-                    "iid": { "type": "string", "title": "Iid" },
-                    "title": { "type": "string", "title": "Title" },
-                    "webUrl": { "type": "string", "title": "Weburl" },
-                    "state": { "type": "string", "title": "State" },
-                    "reference": { "type": "string", "title": "Reference" }
+                    "iid": {
+                        "type": "string",
+                        "title": "Iid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "title": "Reference"
+                    }
                 },
                 "type": "object",
                 "required": ["iid", "title", "webUrl", "state", "reference"],
@@ -2219,13 +2983,29 @@
             },
             "app__schemas__performance__ProjectInfo": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
-                    "name": { "type": "string", "title": "Name" },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
                     "avatar_url": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Avatar Url"
                     },
-                    "web_url": { "type": "string", "title": "Web Url" },
+                    "web_url": {
+                        "type": "string",
+                        "title": "Web Url"
+                    },
                     "path_with_namespace": {
                         "type": "string",
                         "title": "Path With Namespace"
@@ -2248,18 +3028,31 @@
             },
             "app__schemas__performance__TimelogNode": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
                     "project": {
                         "$ref": "#/components/schemas/app__schemas__performance__ProjectInfo"
                     },
-                    "time_spent": { "type": "integer", "title": "Time Spent" },
+                    "time_spent": {
+                        "type": "integer",
+                        "title": "Time Spent"
+                    },
                     "spent_at": {
                         "type": "string",
                         "format": "date-time",
                         "title": "Spent At"
                     },
                     "summary": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Summary"
                     },
                     "issue": {
@@ -2267,7 +3060,9 @@
                             {
                                 "$ref": "#/components/schemas/app__schemas__performance__IssueInfo"
                             },
-                            { "type": "null" }
+                            {
+                                "type": "null"
+                            }
                         ]
                     },
                     "merge_request": {
@@ -2275,7 +3070,9 @@
                             {
                                 "$ref": "#/components/schemas/app__schemas__performance__MergeRequestInfo"
                             },
-                            { "type": "null" }
+                            {
+                                "type": "null"
+                            }
                         ]
                     }
                 },
@@ -2286,11 +3083,26 @@
             },
             "app__schemas__users__IssueInfo": {
                 "properties": {
-                    "iid": { "type": "string", "title": "Iid" },
-                    "title": { "type": "string", "title": "Title" },
-                    "webUrl": { "type": "string", "title": "Weburl" },
-                    "state": { "type": "string", "title": "State" },
-                    "reference": { "type": "string", "title": "Reference" }
+                    "iid": {
+                        "type": "string",
+                        "title": "Iid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "title": "Reference"
+                    }
                 },
                 "type": "object",
                 "required": ["iid", "title", "webUrl", "state", "reference"],
@@ -2298,11 +3110,26 @@
             },
             "app__schemas__users__MergeRequestInfo": {
                 "properties": {
-                    "iid": { "type": "string", "title": "Iid" },
-                    "title": { "type": "string", "title": "Title" },
-                    "webUrl": { "type": "string", "title": "Weburl" },
-                    "state": { "type": "string", "title": "State" },
-                    "reference": { "type": "string", "title": "Reference" }
+                    "iid": {
+                        "type": "string",
+                        "title": "Iid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "title": "Reference"
+                    }
                 },
                 "type": "object",
                 "required": ["iid", "title", "webUrl", "state", "reference"],
@@ -2310,9 +3137,18 @@
             },
             "app__schemas__users__ProjectInfo": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
-                    "webUrl": { "type": "string", "title": "Weburl" },
-                    "fullPath": { "type": "string", "title": "Fullpath" },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "webUrl": {
+                        "type": "string",
+                        "title": "Weburl"
+                    },
+                    "fullPath": {
+                        "type": "string",
+                        "title": "Fullpath"
+                    },
                     "nameWithNamespace": {
                         "type": "string",
                         "title": "Namewithnamespace"
@@ -2324,21 +3160,43 @@
             },
             "app__schemas__users__TimelogNode": {
                 "properties": {
-                    "id": { "type": "integer", "title": "Id" },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
                     "project": {
                         "$ref": "#/components/schemas/app__schemas__users__ProjectInfo"
                     },
-                    "timeSpent": { "type": "integer", "title": "Timespent" },
-                    "user": { "$ref": "#/components/schemas/UserInfo" },
-                    "spentAt": { "type": "string", "title": "Spentat" },
+                    "timeSpent": {
+                        "type": "integer",
+                        "title": "Timespent"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserInfo"
+                    },
+                    "spentAt": {
+                        "type": "string",
+                        "title": "Spentat"
+                    },
                     "note": {
                         "anyOf": [
-                            { "$ref": "#/components/schemas/NoteInfo" },
-                            { "type": "null" }
+                            {
+                                "$ref": "#/components/schemas/NoteInfo"
+                            },
+                            {
+                                "type": "null"
+                            }
                         ]
                     },
                     "summary": {
-                        "anyOf": [{ "type": "string" }, { "type": "null" }],
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Summary"
                     },
                     "issue": {
@@ -2346,7 +3204,9 @@
                             {
                                 "$ref": "#/components/schemas/app__schemas__users__IssueInfo"
                             },
-                            { "type": "null" }
+                            {
+                                "type": "null"
+                            }
                         ]
                     },
                     "mergeRequest": {
@@ -2354,7 +3214,9 @@
                             {
                                 "$ref": "#/components/schemas/app__schemas__users__MergeRequestInfo"
                             },
-                            { "type": "null" }
+                            {
+                                "type": "null"
+                            }
                         ]
                     }
                 },
@@ -2364,7 +3226,10 @@
             }
         },
         "securitySchemes": {
-            "HTTPBearer": { "type": "http", "scheme": "bearer" }
+            "HTTPBearer": {
+                "type": "http",
+                "scheme": "bearer"
+            }
         }
     }
 }

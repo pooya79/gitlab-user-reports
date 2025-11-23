@@ -136,6 +136,41 @@ class UserPerformanceRequest(BaseModel):
         return self
 
 
+class ProjectPerformanceRequest(BaseModel):
+    project_id: int | str = Field(
+        ...,
+        description=("GitLab project ID or full path to scope the performance data."),
+    )
+    start_date: datetime = Field(
+        ...,
+        description=(
+            "Start of the performance window (any timezone is accepted; "
+            "internally normalized to UTC)."
+        ),
+    )
+    end_date: datetime = Field(
+        ...,
+        description=(
+            "End of the performance window (any timezone is accepted; "
+            "internally normalized to UTC)."
+        ),
+    )
+
+    @model_validator(mode="after")
+    def validate_time_interval(self) -> "UserPerformanceRequest":
+        """Normalize times to UTC and validate the range."""
+        self.start_date = _normalize_to_utc(self.start_date)
+        self.end_date = _normalize_to_utc(self.end_date)
+
+        if self.start_date >= self.end_date:
+            raise ValueError("start_date must be strictly before end_date.")
+
+        if self.end_date - self.start_date > timedelta(days=7):
+            raise ValueError("The date range must not exceed 7 days.")
+
+        return self
+
+
 # ---------------------------------------------------------------------------
 # Timelog-related models
 # ---------------------------------------------------------------------------
@@ -305,6 +340,71 @@ class GeneralUserPerformance(BaseModel):
 
     # Per-project performance
     project_performances: list[ProjectPerformanceShort]
+
+    @field_serializer(
+        "daily_commit_counts",
+        "daily_additions",
+        "daily_deletions",
+        "daily_changes",
+    )
+    def _serialize_daily_maps(self, value: dict[datetime, int]) -> dict[str, int]:
+        # Mongo-safe: string keys
+        return {k.isoformat(): v for k, v in value.items()}
+
+    @field_validator(
+        "daily_commit_counts",
+        "daily_additions",
+        "daily_deletions",
+        "daily_changes",
+        mode="before",
+    )
+    @classmethod
+    def _parse_daily_maps(cls, v):
+        # When loading from Mongo, keys are strings
+        if isinstance(v, dict):
+            out: dict[datetime, int] = {}
+            for k, val in v.items():
+                if isinstance(k, datetime):
+                    dt = k
+                else:
+                    dt = datetime.fromisoformat(k)
+                out[dt] = val
+            return out
+        return v
+
+
+class ProjectContributorStats(BaseModel):
+    """Contributor-specific stats within a project. (authors of commits)"""
+
+    author_name: str
+    author_email: str
+
+    commits: int
+    additions: int
+    deletions: int
+    changes: int
+
+
+class GeneralProjectPerformance(BaseModel):
+    """Top-level structure returned by the performance service for a project."""
+
+    project_id: int
+    project_name: str
+
+    # KPIs
+    commits: int
+    additions: int
+    deletions: int
+    changes: int
+
+    # Contributors stats
+    contributors: list[ProjectContributorStats]
+
+    # Daily status
+    daily_commit_counts: dict[datetime, int]
+    daily_additions: dict[datetime, int]
+    daily_deletions: dict[datetime, int]
+    daily_changes: dict[datetime, int]
 
     @field_serializer(
         "daily_commit_counts",

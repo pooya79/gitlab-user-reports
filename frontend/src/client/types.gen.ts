@@ -49,6 +49,66 @@ export type ErrorResponseModel = {
 };
 
 /**
+ * GeneralProjectPerformance
+ *
+ * Top-level structure returned by the performance service for a project.
+ */
+export type GeneralProjectPerformance = {
+    /**
+     * Project Id
+     */
+    project_id: number;
+    /**
+     * Project Name
+     */
+    project_name: string;
+    /**
+     * Commits
+     */
+    commits: number;
+    /**
+     * Additions
+     */
+    additions: number;
+    /**
+     * Deletions
+     */
+    deletions: number;
+    /**
+     * Changes
+     */
+    changes: number;
+    /**
+     * Contributors
+     */
+    contributors: Array<ProjectContributorStats>;
+    /**
+     * Daily Commit Counts
+     */
+    daily_commit_counts: {
+        [key: string]: number;
+    };
+    /**
+     * Daily Additions
+     */
+    daily_additions: {
+        [key: string]: number;
+    };
+    /**
+     * Daily Deletions
+     */
+    daily_deletions: {
+        [key: string]: number;
+    };
+    /**
+     * Daily Changes
+     */
+    daily_changes: {
+        [key: string]: number;
+    };
+};
+
+/**
  * GeneralUserPerformance
  *
  * Top-level structure returned by the performance service.
@@ -504,6 +564,38 @@ export type PageInfo = {
      * Endcursor
      */
     endCursor?: string | null;
+};
+
+/**
+ * ProjectContributorStats
+ *
+ * Contributor-specific stats within a project. (authors of commits)
+ */
+export type ProjectContributorStats = {
+    /**
+     * Author Name
+     */
+    author_name: string;
+    /**
+     * Author Email
+     */
+    author_email: string;
+    /**
+     * Commits
+     */
+    commits: number;
+    /**
+     * Additions
+     */
+    additions: number;
+    /**
+     * Deletions
+     */
+    deletions: number;
+    /**
+     * Changes
+     */
+    changes: number;
 };
 
 /**
@@ -1286,7 +1378,7 @@ export type GetProfileAuthMeGetResponses = {
 export type GetProfileAuthMeGetResponse =
     GetProfileAuthMeGetResponses[keyof GetProfileAuthMeGetResponses];
 
-export type GetProjectMembersGitlabProjectsProjectIdMembersGetData = {
+export type GetProjectMembersProjectsProjectIdMembersGetData = {
     body?: never;
     path: {
         /**
@@ -1316,10 +1408,10 @@ export type GetProjectMembersGitlabProjectsProjectIdMembersGetData = {
          */
         search?: string | null;
     };
-    url: "/gitlab/projects/{project_id}/members";
+    url: "/projects/{project_id}/members";
 };
 
-export type GetProjectMembersGitlabProjectsProjectIdMembersGetErrors = {
+export type GetProjectMembersProjectsProjectIdMembersGetErrors = {
     /**
      * Invalid credentials
      */
@@ -1338,22 +1430,22 @@ export type GetProjectMembersGitlabProjectsProjectIdMembersGetErrors = {
     500: ErrorResponseModel;
 };
 
-export type GetProjectMembersGitlabProjectsProjectIdMembersGetError =
-    GetProjectMembersGitlabProjectsProjectIdMembersGetErrors[keyof GetProjectMembersGitlabProjectsProjectIdMembersGetErrors];
+export type GetProjectMembersProjectsProjectIdMembersGetError =
+    GetProjectMembersProjectsProjectIdMembersGetErrors[keyof GetProjectMembersProjectsProjectIdMembersGetErrors];
 
-export type GetProjectMembersGitlabProjectsProjectIdMembersGetResponses = {
+export type GetProjectMembersProjectsProjectIdMembersGetResponses = {
     /**
-     * Response Get Project Members Gitlab Projects  Project Id  Members Get
+     * Response Get Project Members Projects  Project Id  Members Get
      *
      * Successful Response
      */
     200: Array<MembersResponse>;
 };
 
-export type GetProjectMembersGitlabProjectsProjectIdMembersGetResponse =
-    GetProjectMembersGitlabProjectsProjectIdMembersGetResponses[keyof GetProjectMembersGitlabProjectsProjectIdMembersGetResponses];
+export type GetProjectMembersProjectsProjectIdMembersGetResponse =
+    GetProjectMembersProjectsProjectIdMembersGetResponses[keyof GetProjectMembersProjectsProjectIdMembersGetResponses];
 
-export type ListProjectsGitlabProjectsGetData = {
+export type ListProjectsProjectsGetData = {
     body?: never;
     path?: never;
     query?: {
@@ -1382,10 +1474,10 @@ export type ListProjectsGitlabProjectsGetData = {
          */
         membership?: boolean | null;
     };
-    url: "/gitlab/projects";
+    url: "/projects/";
 };
 
-export type ListProjectsGitlabProjectsGetErrors = {
+export type ListProjectsProjectsGetErrors = {
     /**
      * Invalid credentials
      */
@@ -1404,20 +1496,66 @@ export type ListProjectsGitlabProjectsGetErrors = {
     502: ErrorResponseModel;
 };
 
-export type ListProjectsGitlabProjectsGetError =
-    ListProjectsGitlabProjectsGetErrors[keyof ListProjectsGitlabProjectsGetErrors];
+export type ListProjectsProjectsGetError =
+    ListProjectsProjectsGetErrors[keyof ListProjectsProjectsGetErrors];
 
-export type ListProjectsGitlabProjectsGetResponses = {
+export type ListProjectsProjectsGetResponses = {
     /**
-     * Response List Projects Gitlab Projects Get
+     * Response List Projects Projects  Get
      *
      * Successful Response
      */
     200: Array<ProjectsResponse>;
 };
 
-export type ListProjectsGitlabProjectsGetResponse =
-    ListProjectsGitlabProjectsGetResponses[keyof ListProjectsGitlabProjectsGetResponses];
+export type ListProjectsProjectsGetResponse =
+    ListProjectsProjectsGetResponses[keyof ListProjectsProjectsGetResponses];
+
+export type GetProjectProjectsProjectIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Project Id
+         *
+         * GitLab project ID
+         */
+        project_id: number;
+    };
+    query?: never;
+    url: "/projects/{project_id}";
+};
+
+export type GetProjectProjectsProjectIdGetErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Resource not found
+     */
+    404: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+};
+
+export type GetProjectProjectsProjectIdGetError =
+    GetProjectProjectsProjectIdGetErrors[keyof GetProjectProjectsProjectIdGetErrors];
+
+export type GetProjectProjectsProjectIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProjectsResponse;
+};
+
+export type GetProjectProjectsProjectIdGetResponse =
+    GetProjectProjectsProjectIdGetResponses[keyof GetProjectProjectsProjectIdGetResponses];
 
 export type ListGitlabUsersUsersGetData = {
     body?: never;
@@ -1645,7 +1783,7 @@ export type GetUserPerformancePerformanceUsersUserIdGetResponses = {
 export type GetUserPerformancePerformanceUsersUserIdGetResponse =
     GetUserPerformancePerformanceUsersUserIdGetResponses[keyof GetUserPerformancePerformanceUsersUserIdGetResponses];
 
-export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetData =
+export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetData =
     {
         body?: never;
         path: {
@@ -1676,10 +1814,10 @@ export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetData =
              */
             end_date: string;
         };
-        url: "/performance/project/{project_id}/users/{user_id}";
+        url: "/performance/projects/{project_id}/users/{user_id}";
     };
 
-export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors =
+export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors =
     {
         /**
          * Invalid credentials
@@ -1699,10 +1837,10 @@ export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors
         500: ErrorResponseModel;
     };
 
-export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetError =
-    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors[keyof GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetErrors];
+export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetError =
+    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors[keyof GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors];
 
-export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses =
+export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses =
     {
         /**
          * Successful Response
@@ -1710,8 +1848,8 @@ export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetRespon
         200: ProjectPerformanceResponse;
     };
 
-export type GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponse =
-    GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses[keyof GetProjectPerformancePerformanceProjectProjectIdUsersUserIdGetResponses];
+export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponse =
+    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses[keyof GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses];
 
 export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData = {
     body?: never;
@@ -1856,6 +1994,63 @@ export type SetUserSettingsPerformanceUsersUserIdSettingsPostResponses = {
 
 export type SetUserSettingsPerformanceUsersUserIdSettingsPostResponse =
     SetUserSettingsPerformanceUsersUserIdSettingsPostResponses[keyof SetUserSettingsPerformanceUsersUserIdSettingsPostResponses];
+
+export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Project Id
+         *
+         * The ID of the GitLab project.
+         */
+        project_id: number;
+    };
+    query: {
+        /**
+         * Start Date
+         *
+         * The start date for the performance period in ISO format.
+         */
+        start_date: string;
+        /**
+         * End Date
+         *
+         * The end date for the performance period in ISO format.
+         */
+        end_date: string;
+    };
+    url: "/performance/projects/{project_id}";
+};
+
+export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors =
+    {
+        /**
+         * Invalid credentials
+         */
+        401: ErrorResponseModel;
+        /**
+         * Validation Error
+         */
+        422: HttpValidationError;
+        /**
+         * Internal Server Error
+         */
+        500: ErrorResponseModel;
+    };
+
+export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetError =
+    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors[keyof GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors];
+
+export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses =
+    {
+        /**
+         * Successful Response
+         */
+        200: GeneralProjectPerformance;
+    };
+
+export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponse =
+    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses[keyof GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses];
 
 export type HealthHealthGetData = {
     body?: never;

@@ -26,6 +26,8 @@ from app.schemas.performance import (
     TimeSpentStats,
     CodeReviewStats,
     GeneralUserPerformance,
+    ProjectContributorStats,
+    GeneralProjectPerformance,
 )
 
 _UTC = timezone.utc
@@ -41,7 +43,7 @@ def _to_date(dt_obj: datetime) -> datetime:
 
 
 def _parse_gitlab_datetime(value: str) -> datetime:
-    """Convert GitLab ISO datetime strings into aware UTC datetimes."""
+    """Convert GitLab ISO datetime strings into aware UTC datetime (normalize to midnight)."""
     if value.endswith("Z"):
         value = value[:-1] + "+00:00"
     parsed = datetime.fromisoformat(value)
@@ -673,4 +675,95 @@ def summarize_user_performance(
             )
             for pp in project_performances
         ],
+    )
+
+
+def summarize_project_performance(
+    *,
+    gitlab_client: gitlab.Gitlab,
+    project_id: int,
+    start_date: datetime,
+    end_date: datetime,
+) -> GeneralProjectPerformance:
+    """Build an aggregated view of a project's performance metrics."""
+
+    project = gitlab_client.projects.get(project_id)
+
+    # Fetch commits of project in the given time range for all users
+    try:
+        commits = project.commits.list(
+            all=True,
+            get_all=True,
+            since=start_date.isoformat(),
+            until=(
+                end_date + timedelta(days=get_settings().safe_date_offset)
+            ).isoformat(),
+            with_stats=True,
+        )
+        project_commits = [
+            commit
+            for commit in commits
+            if _parse_gitlab_datetime(commit.authored_date) >= start_date
+            and _parse_gitlab_datetime(commit.authored_date) <= end_date
+            and len(commit.parent_ids) < 2  # Exclude merge commits
+        ]
+    except GitlabError as exc:
+        raise PerformanceComputationError(
+            f"Failed to fetch commits for project ID {project_id}"
+        ) from exc
+
+    total_additions = 0
+    total_deletions = 0
+    daily_commit_counts: dict[datetime, int] = defaultdict(int)
+    daily_additions: dict[datetime, int] = defaultdict(int)
+    daily_deletions: dict[datetime, int] = defaultdict(int)
+    daily_changes: dict[datetime, int] = defaultdict(int)
+
+    contributors: dict[str, ProjectContributorStats] = {}
+
+    for commit in project_commits:
+        stats = commit.stats or {}
+        num_additions = stats.get("additions", 0)
+        num_deletions = stats.get("deletions", 0)
+
+        total_additions += num_additions
+        total_deletions += num_deletions
+
+        authored_dt = _parse_gitlab_datetime(commit.authored_date)
+        daily_commit_counts[authored_dt] += 1
+        daily_additions[authored_dt] += num_additions
+        daily_deletions[authored_dt] += num_deletions
+        daily_changes[authored_dt] += num_additions + num_deletions
+
+        author_email = commit.author_email
+        if author_email not in contributors:
+            contributors[author_email] = ProjectContributorStats(
+                author_name=commit.author_name,
+                author_email=author_email,
+                commits=0,
+                additions=0,
+                deletions=0,
+                changes=0,
+            )
+        contributor_stats = contributors[author_email]
+        contributor_stats.commits += 1
+        contributor_stats.additions += num_additions
+        contributor_stats.deletions += num_deletions
+        contributor_stats.changes += num_additions + num_deletions
+
+    total_commits = len(project_commits)
+    total_changes = total_additions + total_deletions
+
+    return GeneralProjectPerformance(
+        project_id=project.id,
+        project_name=project.name,
+        commits=total_commits,
+        additions=total_additions,
+        deletions=total_deletions,
+        changes=total_changes,
+        contributors=list(contributors.values()),
+        daily_commit_counts=dict(daily_commit_counts),
+        daily_additions=dict(daily_additions),
+        daily_deletions=dict(daily_deletions),
+        daily_changes=dict(daily_changes),
     )
