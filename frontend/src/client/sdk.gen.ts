@@ -6,6 +6,12 @@ import type {
     CheckGitlabTokenAuthGitlabTokenCheckPostData,
     CheckGitlabTokenAuthGitlabTokenCheckPostErrors,
     CheckGitlabTokenAuthGitlabTokenCheckPostResponses,
+    CreateScheduleSchedulerReportsPostData,
+    CreateScheduleSchedulerReportsPostErrors,
+    CreateScheduleSchedulerReportsPostResponses,
+    DeleteScheduleSchedulerReportsScheduleIdDeleteData,
+    DeleteScheduleSchedulerReportsScheduleIdDeleteErrors,
+    DeleteScheduleSchedulerReportsScheduleIdDeleteResponses,
     GetGeneralProjectPerformancePerformanceProjectsProjectIdGetData,
     GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors,
     GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses,
@@ -24,6 +30,9 @@ import type {
     GetProjectProjectsProjectIdGetData,
     GetProjectProjectsProjectIdGetErrors,
     GetProjectProjectsProjectIdGetResponses,
+    GetScheduleSchedulerReportsScheduleIdGetData,
+    GetScheduleSchedulerReportsScheduleIdGetErrors,
+    GetScheduleSchedulerReportsScheduleIdGetResponses,
     GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData,
     GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors,
     GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses,
@@ -44,18 +53,27 @@ import type {
     ListProjectsProjectsGetData,
     ListProjectsProjectsGetErrors,
     ListProjectsProjectsGetResponses,
+    ListSchedulesSchedulerReportsGetData,
+    ListSchedulesSchedulerReportsGetErrors,
+    ListSchedulesSchedulerReportsGetResponses,
     LoginAuthLoginPostData,
     LoginAuthLoginPostErrors,
     LoginAuthLoginPostResponses,
     LogoutAuthLogoutPostData,
     LogoutAuthLogoutPostErrors,
     LogoutAuthLogoutPostResponses,
+    SendScheduleNowSchedulerReportsScheduleIdSendNowPostData,
+    SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors,
+    SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses,
     SetUserSettingsPerformanceUsersUserIdSettingsPostData,
     SetUserSettingsPerformanceUsersUserIdSettingsPostErrors,
     SetUserSettingsPerformanceUsersUserIdSettingsPostResponses,
     UpdateGitlabConfigurationAuthGitlabPostData,
     UpdateGitlabConfigurationAuthGitlabPostErrors,
     UpdateGitlabConfigurationAuthGitlabPostResponses,
+    UpdateScheduleSchedulerReportsScheduleIdPutData,
+    UpdateScheduleSchedulerReportsScheduleIdPutErrors,
+    UpdateScheduleSchedulerReportsScheduleIdPutResponses,
 } from "./types.gen";
 
 export type Options<
@@ -533,6 +551,182 @@ export const getGeneralProjectPerformancePerformanceProjectsProjectIdGet = <
             },
         ],
         url: "/performance/projects/{project_id}",
+        ...options,
+    });
+};
+
+/**
+ * List Schedules
+ *
+ * List all configured schedules.
+ */
+export const listSchedulesSchedulerReportsGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options?: Options<ListSchedulesSchedulerReportsGetData, ThrowOnError>,
+) => {
+    return (options?.client ?? client).get<
+        ListSchedulesSchedulerReportsGetResponses,
+        ListSchedulesSchedulerReportsGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/scheduler/reports",
+        ...options,
+    });
+};
+
+/**
+ * Create Schedule
+ *
+ * Create a scheduled weekly report.
+ */
+export const createScheduleSchedulerReportsPost = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<CreateScheduleSchedulerReportsPostData, ThrowOnError>,
+) => {
+    return (options.client ?? client).post<
+        CreateScheduleSchedulerReportsPostResponses,
+        CreateScheduleSchedulerReportsPostErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/scheduler/reports",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+};
+
+/**
+ * Delete Schedule
+ *
+ * Delete a schedule and remove its job.
+ */
+export const deleteScheduleSchedulerReportsScheduleIdDelete = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        DeleteScheduleSchedulerReportsScheduleIdDeleteData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).delete<
+        DeleteScheduleSchedulerReportsScheduleIdDeleteResponses,
+        DeleteScheduleSchedulerReportsScheduleIdDeleteErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/scheduler/reports/{schedule_id}",
+        ...options,
+    });
+};
+
+/**
+ * Get Schedule
+ *
+ * Fetch a single schedule.
+ */
+export const getScheduleSchedulerReportsScheduleIdGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        GetScheduleSchedulerReportsScheduleIdGetData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).get<
+        GetScheduleSchedulerReportsScheduleIdGetResponses,
+        GetScheduleSchedulerReportsScheduleIdGetErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/scheduler/reports/{schedule_id}",
+        ...options,
+    });
+};
+
+/**
+ * Update Schedule
+ *
+ * Update an existing scheduled report.
+ */
+export const updateScheduleSchedulerReportsScheduleIdPut = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        UpdateScheduleSchedulerReportsScheduleIdPutData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).put<
+        UpdateScheduleSchedulerReportsScheduleIdPutResponses,
+        UpdateScheduleSchedulerReportsScheduleIdPutErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/scheduler/reports/{schedule_id}",
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+        },
+    });
+};
+
+/**
+ * Send Schedule Now
+ *
+ * Trigger a scheduled report immediately.
+ */
+export const sendScheduleNowSchedulerReportsScheduleIdSendNowPost = <
+    ThrowOnError extends boolean = false,
+>(
+    options: Options<
+        SendScheduleNowSchedulerReportsScheduleIdSendNowPostData,
+        ThrowOnError
+    >,
+) => {
+    return (options.client ?? client).post<
+        SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses,
+        SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors,
+        ThrowOnError
+    >({
+        security: [
+            {
+                scheme: "bearer",
+                type: "http",
+            },
+        ],
+        url: "/scheduler/reports/{schedule_id}/send-now",
         ...options,
     });
 };

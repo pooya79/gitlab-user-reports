@@ -3,13 +3,16 @@
 import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ChartColumnBig, GitBranch, Users } from "lucide-react";
+import { ChartColumnBig, GitBranch, Users, CalendarClock } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
 import ProjectsTab from "./projects-tab";
 import UsersTab from "./users-tab";
+import SchedulesTab from "./schedules-tab";
 
 export default function DashboardPage() {
-    const [activeTab, setActiveTab] = useState<"projects" | "users">("users");
+    const [activeTab, setActiveTab] = useState<
+        "users" | "projects" | "schedules"
+    >("users");
 
     return (
         <div className="min-h-screen bg-muted/30">
@@ -41,6 +44,12 @@ export default function DashboardPage() {
                             isActive={activeTab === "projects"}
                             onClick={() => setActiveTab("projects")}
                         />
+                        <TabButton
+                            label="Schedules"
+                            icon={<CalendarClock className="size-4" />}
+                            isActive={activeTab === "schedules"}
+                            onClick={() => setActiveTab("schedules")}
+                        />
                     </nav>
                     <div className="flex justify-end">
                         <UserAvatar />
@@ -49,6 +58,7 @@ export default function DashboardPage() {
 
                 <UsersTab isActive={activeTab === "users"} />
                 <ProjectsTab isActive={activeTab === "projects"} />
+                <SchedulesTab isActive={activeTab === "schedules"} />
             </main>
         </div>
     );

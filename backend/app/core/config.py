@@ -23,11 +23,21 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_nested_delimiter="_", env_nested_max_split=1)
 
     mongodb: MongoDBSettings
+
+    smtp_host: str = "mail.yourdomain.com"
+    smtp_port: int = 587
+    smtp_username: str = "your_email@yourdomain.com"
+    smtp_password: str = "your_email_password"
+    smtp_use_tls: bool = True
+    smtp_use_ssl: bool = False
+    email_from: str = "your_email@yourdomain.com"
+
     app_name: str = "GitLab User Reports"
     debug: bool = False
     cors_origins: str | list[str] = []
     host: str = "127.0.0.1"
     port: int = 8000
+
     jwt_secret_key: str = "insecure-development-secret"
     jwt_algorithm: str = "HS256"
     jwt_access_token_exp_minutes: int = 360

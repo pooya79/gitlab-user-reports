@@ -23,6 +23,7 @@ services:
       - .env
     networks:
       - localnet
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     labels:
       - "traefik.enable=true"
       # It is good practice to explicitly define the entrypoint
@@ -34,6 +35,19 @@ services:
       # does NOT expect '/api' in the URL path.
       #- "traefik.http.middlewares.api-strip.stripprefix.prefixes=/api"
       #- "traefik.http.routers.backend.middlewares=api-strip"
+    depends_on:
+      - mongodb
+
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+    command: ["python", "-m", "app.cli.run_scheduler"]
+    restart: unless-stopped
 
   mongodb:
     image: mongo:latest
@@ -57,6 +71,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: frontend
+    env_file:
+      - .env
     networks:
       - localnet
     labels:
@@ -65,6 +81,8 @@ services:
       # Matches everything else
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
       - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+    depends_on:
+      - backend
 
 networks:
   localnet:

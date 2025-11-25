@@ -1524,6 +1524,417 @@
                 }
             }
         },
+        "/scheduler/reports": {
+            "get": {
+                "tags": ["scheduler"],
+                "summary": "List Schedules",
+                "description": "List all configured schedules.",
+                "operationId": "list_schedules_scheduler_reports_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/ScheduledReportResponse"
+                                    },
+                                    "type": "array",
+                                    "title": "Response List Schedules Scheduler Reports Get"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": ["scheduler"],
+                "summary": "Create Schedule",
+                "description": "Create a scheduled weekly report.",
+                "operationId": "create_schedule_scheduler_reports_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScheduledReportCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScheduledReportResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/scheduler/reports/{schedule_id}": {
+            "get": {
+                "tags": ["scheduler"],
+                "summary": "Get Schedule",
+                "description": "Fetch a single schedule.",
+                "operationId": "get_schedule_scheduler_reports__schedule_id__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "schedule_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Mongo ObjectId of the schedule",
+                            "title": "Schedule Id"
+                        },
+                        "description": "Mongo ObjectId of the schedule"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScheduledReportResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": ["scheduler"],
+                "summary": "Update Schedule",
+                "description": "Update an existing scheduled report.",
+                "operationId": "update_schedule_scheduler_reports__schedule_id__put",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "schedule_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Schedule Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScheduledReportUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScheduledReportResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["scheduler"],
+                "summary": "Delete Schedule",
+                "description": "Delete a schedule and remove its job.",
+                "operationId": "delete_schedule_scheduler_reports__schedule_id__delete",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "schedule_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Schedule Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful Response"
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/scheduler/reports/{schedule_id}/send-now": {
+            "post": {
+                "tags": ["scheduler"],
+                "summary": "Send Schedule Now",
+                "description": "Trigger a scheduled report immediately.",
+                "operationId": "send_schedule_now_scheduler_reports__schedule_id__send_now_post",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "schedule_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Schedule Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "title": "Response Send Schedule Now Scheduler Reports  Schedule Id  Send Now Post"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "tags": ["health"],
@@ -2697,6 +3108,346 @@
                 ],
                 "title": "ProjectsResponse",
                 "description": "Response schema for GitLab projects."
+            },
+            "ScheduledReportCreate": {
+                "properties": {
+                    "user_id": {
+                        "type": "integer",
+                        "title": "User Id",
+                        "description": "GitLab user ID to generate the report for."
+                    },
+                    "to": {
+                        "items": {
+                            "type": "string",
+                            "format": "email"
+                        },
+                        "type": "array",
+                        "title": "To",
+                        "description": "Primary recipient list for the report email."
+                    },
+                    "cc": {
+                        "items": {
+                            "type": "string",
+                            "format": "email"
+                        },
+                        "type": "array",
+                        "title": "Cc",
+                        "description": "Optional CC recipients for the report email."
+                    },
+                    "bcc": {
+                        "items": {
+                            "type": "string",
+                            "format": "email"
+                        },
+                        "type": "array",
+                        "title": "Bcc",
+                        "description": "Optional BCC recipients for the report email."
+                    },
+                    "subject": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Subject",
+                        "description": "Optional subject override. Defaults to a generated subject."
+                    },
+                    "day_of_week": {
+                        "type": "string",
+                        "title": "Day Of Week",
+                        "description": "APScheduler day-of-week value (mon-sun or 0-6). Uses UTC.",
+                        "default": "mon"
+                    },
+                    "hour_utc": {
+                        "type": "integer",
+                        "maximum": 23.0,
+                        "minimum": 0.0,
+                        "title": "Hour Utc",
+                        "description": "Hour of the day (UTC) to send the report.",
+                        "default": 7
+                    },
+                    "minute_utc": {
+                        "type": "integer",
+                        "maximum": 59.0,
+                        "minimum": 0.0,
+                        "title": "Minute Utc",
+                        "description": "Minute of the hour (UTC) to send the report.",
+                        "default": 0
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "title": "Active",
+                        "description": "Whether the schedule is enabled. Disabled schedules do not run.",
+                        "default": true
+                    }
+                },
+                "type": "object",
+                "required": ["user_id", "to"],
+                "title": "ScheduledReportCreate",
+                "description": "Payload for creating a new schedule."
+            },
+            "ScheduledReportResponse": {
+                "properties": {
+                    "user_id": {
+                        "type": "integer",
+                        "title": "User Id",
+                        "description": "GitLab user ID to generate the report for."
+                    },
+                    "to": {
+                        "items": {
+                            "type": "string",
+                            "format": "email"
+                        },
+                        "type": "array",
+                        "title": "To",
+                        "description": "Primary recipient list for the report email."
+                    },
+                    "cc": {
+                        "items": {
+                            "type": "string",
+                            "format": "email"
+                        },
+                        "type": "array",
+                        "title": "Cc",
+                        "description": "Optional CC recipients for the report email."
+                    },
+                    "bcc": {
+                        "items": {
+                            "type": "string",
+                            "format": "email"
+                        },
+                        "type": "array",
+                        "title": "Bcc",
+                        "description": "Optional BCC recipients for the report email."
+                    },
+                    "subject": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Subject",
+                        "description": "Optional subject override. Defaults to a generated subject."
+                    },
+                    "day_of_week": {
+                        "type": "string",
+                        "title": "Day Of Week",
+                        "description": "APScheduler day-of-week value (mon-sun or 0-6). Uses UTC.",
+                        "default": "mon"
+                    },
+                    "hour_utc": {
+                        "type": "integer",
+                        "maximum": 23.0,
+                        "minimum": 0.0,
+                        "title": "Hour Utc",
+                        "description": "Hour of the day (UTC) to send the report.",
+                        "default": 7
+                    },
+                    "minute_utc": {
+                        "type": "integer",
+                        "maximum": 59.0,
+                        "minimum": 0.0,
+                        "title": "Minute Utc",
+                        "description": "Minute of the hour (UTC) to send the report.",
+                        "default": 0
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "title": "Active",
+                        "description": "Whether the schedule is enabled. Disabled schedules do not run.",
+                        "default": true
+                    },
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "last_sent_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Last Sent At"
+                    },
+                    "last_error": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Last Error"
+                    },
+                    "created_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Created At"
+                    },
+                    "updated_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Updated At"
+                    },
+                    "next_run_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Next Run At",
+                        "description": "Next planned runtime for this schedule (UTC)."
+                    }
+                },
+                "type": "object",
+                "required": ["user_id", "to", "id"],
+                "title": "ScheduledReportResponse",
+                "description": "Response model describing a scheduled report."
+            },
+            "ScheduledReportUpdate": {
+                "properties": {
+                    "to": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string",
+                                    "format": "email"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "To"
+                    },
+                    "cc": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string",
+                                    "format": "email"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Cc"
+                    },
+                    "bcc": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string",
+                                    "format": "email"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Bcc"
+                    },
+                    "subject": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Subject"
+                    },
+                    "day_of_week": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Day Of Week"
+                    },
+                    "hour_utc": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "maximum": 23.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Hour Utc",
+                        "description": "Hour of the day (UTC) to send the report."
+                    },
+                    "minute_utc": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "maximum": 59.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Minute Utc",
+                        "description": "Minute of the hour (UTC) to send the report."
+                    },
+                    "active": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Active"
+                    }
+                },
+                "type": "object",
+                "title": "ScheduledReportUpdate",
+                "description": "Payload for updating an existing schedule."
             },
             "TimeSpentStats": {
                 "properties": {

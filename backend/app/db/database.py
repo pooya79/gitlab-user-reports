@@ -94,3 +94,9 @@ def init_db() -> None:
 
     user_performance_settings = db["user_performance_settings"]
     user_performance_settings.create_index("user_id", unique=True)
+
+    scheduled_reports = db["scheduled_reports"]
+    scheduled_reports.create_index("user_id")
+    scheduled_reports.create_index("active")
+    scheduled_reports.create_index("day_of_week")
+    scheduled_reports.create_index("manual_trigger_at")

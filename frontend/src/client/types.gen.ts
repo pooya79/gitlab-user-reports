@@ -838,6 +838,200 @@ export type ProjectsResponse = {
 };
 
 /**
+ * ScheduledReportCreate
+ *
+ * Payload for creating a new schedule.
+ */
+export type ScheduledReportCreate = {
+    /**
+     * User Id
+     *
+     * GitLab user ID to generate the report for.
+     */
+    user_id: number;
+    /**
+     * To
+     *
+     * Primary recipient list for the report email.
+     */
+    to: Array<string>;
+    /**
+     * Cc
+     *
+     * Optional CC recipients for the report email.
+     */
+    cc?: Array<string>;
+    /**
+     * Bcc
+     *
+     * Optional BCC recipients for the report email.
+     */
+    bcc?: Array<string>;
+    /**
+     * Subject
+     *
+     * Optional subject override. Defaults to a generated subject.
+     */
+    subject?: string | null;
+    /**
+     * Day Of Week
+     *
+     * APScheduler day-of-week value (mon-sun or 0-6). Uses UTC.
+     */
+    day_of_week?: string;
+    /**
+     * Hour Utc
+     *
+     * Hour of the day (UTC) to send the report.
+     */
+    hour_utc?: number;
+    /**
+     * Minute Utc
+     *
+     * Minute of the hour (UTC) to send the report.
+     */
+    minute_utc?: number;
+    /**
+     * Active
+     *
+     * Whether the schedule is enabled. Disabled schedules do not run.
+     */
+    active?: boolean;
+};
+
+/**
+ * ScheduledReportResponse
+ *
+ * Response model describing a scheduled report.
+ */
+export type ScheduledReportResponse = {
+    /**
+     * User Id
+     *
+     * GitLab user ID to generate the report for.
+     */
+    user_id: number;
+    /**
+     * To
+     *
+     * Primary recipient list for the report email.
+     */
+    to: Array<string>;
+    /**
+     * Cc
+     *
+     * Optional CC recipients for the report email.
+     */
+    cc?: Array<string>;
+    /**
+     * Bcc
+     *
+     * Optional BCC recipients for the report email.
+     */
+    bcc?: Array<string>;
+    /**
+     * Subject
+     *
+     * Optional subject override. Defaults to a generated subject.
+     */
+    subject?: string | null;
+    /**
+     * Day Of Week
+     *
+     * APScheduler day-of-week value (mon-sun or 0-6). Uses UTC.
+     */
+    day_of_week?: string;
+    /**
+     * Hour Utc
+     *
+     * Hour of the day (UTC) to send the report.
+     */
+    hour_utc?: number;
+    /**
+     * Minute Utc
+     *
+     * Minute of the hour (UTC) to send the report.
+     */
+    minute_utc?: number;
+    /**
+     * Active
+     *
+     * Whether the schedule is enabled. Disabled schedules do not run.
+     */
+    active?: boolean;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Last Sent At
+     */
+    last_sent_at?: string | null;
+    /**
+     * Last Error
+     */
+    last_error?: string | null;
+    /**
+     * Created At
+     */
+    created_at?: string | null;
+    /**
+     * Updated At
+     */
+    updated_at?: string | null;
+    /**
+     * Next Run At
+     *
+     * Next planned runtime for this schedule (UTC).
+     */
+    next_run_at?: string | null;
+};
+
+/**
+ * ScheduledReportUpdate
+ *
+ * Payload for updating an existing schedule.
+ */
+export type ScheduledReportUpdate = {
+    /**
+     * To
+     */
+    to?: Array<string> | null;
+    /**
+     * Cc
+     */
+    cc?: Array<string> | null;
+    /**
+     * Bcc
+     */
+    bcc?: Array<string> | null;
+    /**
+     * Subject
+     */
+    subject?: string | null;
+    /**
+     * Day Of Week
+     */
+    day_of_week?: string | number | null;
+    /**
+     * Hour Utc
+     *
+     * Hour of the day (UTC) to send the report.
+     */
+    hour_utc?: number | null;
+    /**
+     * Minute Utc
+     *
+     * Minute of the hour (UTC) to send the report.
+     */
+    minute_utc?: number | null;
+    /**
+     * Active
+     */
+    active?: boolean | null;
+};
+
+/**
  * TimeSpentStats
  *
  * Time-spent related activity such as logged time per day and per project.
@@ -2051,6 +2245,252 @@ export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses
 
 export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponse =
     GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses[keyof GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses];
+
+export type ListSchedulesSchedulerReportsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: "/scheduler/reports";
+};
+
+export type ListSchedulesSchedulerReportsGetErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+};
+
+export type ListSchedulesSchedulerReportsGetError =
+    ListSchedulesSchedulerReportsGetErrors[keyof ListSchedulesSchedulerReportsGetErrors];
+
+export type ListSchedulesSchedulerReportsGetResponses = {
+    /**
+     * Response List Schedules Scheduler Reports Get
+     *
+     * Successful Response
+     */
+    200: Array<ScheduledReportResponse>;
+};
+
+export type ListSchedulesSchedulerReportsGetResponse =
+    ListSchedulesSchedulerReportsGetResponses[keyof ListSchedulesSchedulerReportsGetResponses];
+
+export type CreateScheduleSchedulerReportsPostData = {
+    body: ScheduledReportCreate;
+    path?: never;
+    query?: never;
+    url: "/scheduler/reports";
+};
+
+export type CreateScheduleSchedulerReportsPostErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Resource not found
+     */
+    404: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+    /**
+     * Bad Gateway
+     */
+    502: ErrorResponseModel;
+};
+
+export type CreateScheduleSchedulerReportsPostError =
+    CreateScheduleSchedulerReportsPostErrors[keyof CreateScheduleSchedulerReportsPostErrors];
+
+export type CreateScheduleSchedulerReportsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ScheduledReportResponse;
+};
+
+export type CreateScheduleSchedulerReportsPostResponse =
+    CreateScheduleSchedulerReportsPostResponses[keyof CreateScheduleSchedulerReportsPostResponses];
+
+export type DeleteScheduleSchedulerReportsScheduleIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Schedule Id
+         */
+        schedule_id: string;
+    };
+    query?: never;
+    url: "/scheduler/reports/{schedule_id}";
+};
+
+export type DeleteScheduleSchedulerReportsScheduleIdDeleteErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Resource not found
+     */
+    404: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteScheduleSchedulerReportsScheduleIdDeleteError =
+    DeleteScheduleSchedulerReportsScheduleIdDeleteErrors[keyof DeleteScheduleSchedulerReportsScheduleIdDeleteErrors];
+
+export type DeleteScheduleSchedulerReportsScheduleIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteScheduleSchedulerReportsScheduleIdDeleteResponse =
+    DeleteScheduleSchedulerReportsScheduleIdDeleteResponses[keyof DeleteScheduleSchedulerReportsScheduleIdDeleteResponses];
+
+export type GetScheduleSchedulerReportsScheduleIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Schedule Id
+         *
+         * Mongo ObjectId of the schedule
+         */
+        schedule_id: string;
+    };
+    query?: never;
+    url: "/scheduler/reports/{schedule_id}";
+};
+
+export type GetScheduleSchedulerReportsScheduleIdGetErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Resource not found
+     */
+    404: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetScheduleSchedulerReportsScheduleIdGetError =
+    GetScheduleSchedulerReportsScheduleIdGetErrors[keyof GetScheduleSchedulerReportsScheduleIdGetErrors];
+
+export type GetScheduleSchedulerReportsScheduleIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ScheduledReportResponse;
+};
+
+export type GetScheduleSchedulerReportsScheduleIdGetResponse =
+    GetScheduleSchedulerReportsScheduleIdGetResponses[keyof GetScheduleSchedulerReportsScheduleIdGetResponses];
+
+export type UpdateScheduleSchedulerReportsScheduleIdPutData = {
+    body: ScheduledReportUpdate;
+    path: {
+        /**
+         * Schedule Id
+         */
+        schedule_id: string;
+    };
+    query?: never;
+    url: "/scheduler/reports/{schedule_id}";
+};
+
+export type UpdateScheduleSchedulerReportsScheduleIdPutErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Resource not found
+     */
+    404: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateScheduleSchedulerReportsScheduleIdPutError =
+    UpdateScheduleSchedulerReportsScheduleIdPutErrors[keyof UpdateScheduleSchedulerReportsScheduleIdPutErrors];
+
+export type UpdateScheduleSchedulerReportsScheduleIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ScheduledReportResponse;
+};
+
+export type UpdateScheduleSchedulerReportsScheduleIdPutResponse =
+    UpdateScheduleSchedulerReportsScheduleIdPutResponses[keyof UpdateScheduleSchedulerReportsScheduleIdPutResponses];
+
+export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostData = {
+    body?: never;
+    path: {
+        /**
+         * Schedule Id
+         */
+        schedule_id: string;
+    };
+    query?: never;
+    url: "/scheduler/reports/{schedule_id}/send-now";
+};
+
+export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors = {
+    /**
+     * Invalid credentials
+     */
+    401: ErrorResponseModel;
+    /**
+     * Resource not found
+     */
+    404: ErrorResponseModel;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorResponseModel;
+};
+
+export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostError =
+    SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors[keyof SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors];
+
+export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses = {
+    /**
+     * Response Send Schedule Now Scheduler Reports  Schedule Id  Send Now Post
+     *
+     * Successful Response
+     */
+    202: {
+        [key: string]: string;
+    };
+};
+
+export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponse =
+    SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses[keyof SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses];
 
 export type HealthHealthGetData = {
     body?: never;

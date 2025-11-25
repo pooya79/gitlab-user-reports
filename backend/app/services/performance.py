@@ -323,6 +323,8 @@ def get_time_spent_stats(
                 id
                 project {
                     id
+                    name
+                    avatarUrl
                     webUrl
                     fullPath
                     nameWithNamespace
