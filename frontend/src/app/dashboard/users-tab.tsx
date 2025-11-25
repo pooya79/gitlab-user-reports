@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { listGitlabUsersUsersGet, type GitLabUser } from "@/client";
+import { listGitlabUsersApiUsersGet, type GitLabUser } from "@/client";
 import { cn } from "@/lib/utils";
 import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
 import { clearAccessToken } from "@/lib/auth";
@@ -81,7 +81,7 @@ export default function UsersTab({ isActive }: UsersTabProps) {
             setUserError(null);
 
             try {
-                const res = await listGitlabUsersUsersGet({
+                const res = await listGitlabUsersApiUsersGet({
                     signal: controller.signal,
                     query: {
                         page: userPage,

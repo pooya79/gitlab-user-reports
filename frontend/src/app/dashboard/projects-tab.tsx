@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { listProjectsProjectsGet, type ProjectsResponse } from "@/client";
+import { listProjectsApiProjectsGet, type ProjectsResponse } from "@/client";
 import { cn } from "@/lib/utils";
 import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
 import { clearAccessToken } from "@/lib/auth";
@@ -78,7 +78,7 @@ export default function ProjectsTab({ isActive }: ProjectsTabProps) {
             setProjectError(null);
 
             try {
-                const res = await listProjectsProjectsGet({
+                const res = await listProjectsApiProjectsGet({
                     signal: controller.signal,
                     query: {
                         page: projectPage,

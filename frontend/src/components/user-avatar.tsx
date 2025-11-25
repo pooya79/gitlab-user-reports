@@ -15,7 +15,7 @@ import {
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ExternalLink, LogOut, Mail, Wrench } from "lucide-react";
 import { clearAccessToken } from "@/lib/auth";
-import { type GitlabUserInfo, getProfileAuthMeGet } from "@/client";
+import { type GitlabUserInfo, getProfileApiAuthMeGet } from "@/client";
 import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
 
 export function UserAvatar() {
@@ -25,7 +25,7 @@ export function UserAvatar() {
 
     const fetchUserInfo = async () => {
         try {
-            const res = await getProfileAuthMeGet();
+            const res = await getProfileApiAuthMeGet();
 
             if (res.error) {
                 const detail =

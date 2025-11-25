@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ExternalLink, Loader2, Shield } from "lucide-react";
 import {
-    getProjectMembersProjectsProjectIdMembersGet,
-    type GetProjectMembersProjectsProjectIdMembersGetResponse,
+    getProjectMembersApiProjectsProjectIdMembersGet,
+    type GetProjectMembersApiProjectsProjectIdMembersGetResponse,
 } from "@/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +28,7 @@ type MembersTabProps = {
 export default function MembersTab({ projectId }: MembersTabProps) {
     const isValidProjectId = Number.isFinite(projectId);
     const [members, setMembers] =
-        useState<GetProjectMembersProjectsProjectIdMembersGetResponse>([]);
+        useState<GetProjectMembersApiProjectsProjectIdMembersGetResponse>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { setGitlabTokenFailed } = useGitlabTokenStore();
@@ -47,10 +47,11 @@ export default function MembersTab({ projectId }: MembersTabProps) {
             setError(null);
 
             try {
-                const res = await getProjectMembersProjectsProjectIdMembersGet({
-                    signal: controller.signal,
-                    path: { project_id: projectId },
-                });
+                const res =
+                    await getProjectMembersApiProjectsProjectIdMembersGet({
+                        signal: controller.signal,
+                        path: { project_id: projectId },
+                    });
 
                 if (controller.signal.aborted) {
                     return;
@@ -172,7 +173,7 @@ function TabPlaceholder({
 function MemberCard({
     member,
 }: {
-    member: NonNullable<GetProjectMembersProjectsProjectIdMembersGetResponse>[number];
+    member: NonNullable<GetProjectMembersApiProjectsProjectIdMembersGetResponse>[number];
 }) {
     const initials = useMemo(
         () => getInitials(member.name, member.username),

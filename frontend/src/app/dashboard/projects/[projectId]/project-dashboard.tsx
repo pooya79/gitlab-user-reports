@@ -7,7 +7,7 @@ import type { DateRange } from "react-day-picker";
 import { ArrowLeft, ExternalLink, Loader2, Shield } from "lucide-react";
 
 import {
-    getProjectProjectsProjectIdGet,
+    getProjectApiProjectsProjectIdGet,
     type ProjectsResponse,
 } from "@/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -62,7 +62,7 @@ export default function ProjectDashboard({ projectId }: ProjectDashboardProps) {
             setError(null);
 
             try {
-                const res = await getProjectProjectsProjectIdGet({
+                const res = await getProjectApiProjectsProjectIdGet({
                     signal: controller.signal,
                     path: { project_id: projectId },
                 });

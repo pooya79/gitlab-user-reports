@@ -5,12 +5,12 @@
         "version": "0.1.0"
     },
     "paths": {
-        "/auth/login": {
+        "/api/auth/login": {
             "post": {
                 "tags": ["auth"],
                 "summary": "Login",
                 "description": "Authenticate the sole application user, provisioning if necessary.",
-                "operationId": "login_auth_login_post",
+                "operationId": "login_api_auth_login_post",
                 "parameters": [
                     {
                         "name": "User-Agent",
@@ -93,12 +93,12 @@
                 }
             }
         },
-        "/auth/logout": {
+        "/api/auth/logout": {
             "post": {
                 "tags": ["auth"],
                 "summary": "Logout",
                 "description": "Invalidate the currently active session.",
-                "operationId": "logout_auth_logout_post",
+                "operationId": "logout_api_auth_logout_post",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -138,12 +138,12 @@
                 ]
             }
         },
-        "/auth/gitlab": {
+        "/api/auth/gitlab": {
             "post": {
                 "tags": ["auth"],
                 "summary": "Update Gitlab Configuration",
                 "description": "Update the GitLab admin token and store user metadata.",
-                "operationId": "update_gitlab_configuration_auth_gitlab_post",
+                "operationId": "update_gitlab_configuration_api_auth_gitlab_post",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -213,12 +213,12 @@
                 ]
             }
         },
-        "/auth/gitlab/token-check": {
+        "/api/auth/gitlab/token-check": {
             "post": {
                 "tags": ["auth"],
                 "summary": "Check Gitlab Token",
                 "description": "Check the validity of a GitLab token.",
-                "operationId": "check_gitlab_token_auth_gitlab_token_check_post",
+                "operationId": "check_gitlab_token_api_auth_gitlab_token_check_post",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -288,12 +288,12 @@
                 ]
             }
         },
-        "/auth/me": {
+        "/api/auth/me": {
             "get": {
                 "tags": ["auth"],
                 "summary": "Get Profile",
                 "description": "Return the authenticated user's profile information.",
-                "operationId": "get_profile_auth_me_get",
+                "operationId": "get_profile_api_auth_me_get",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -333,12 +333,12 @@
                 ]
             }
         },
-        "/projects/{project_id}/members": {
+        "/api/projects/{project_id}/members": {
             "get": {
                 "tags": ["projects"],
                 "summary": "Get Project Members",
                 "description": "Get members of a GitLab project.",
-                "operationId": "get_project_members_projects__project_id__members_get",
+                "operationId": "get_project_members_api_projects__project_id__members_get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -412,7 +412,7 @@
                                     "items": {
                                         "$ref": "#/components/schemas/MembersResponse"
                                     },
-                                    "title": "Response Get Project Members Projects  Project Id  Members Get"
+                                    "title": "Response Get Project Members Api Projects  Project Id  Members Get"
                                 }
                             }
                         }
@@ -460,12 +460,12 @@
                 }
             }
         },
-        "/projects/": {
+        "/api/projects/": {
             "get": {
                 "tags": ["projects"],
                 "summary": "List Projects",
                 "description": "List GitLab projects with optional search filtering.",
-                "operationId": "list_projects_projects__get",
+                "operationId": "list_projects_api_projects__get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -546,7 +546,7 @@
                                     "items": {
                                         "$ref": "#/components/schemas/ProjectsResponse"
                                     },
-                                    "title": "Response List Projects Projects  Get"
+                                    "title": "Response List Projects Api Projects  Get"
                                 }
                             }
                         }
@@ -594,12 +594,12 @@
                 }
             }
         },
-        "/projects/{project_id}": {
+        "/api/projects/{project_id}": {
             "get": {
                 "tags": ["projects"],
                 "summary": "Get Project",
                 "description": "Get details of a specific GitLab project.",
-                "operationId": "get_project_projects__project_id__get",
+                "operationId": "get_project_api_projects__project_id__get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -672,12 +672,12 @@
                 }
             }
         },
-        "/users/": {
+        "/api/users/": {
             "get": {
                 "tags": ["users"],
                 "summary": "List GitLab Users",
                 "description": "Retrieve a list of GitLab users with optional search and pagination.",
-                "operationId": "list_gitlab_users_users__get",
+                "operationId": "list_gitlab_users_api_users__get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -749,7 +749,7 @@
                                     "items": {
                                         "$ref": "#/components/schemas/GitLabUser"
                                     },
-                                    "title": "Response List Gitlab Users Users  Get"
+                                    "title": "Response List Gitlab Users Api Users  Get"
                                 }
                             }
                         }
@@ -787,12 +787,12 @@
                 }
             }
         },
-        "/users/{user_id}": {
+        "/api/users/{user_id}": {
             "get": {
                 "tags": ["users"],
                 "summary": "Get Gitlab User",
                 "description": "Retrieve a GitLab user by their ID.",
-                "operationId": "get_gitlab_user_users__user_id__get",
+                "operationId": "get_gitlab_user_api_users__user_id__get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -855,12 +855,12 @@
                 }
             }
         },
-        "/users/{username}/timelogs": {
+        "/api/users/{username}/timelogs": {
             "get": {
                 "tags": ["users"],
                 "summary": "Get User Timelogs",
                 "description": "Retrieve user timelogs for a specified period.",
-                "operationId": "get_user_timelogs_users__username__timelogs_get",
+                "operationId": "get_user_timelogs_api_users__username__timelogs_get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -977,12 +977,12 @@
                 }
             }
         },
-        "/performance/users/{user_id}": {
+        "/api/performance/users/{user_id}": {
             "get": {
                 "tags": ["performance"],
                 "summary": "Get User Performance",
                 "description": "Calculate and retrieve user performance data over a specified time period.",
-                "operationId": "get_user_performance_performance_users__user_id__get",
+                "operationId": "get_user_performance_api_performance_users__user_id__get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1069,12 +1069,12 @@
                 }
             }
         },
-        "/performance/projects/{project_id}/users/{user_id}": {
+        "/api/performance/projects/{project_id}/users/{user_id}": {
             "get": {
                 "tags": ["performance"],
                 "summary": "Get Project Performance",
                 "description": "Calculate and retrieve project performance data over a specified time period.",
-                "operationId": "get_project_performance_performance_projects__project_id__users__user_id__get",
+                "operationId": "get_project_performance_api_performance_projects__project_id__users__user_id__get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1182,12 +1182,12 @@
                 }
             }
         },
-        "/performanceusers/{user_id}/time-spent": {
+        "/api/performanceusers/{user_id}/time-spent": {
             "get": {
                 "tags": ["performance"],
                 "summary": "Get Time Spent Statistics",
                 "description": "Retrieve time spent statistics for a user over a specified time period.",
-                "operationId": "get_time_spent_statistics_performanceusers__user_id__time_spent_get",
+                "operationId": "get_time_spent_statistics_api_performanceusers__user_id__time_spent_get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1284,11 +1284,11 @@
                 }
             }
         },
-        "/performance/users/{user_id}/settings": {
+        "/api/performance/users/{user_id}/settings": {
             "get": {
                 "tags": ["performance"],
                 "summary": "Get User Settings",
-                "operationId": "get_user_settings_performance_users__user_id__settings_get",
+                "operationId": "get_user_settings_api_performance_users__user_id__settings_get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1361,7 +1361,7 @@
             "post": {
                 "tags": ["performance"],
                 "summary": "Set User Settings",
-                "operationId": "set_user_settings_performance_users__user_id__settings_post",
+                "operationId": "set_user_settings_api_performance_users__user_id__settings_post",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1432,12 +1432,12 @@
                 }
             }
         },
-        "/performance/projects/{project_id}": {
+        "/api/performance/projects/{project_id}": {
             "get": {
                 "tags": ["performance"],
                 "summary": "Get General Project Performance",
                 "description": "Calculate and retrieve general project performance data over a specified time period.",
-                "operationId": "get_general_project_performance_performance_projects__project_id__get",
+                "operationId": "get_general_project_performance_api_performance_projects__project_id__get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1524,12 +1524,12 @@
                 }
             }
         },
-        "/scheduler/reports": {
+        "/api/scheduler/reports": {
             "get": {
                 "tags": ["scheduler"],
                 "summary": "List Schedules",
                 "description": "List all configured schedules.",
-                "operationId": "list_schedules_scheduler_reports_get",
+                "operationId": "list_schedules_api_scheduler_reports_get",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -1540,7 +1540,7 @@
                                         "$ref": "#/components/schemas/ScheduledReportResponse"
                                     },
                                     "type": "array",
-                                    "title": "Response List Schedules Scheduler Reports Get"
+                                    "title": "Response List Schedules Api Scheduler Reports Get"
                                 }
                             }
                         }
@@ -1576,7 +1576,7 @@
                 "tags": ["scheduler"],
                 "summary": "Create Schedule",
                 "description": "Create a scheduled weekly report.",
-                "operationId": "create_schedule_scheduler_reports_post",
+                "operationId": "create_schedule_api_scheduler_reports_post",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1656,12 +1656,12 @@
                 ]
             }
         },
-        "/scheduler/reports/{schedule_id}": {
+        "/api/scheduler/reports/{schedule_id}": {
             "get": {
                 "tags": ["scheduler"],
                 "summary": "Get Schedule",
                 "description": "Fetch a single schedule.",
-                "operationId": "get_schedule_scheduler_reports__schedule_id__get",
+                "operationId": "get_schedule_api_scheduler_reports__schedule_id__get",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1727,7 +1727,7 @@
                 "tags": ["scheduler"],
                 "summary": "Update Schedule",
                 "description": "Update an existing scheduled report.",
-                "operationId": "update_schedule_scheduler_reports__schedule_id__put",
+                "operationId": "update_schedule_api_scheduler_reports__schedule_id__put",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1801,7 +1801,7 @@
                 "tags": ["scheduler"],
                 "summary": "Delete Schedule",
                 "description": "Delete a schedule and remove its job.",
-                "operationId": "delete_schedule_scheduler_reports__schedule_id__delete",
+                "operationId": "delete_schedule_api_scheduler_reports__schedule_id__delete",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1855,12 +1855,12 @@
                 }
             }
         },
-        "/scheduler/reports/{schedule_id}/send-now": {
+        "/api/scheduler/reports/{schedule_id}/send-now": {
             "post": {
                 "tags": ["scheduler"],
                 "summary": "Send Schedule Now",
                 "description": "Trigger a scheduled report immediately.",
-                "operationId": "send_schedule_now_scheduler_reports__schedule_id__send_now_post",
+                "operationId": "send_schedule_now_api_scheduler_reports__schedule_id__send_now_post",
                 "security": [
                     {
                         "HTTPBearer": []
@@ -1887,7 +1887,7 @@
                                     "additionalProperties": {
                                         "type": "string"
                                     },
-                                    "title": "Response Send Schedule Now Scheduler Reports  Schedule Id  Send Now Post"
+                                    "title": "Response Send Schedule Now Api Scheduler Reports  Schedule Id  Send Now Post"
                                 }
                             }
                         }

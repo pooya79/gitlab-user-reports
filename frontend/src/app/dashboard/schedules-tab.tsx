@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    listSchedulesSchedulerReportsGet,
-    createScheduleSchedulerReportsPost,
-    updateScheduleSchedulerReportsScheduleIdPut,
-    deleteScheduleSchedulerReportsScheduleIdDelete,
-    sendScheduleNowSchedulerReportsScheduleIdSendNowPost,
-    listGitlabUsersUsersGet,
-    getGitlabUserUsersUserIdGet,
+    listSchedulesApiSchedulerReportsGet,
+    createScheduleApiSchedulerReportsPost,
+    updateScheduleApiSchedulerReportsScheduleIdPut,
+    deleteScheduleApiSchedulerReportsScheduleIdDelete,
+    sendScheduleNowApiSchedulerReportsScheduleIdSendNowPost,
+    listGitlabUsersApiUsersGet,
+    getGitlabUserApiUsersUserIdGet,
     type ScheduledReportCreate,
     type ScheduledReportResponse,
     type ScheduledReportUpdate,
@@ -73,7 +73,7 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
         setLoading(true);
         setError(null);
         try {
-            const res = await listSchedulesSchedulerReportsGet();
+            const res = await listSchedulesApiSchedulerReportsGet();
             if (res.error) {
                 const detail =
                     typeof res.error?.detail === "string"
@@ -88,7 +88,7 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
                 }
                 setError(
                     detail ||
-                        "We could not load schedules. Please try again later."
+                        "We could not load schedules. Please try again later.",
                 );
                 setSchedules([]);
                 return;
@@ -98,7 +98,7 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
             setError(
                 err instanceof Error
                     ? err.message
-                    : "Unexpected error loading schedules."
+                    : "Unexpected error loading schedules.",
             );
             setSchedules([]);
         } finally {
@@ -125,7 +125,7 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
             const updates: Record<number, string> = {};
             for (const id of missing) {
                 try {
-                    const res = await getGitlabUserUsersUserIdGet({
+                    const res = await getGitlabUserApiUsersUserIdGet({
                         path: { user_id: id },
                         signal: controller.signal,
                     });
@@ -146,11 +146,11 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
     }, [schedules, userNames]);
 
     const handleCreate = async (
-        payload: ScheduledReportCreate
+        payload: ScheduledReportCreate,
     ): Promise<boolean> => {
         setCreating(true);
         try {
-            const res = await createScheduleSchedulerReportsPost({
+            const res = await createScheduleApiSchedulerReportsPost({
                 body: payload,
             });
             if (res.error) {
@@ -170,11 +170,11 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
 
     const handleUpdate = async (
         id: string,
-        payload: ScheduledReportUpdate
+        payload: ScheduledReportUpdate,
     ): Promise<boolean> => {
         setSavingId(id);
         try {
-            const res = await updateScheduleSchedulerReportsScheduleIdPut({
+            const res = await updateScheduleApiSchedulerReportsScheduleIdPut({
                 path: { schedule_id: id },
                 body: payload,
             });
@@ -197,7 +197,7 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
     const handleDelete = async (id: string) => {
         setDeletingId(id);
         try {
-            await deleteScheduleSchedulerReportsScheduleIdDelete({
+            await deleteScheduleApiSchedulerReportsScheduleIdDelete({
                 path: { schedule_id: id },
             });
             await loadSchedules();
@@ -210,7 +210,7 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
         setSendingId(id);
         try {
             const res =
-                await sendScheduleNowSchedulerReportsScheduleIdSendNowPost({
+                await sendScheduleNowApiSchedulerReportsScheduleIdSendNowPost({
                     path: { schedule_id: id },
                 });
             if (res.error) {
@@ -344,7 +344,7 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
                                         <Badge variant="secondary">
                                             Next:{" "}
                                             {formatDateTime(
-                                                schedule.next_run_at
+                                                schedule.next_run_at,
                                             )}
                                         </Badge>
                                     )}
@@ -352,7 +352,7 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
                                         <Badge variant="outline">
                                             Last sent:{" "}
                                             {formatDateTime(
-                                                schedule.last_sent_at
+                                                schedule.last_sent_at,
                                             )}
                                         </Badge>
                                     )}
@@ -414,7 +414,7 @@ export default function SchedulesTab({ isActive }: SchedulesTabProps) {
                                     className="gap-2"
                                     onClick={() =>
                                         setEditingId(
-                                            isEditing ? null : schedule.id
+                                            isEditing ? null : schedule.id,
                                         )
                                     }
                                     disabled={isSending || isDeleting}
@@ -501,10 +501,10 @@ function ScheduleForm({
     userLabel,
 }: ScheduleFormProps) {
     const [userId, setUserId] = useState<number | null>(
-        initial?.user_id ?? null
+        initial?.user_id ?? null,
     );
     const [selectedUserLabel, setSelectedUserLabel] = useState<string>(
-        userLabel ?? (initial ? `User #${initial.user_id}` : "")
+        userLabel ?? (initial ? `User #${initial.user_id}` : ""),
     );
     const [userQuery, setUserQuery] = useState("");
     const [userResults, setUserResults] = useState<GitLabUser[]>([]);
@@ -531,7 +531,7 @@ function ScheduleForm({
         const handle = setTimeout(async () => {
             setSearchingUsers(true);
             try {
-                const res = await listGitlabUsersUsersGet({
+                const res = await listGitlabUsersApiUsersGet({
                     signal: controller.signal,
                     query: {
                         search: userQuery.trim(),
@@ -643,7 +643,7 @@ function ScheduleForm({
                                     onClick={() => {
                                         setUserId(user.id);
                                         setSelectedUserLabel(
-                                            `${user.name} (@${user.username})`
+                                            `${user.name} (@${user.username})`,
                                         );
                                         setUserResults([]);
                                     }}
@@ -659,7 +659,7 @@ function ScheduleForm({
                                             "size-4 text-primary",
                                             userId === user.id
                                                 ? "opacity-100"
-                                                : "opacity-0"
+                                                : "opacity-0",
                                         )}
                                     />
                                 </button>
@@ -759,13 +759,13 @@ function ScheduleForm({
                         "flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition",
                         active
                             ? "border-primary/30 bg-primary/10 text-primary"
-                            : "border-muted-foreground/30 text-muted-foreground"
+                            : "border-muted-foreground/30 text-muted-foreground",
                     )}
                 >
                     <Check
                         className={cn(
                             "size-4",
-                            active ? "opacity-100" : "opacity-40"
+                            active ? "opacity-100" : "opacity-40",
                         )}
                     />
                     {active ? "Active" : "Paused"}

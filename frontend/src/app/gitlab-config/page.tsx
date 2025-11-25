@@ -15,8 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import {
-    updateGitlabConfigurationAuthGitlabPost,
-    checkGitlabTokenAuthGitlabTokenCheckPost,
+    updateGitlabConfigurationApiAuthGitlabPost,
+    checkGitlabTokenApiAuthGitlabTokenCheckPost,
 } from "@/client";
 import { z, ZodError } from "zod";
 import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
@@ -51,7 +51,7 @@ export default function GitlabConfigPage() {
                 return;
             }
 
-            const res = await updateGitlabConfigurationAuthGitlabPost({
+            const res = await updateGitlabConfigurationApiAuthGitlabPost({
                 body: {
                     gitlab_url: gitlabUrl,
                     gitlab_admin_token: adminToken,
@@ -101,7 +101,7 @@ export default function GitlabConfigPage() {
                 gitlab_admin_token: adminToken,
             });
 
-            const res = await checkGitlabTokenAuthGitlabTokenCheckPost({
+            const res = await checkGitlabTokenApiAuthGitlabTokenCheckPost({
                 body: {
                     gitlab_url: gitlabUrl,
                     gitlab_admin_token: adminToken,

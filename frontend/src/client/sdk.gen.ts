@@ -3,77 +3,77 @@
 import type { Client, Options as Options2, TDataShape } from "./client";
 import { client } from "./client.gen";
 import type {
-    CheckGitlabTokenAuthGitlabTokenCheckPostData,
-    CheckGitlabTokenAuthGitlabTokenCheckPostErrors,
-    CheckGitlabTokenAuthGitlabTokenCheckPostResponses,
-    CreateScheduleSchedulerReportsPostData,
-    CreateScheduleSchedulerReportsPostErrors,
-    CreateScheduleSchedulerReportsPostResponses,
-    DeleteScheduleSchedulerReportsScheduleIdDeleteData,
-    DeleteScheduleSchedulerReportsScheduleIdDeleteErrors,
-    DeleteScheduleSchedulerReportsScheduleIdDeleteResponses,
-    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetData,
-    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors,
-    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses,
-    GetGitlabUserUsersUserIdGetData,
-    GetGitlabUserUsersUserIdGetErrors,
-    GetGitlabUserUsersUserIdGetResponses,
-    GetProfileAuthMeGetData,
-    GetProfileAuthMeGetErrors,
-    GetProfileAuthMeGetResponses,
-    GetProjectMembersProjectsProjectIdMembersGetData,
-    GetProjectMembersProjectsProjectIdMembersGetErrors,
-    GetProjectMembersProjectsProjectIdMembersGetResponses,
-    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetData,
-    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors,
-    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses,
-    GetProjectProjectsProjectIdGetData,
-    GetProjectProjectsProjectIdGetErrors,
-    GetProjectProjectsProjectIdGetResponses,
-    GetScheduleSchedulerReportsScheduleIdGetData,
-    GetScheduleSchedulerReportsScheduleIdGetErrors,
-    GetScheduleSchedulerReportsScheduleIdGetResponses,
-    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData,
-    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors,
-    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses,
-    GetUserPerformancePerformanceUsersUserIdGetData,
-    GetUserPerformancePerformanceUsersUserIdGetErrors,
-    GetUserPerformancePerformanceUsersUserIdGetResponses,
-    GetUserSettingsPerformanceUsersUserIdSettingsGetData,
-    GetUserSettingsPerformanceUsersUserIdSettingsGetErrors,
-    GetUserSettingsPerformanceUsersUserIdSettingsGetResponses,
-    GetUserTimelogsUsersUsernameTimelogsGetData,
-    GetUserTimelogsUsersUsernameTimelogsGetErrors,
-    GetUserTimelogsUsersUsernameTimelogsGetResponses,
+    CheckGitlabTokenApiAuthGitlabTokenCheckPostData,
+    CheckGitlabTokenApiAuthGitlabTokenCheckPostErrors,
+    CheckGitlabTokenApiAuthGitlabTokenCheckPostResponses,
+    CreateScheduleApiSchedulerReportsPostData,
+    CreateScheduleApiSchedulerReportsPostErrors,
+    CreateScheduleApiSchedulerReportsPostResponses,
+    DeleteScheduleApiSchedulerReportsScheduleIdDeleteData,
+    DeleteScheduleApiSchedulerReportsScheduleIdDeleteErrors,
+    DeleteScheduleApiSchedulerReportsScheduleIdDeleteResponses,
+    GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetData,
+    GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetErrors,
+    GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetResponses,
+    GetGitlabUserApiUsersUserIdGetData,
+    GetGitlabUserApiUsersUserIdGetErrors,
+    GetGitlabUserApiUsersUserIdGetResponses,
+    GetProfileApiAuthMeGetData,
+    GetProfileApiAuthMeGetErrors,
+    GetProfileApiAuthMeGetResponses,
+    GetProjectApiProjectsProjectIdGetData,
+    GetProjectApiProjectsProjectIdGetErrors,
+    GetProjectApiProjectsProjectIdGetResponses,
+    GetProjectMembersApiProjectsProjectIdMembersGetData,
+    GetProjectMembersApiProjectsProjectIdMembersGetErrors,
+    GetProjectMembersApiProjectsProjectIdMembersGetResponses,
+    GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetData,
+    GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetErrors,
+    GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetResponses,
+    GetScheduleApiSchedulerReportsScheduleIdGetData,
+    GetScheduleApiSchedulerReportsScheduleIdGetErrors,
+    GetScheduleApiSchedulerReportsScheduleIdGetResponses,
+    GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetData,
+    GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetErrors,
+    GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetResponses,
+    GetUserPerformanceApiPerformanceUsersUserIdGetData,
+    GetUserPerformanceApiPerformanceUsersUserIdGetErrors,
+    GetUserPerformanceApiPerformanceUsersUserIdGetResponses,
+    GetUserSettingsApiPerformanceUsersUserIdSettingsGetData,
+    GetUserSettingsApiPerformanceUsersUserIdSettingsGetErrors,
+    GetUserSettingsApiPerformanceUsersUserIdSettingsGetResponses,
+    GetUserTimelogsApiUsersUsernameTimelogsGetData,
+    GetUserTimelogsApiUsersUsernameTimelogsGetErrors,
+    GetUserTimelogsApiUsersUsernameTimelogsGetResponses,
     HealthHealthGetData,
     HealthHealthGetResponses,
-    ListGitlabUsersUsersGetData,
-    ListGitlabUsersUsersGetErrors,
-    ListGitlabUsersUsersGetResponses,
-    ListProjectsProjectsGetData,
-    ListProjectsProjectsGetErrors,
-    ListProjectsProjectsGetResponses,
-    ListSchedulesSchedulerReportsGetData,
-    ListSchedulesSchedulerReportsGetErrors,
-    ListSchedulesSchedulerReportsGetResponses,
-    LoginAuthLoginPostData,
-    LoginAuthLoginPostErrors,
-    LoginAuthLoginPostResponses,
-    LogoutAuthLogoutPostData,
-    LogoutAuthLogoutPostErrors,
-    LogoutAuthLogoutPostResponses,
-    SendScheduleNowSchedulerReportsScheduleIdSendNowPostData,
-    SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors,
-    SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses,
-    SetUserSettingsPerformanceUsersUserIdSettingsPostData,
-    SetUserSettingsPerformanceUsersUserIdSettingsPostErrors,
-    SetUserSettingsPerformanceUsersUserIdSettingsPostResponses,
-    UpdateGitlabConfigurationAuthGitlabPostData,
-    UpdateGitlabConfigurationAuthGitlabPostErrors,
-    UpdateGitlabConfigurationAuthGitlabPostResponses,
-    UpdateScheduleSchedulerReportsScheduleIdPutData,
-    UpdateScheduleSchedulerReportsScheduleIdPutErrors,
-    UpdateScheduleSchedulerReportsScheduleIdPutResponses,
+    ListGitlabUsersApiUsersGetData,
+    ListGitlabUsersApiUsersGetErrors,
+    ListGitlabUsersApiUsersGetResponses,
+    ListProjectsApiProjectsGetData,
+    ListProjectsApiProjectsGetErrors,
+    ListProjectsApiProjectsGetResponses,
+    ListSchedulesApiSchedulerReportsGetData,
+    ListSchedulesApiSchedulerReportsGetErrors,
+    ListSchedulesApiSchedulerReportsGetResponses,
+    LoginApiAuthLoginPostData,
+    LoginApiAuthLoginPostErrors,
+    LoginApiAuthLoginPostResponses,
+    LogoutApiAuthLogoutPostData,
+    LogoutApiAuthLogoutPostErrors,
+    LogoutApiAuthLogoutPostResponses,
+    SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostData,
+    SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostErrors,
+    SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostResponses,
+    SetUserSettingsApiPerformanceUsersUserIdSettingsPostData,
+    SetUserSettingsApiPerformanceUsersUserIdSettingsPostErrors,
+    SetUserSettingsApiPerformanceUsersUserIdSettingsPostResponses,
+    UpdateGitlabConfigurationApiAuthGitlabPostData,
+    UpdateGitlabConfigurationApiAuthGitlabPostErrors,
+    UpdateGitlabConfigurationApiAuthGitlabPostResponses,
+    UpdateScheduleApiSchedulerReportsScheduleIdPutData,
+    UpdateScheduleApiSchedulerReportsScheduleIdPutErrors,
+    UpdateScheduleApiSchedulerReportsScheduleIdPutResponses,
 } from "./types.gen";
 
 export type Options<
@@ -98,15 +98,15 @@ export type Options<
  *
  * Authenticate the sole application user, provisioning if necessary.
  */
-export const loginAuthLoginPost = <ThrowOnError extends boolean = false>(
-    options: Options<LoginAuthLoginPostData, ThrowOnError>,
+export const loginApiAuthLoginPost = <ThrowOnError extends boolean = false>(
+    options: Options<LoginApiAuthLoginPostData, ThrowOnError>,
 ) => {
     return (options.client ?? client).post<
-        LoginAuthLoginPostResponses,
-        LoginAuthLoginPostErrors,
+        LoginApiAuthLoginPostResponses,
+        LoginApiAuthLoginPostErrors,
         ThrowOnError
     >({
-        url: "/auth/login",
+        url: "/api/auth/login",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -120,12 +120,12 @@ export const loginAuthLoginPost = <ThrowOnError extends boolean = false>(
  *
  * Invalidate the currently active session.
  */
-export const logoutAuthLogoutPost = <ThrowOnError extends boolean = false>(
-    options?: Options<LogoutAuthLogoutPostData, ThrowOnError>,
+export const logoutApiAuthLogoutPost = <ThrowOnError extends boolean = false>(
+    options?: Options<LogoutApiAuthLogoutPostData, ThrowOnError>,
 ) => {
     return (options?.client ?? client).post<
-        LogoutAuthLogoutPostResponses,
-        LogoutAuthLogoutPostErrors,
+        LogoutApiAuthLogoutPostResponses,
+        LogoutApiAuthLogoutPostErrors,
         ThrowOnError
     >({
         security: [
@@ -134,7 +134,7 @@ export const logoutAuthLogoutPost = <ThrowOnError extends boolean = false>(
                 type: "http",
             },
         ],
-        url: "/auth/logout",
+        url: "/api/auth/logout",
         ...options,
     });
 };
@@ -144,14 +144,17 @@ export const logoutAuthLogoutPost = <ThrowOnError extends boolean = false>(
  *
  * Update the GitLab admin token and store user metadata.
  */
-export const updateGitlabConfigurationAuthGitlabPost = <
+export const updateGitlabConfigurationApiAuthGitlabPost = <
     ThrowOnError extends boolean = false,
 >(
-    options: Options<UpdateGitlabConfigurationAuthGitlabPostData, ThrowOnError>,
+    options: Options<
+        UpdateGitlabConfigurationApiAuthGitlabPostData,
+        ThrowOnError
+    >,
 ) => {
     return (options.client ?? client).post<
-        UpdateGitlabConfigurationAuthGitlabPostResponses,
-        UpdateGitlabConfigurationAuthGitlabPostErrors,
+        UpdateGitlabConfigurationApiAuthGitlabPostResponses,
+        UpdateGitlabConfigurationApiAuthGitlabPostErrors,
         ThrowOnError
     >({
         security: [
@@ -160,7 +163,7 @@ export const updateGitlabConfigurationAuthGitlabPost = <
                 type: "http",
             },
         ],
-        url: "/auth/gitlab",
+        url: "/api/auth/gitlab",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -174,17 +177,17 @@ export const updateGitlabConfigurationAuthGitlabPost = <
  *
  * Check the validity of a GitLab token.
  */
-export const checkGitlabTokenAuthGitlabTokenCheckPost = <
+export const checkGitlabTokenApiAuthGitlabTokenCheckPost = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        CheckGitlabTokenAuthGitlabTokenCheckPostData,
+        CheckGitlabTokenApiAuthGitlabTokenCheckPostData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).post<
-        CheckGitlabTokenAuthGitlabTokenCheckPostResponses,
-        CheckGitlabTokenAuthGitlabTokenCheckPostErrors,
+        CheckGitlabTokenApiAuthGitlabTokenCheckPostResponses,
+        CheckGitlabTokenApiAuthGitlabTokenCheckPostErrors,
         ThrowOnError
     >({
         security: [
@@ -193,7 +196,7 @@ export const checkGitlabTokenAuthGitlabTokenCheckPost = <
                 type: "http",
             },
         ],
-        url: "/auth/gitlab/token-check",
+        url: "/api/auth/gitlab/token-check",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -207,12 +210,12 @@ export const checkGitlabTokenAuthGitlabTokenCheckPost = <
  *
  * Return the authenticated user's profile information.
  */
-export const getProfileAuthMeGet = <ThrowOnError extends boolean = false>(
-    options?: Options<GetProfileAuthMeGetData, ThrowOnError>,
+export const getProfileApiAuthMeGet = <ThrowOnError extends boolean = false>(
+    options?: Options<GetProfileApiAuthMeGetData, ThrowOnError>,
 ) => {
     return (options?.client ?? client).get<
-        GetProfileAuthMeGetResponses,
-        GetProfileAuthMeGetErrors,
+        GetProfileApiAuthMeGetResponses,
+        GetProfileApiAuthMeGetErrors,
         ThrowOnError
     >({
         security: [
@@ -221,7 +224,7 @@ export const getProfileAuthMeGet = <ThrowOnError extends boolean = false>(
                 type: "http",
             },
         ],
-        url: "/auth/me",
+        url: "/api/auth/me",
         ...options,
     });
 };
@@ -231,17 +234,17 @@ export const getProfileAuthMeGet = <ThrowOnError extends boolean = false>(
  *
  * Get members of a GitLab project.
  */
-export const getProjectMembersProjectsProjectIdMembersGet = <
+export const getProjectMembersApiProjectsProjectIdMembersGet = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetProjectMembersProjectsProjectIdMembersGetData,
+        GetProjectMembersApiProjectsProjectIdMembersGetData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).get<
-        GetProjectMembersProjectsProjectIdMembersGetResponses,
-        GetProjectMembersProjectsProjectIdMembersGetErrors,
+        GetProjectMembersApiProjectsProjectIdMembersGetResponses,
+        GetProjectMembersApiProjectsProjectIdMembersGetErrors,
         ThrowOnError
     >({
         security: [
@@ -250,7 +253,7 @@ export const getProjectMembersProjectsProjectIdMembersGet = <
                 type: "http",
             },
         ],
-        url: "/projects/{project_id}/members",
+        url: "/api/projects/{project_id}/members",
         ...options,
     });
 };
@@ -260,12 +263,14 @@ export const getProjectMembersProjectsProjectIdMembersGet = <
  *
  * List GitLab projects with optional search filtering.
  */
-export const listProjectsProjectsGet = <ThrowOnError extends boolean = false>(
-    options?: Options<ListProjectsProjectsGetData, ThrowOnError>,
+export const listProjectsApiProjectsGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options?: Options<ListProjectsApiProjectsGetData, ThrowOnError>,
 ) => {
     return (options?.client ?? client).get<
-        ListProjectsProjectsGetResponses,
-        ListProjectsProjectsGetErrors,
+        ListProjectsApiProjectsGetResponses,
+        ListProjectsApiProjectsGetErrors,
         ThrowOnError
     >({
         security: [
@@ -274,7 +279,7 @@ export const listProjectsProjectsGet = <ThrowOnError extends boolean = false>(
                 type: "http",
             },
         ],
-        url: "/projects/",
+        url: "/api/projects/",
         ...options,
     });
 };
@@ -284,14 +289,14 @@ export const listProjectsProjectsGet = <ThrowOnError extends boolean = false>(
  *
  * Get details of a specific GitLab project.
  */
-export const getProjectProjectsProjectIdGet = <
+export const getProjectApiProjectsProjectIdGet = <
     ThrowOnError extends boolean = false,
 >(
-    options: Options<GetProjectProjectsProjectIdGetData, ThrowOnError>,
+    options: Options<GetProjectApiProjectsProjectIdGetData, ThrowOnError>,
 ) => {
     return (options.client ?? client).get<
-        GetProjectProjectsProjectIdGetResponses,
-        GetProjectProjectsProjectIdGetErrors,
+        GetProjectApiProjectsProjectIdGetResponses,
+        GetProjectApiProjectsProjectIdGetErrors,
         ThrowOnError
     >({
         security: [
@@ -300,7 +305,7 @@ export const getProjectProjectsProjectIdGet = <
                 type: "http",
             },
         ],
-        url: "/projects/{project_id}",
+        url: "/api/projects/{project_id}",
         ...options,
     });
 };
@@ -310,12 +315,14 @@ export const getProjectProjectsProjectIdGet = <
  *
  * Retrieve a list of GitLab users with optional search and pagination.
  */
-export const listGitlabUsersUsersGet = <ThrowOnError extends boolean = false>(
-    options?: Options<ListGitlabUsersUsersGetData, ThrowOnError>,
+export const listGitlabUsersApiUsersGet = <
+    ThrowOnError extends boolean = false,
+>(
+    options?: Options<ListGitlabUsersApiUsersGetData, ThrowOnError>,
 ) => {
     return (options?.client ?? client).get<
-        ListGitlabUsersUsersGetResponses,
-        ListGitlabUsersUsersGetErrors,
+        ListGitlabUsersApiUsersGetResponses,
+        ListGitlabUsersApiUsersGetErrors,
         ThrowOnError
     >({
         security: [
@@ -324,7 +331,7 @@ export const listGitlabUsersUsersGet = <ThrowOnError extends boolean = false>(
                 type: "http",
             },
         ],
-        url: "/users/",
+        url: "/api/users/",
         ...options,
     });
 };
@@ -334,14 +341,14 @@ export const listGitlabUsersUsersGet = <ThrowOnError extends boolean = false>(
  *
  * Retrieve a GitLab user by their ID.
  */
-export const getGitlabUserUsersUserIdGet = <
+export const getGitlabUserApiUsersUserIdGet = <
     ThrowOnError extends boolean = false,
 >(
-    options: Options<GetGitlabUserUsersUserIdGetData, ThrowOnError>,
+    options: Options<GetGitlabUserApiUsersUserIdGetData, ThrowOnError>,
 ) => {
     return (options.client ?? client).get<
-        GetGitlabUserUsersUserIdGetResponses,
-        GetGitlabUserUsersUserIdGetErrors,
+        GetGitlabUserApiUsersUserIdGetResponses,
+        GetGitlabUserApiUsersUserIdGetErrors,
         ThrowOnError
     >({
         security: [
@@ -350,7 +357,7 @@ export const getGitlabUserUsersUserIdGet = <
                 type: "http",
             },
         ],
-        url: "/users/{user_id}",
+        url: "/api/users/{user_id}",
         ...options,
     });
 };
@@ -360,14 +367,17 @@ export const getGitlabUserUsersUserIdGet = <
  *
  * Retrieve user timelogs for a specified period.
  */
-export const getUserTimelogsUsersUsernameTimelogsGet = <
+export const getUserTimelogsApiUsersUsernameTimelogsGet = <
     ThrowOnError extends boolean = false,
 >(
-    options: Options<GetUserTimelogsUsersUsernameTimelogsGetData, ThrowOnError>,
+    options: Options<
+        GetUserTimelogsApiUsersUsernameTimelogsGetData,
+        ThrowOnError
+    >,
 ) => {
     return (options.client ?? client).get<
-        GetUserTimelogsUsersUsernameTimelogsGetResponses,
-        GetUserTimelogsUsersUsernameTimelogsGetErrors,
+        GetUserTimelogsApiUsersUsernameTimelogsGetResponses,
+        GetUserTimelogsApiUsersUsernameTimelogsGetErrors,
         ThrowOnError
     >({
         security: [
@@ -376,7 +386,7 @@ export const getUserTimelogsUsersUsernameTimelogsGet = <
                 type: "http",
             },
         ],
-        url: "/users/{username}/timelogs",
+        url: "/api/users/{username}/timelogs",
         ...options,
     });
 };
@@ -386,17 +396,17 @@ export const getUserTimelogsUsersUsernameTimelogsGet = <
  *
  * Calculate and retrieve user performance data over a specified time period.
  */
-export const getUserPerformancePerformanceUsersUserIdGet = <
+export const getUserPerformanceApiPerformanceUsersUserIdGet = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetUserPerformancePerformanceUsersUserIdGetData,
+        GetUserPerformanceApiPerformanceUsersUserIdGetData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).get<
-        GetUserPerformancePerformanceUsersUserIdGetResponses,
-        GetUserPerformancePerformanceUsersUserIdGetErrors,
+        GetUserPerformanceApiPerformanceUsersUserIdGetResponses,
+        GetUserPerformanceApiPerformanceUsersUserIdGetErrors,
         ThrowOnError
     >({
         security: [
@@ -405,7 +415,7 @@ export const getUserPerformancePerformanceUsersUserIdGet = <
                 type: "http",
             },
         ],
-        url: "/performance/users/{user_id}",
+        url: "/api/performance/users/{user_id}",
         ...options,
     });
 };
@@ -415,46 +425,45 @@ export const getUserPerformancePerformanceUsersUserIdGet = <
  *
  * Calculate and retrieve project performance data over a specified time period.
  */
-export const getProjectPerformancePerformanceProjectsProjectIdUsersUserIdGet = <
-    ThrowOnError extends boolean = false,
->(
-    options: Options<
-        GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetData,
-        ThrowOnError
-    >,
-) => {
-    return (options.client ?? client).get<
-        GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses,
-        GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors,
-        ThrowOnError
-    >({
-        security: [
-            {
-                scheme: "bearer",
-                type: "http",
-            },
-        ],
-        url: "/performance/projects/{project_id}/users/{user_id}",
-        ...options,
-    });
-};
+export const getProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGet =
+    <ThrowOnError extends boolean = false>(
+        options: Options<
+            GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetData,
+            ThrowOnError
+        >,
+    ) => {
+        return (options.client ?? client).get<
+            GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetResponses,
+            GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetErrors,
+            ThrowOnError
+        >({
+            security: [
+                {
+                    scheme: "bearer",
+                    type: "http",
+                },
+            ],
+            url: "/api/performance/projects/{project_id}/users/{user_id}",
+            ...options,
+        });
+    };
 
 /**
  * Get Time Spent Statistics
  *
  * Retrieve time spent statistics for a user over a specified time period.
  */
-export const getTimeSpentStatisticsPerformanceusersUserIdTimeSpentGet = <
+export const getTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGet = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData,
+        GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).get<
-        GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses,
-        GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors,
+        GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetResponses,
+        GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetErrors,
         ThrowOnError
     >({
         security: [
@@ -463,7 +472,7 @@ export const getTimeSpentStatisticsPerformanceusersUserIdTimeSpentGet = <
                 type: "http",
             },
         ],
-        url: "/performanceusers/{user_id}/time-spent",
+        url: "/api/performanceusers/{user_id}/time-spent",
         ...options,
     });
 };
@@ -471,17 +480,17 @@ export const getTimeSpentStatisticsPerformanceusersUserIdTimeSpentGet = <
 /**
  * Get User Settings
  */
-export const getUserSettingsPerformanceUsersUserIdSettingsGet = <
+export const getUserSettingsApiPerformanceUsersUserIdSettingsGet = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetUserSettingsPerformanceUsersUserIdSettingsGetData,
+        GetUserSettingsApiPerformanceUsersUserIdSettingsGetData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).get<
-        GetUserSettingsPerformanceUsersUserIdSettingsGetResponses,
-        GetUserSettingsPerformanceUsersUserIdSettingsGetErrors,
+        GetUserSettingsApiPerformanceUsersUserIdSettingsGetResponses,
+        GetUserSettingsApiPerformanceUsersUserIdSettingsGetErrors,
         ThrowOnError
     >({
         security: [
@@ -490,7 +499,7 @@ export const getUserSettingsPerformanceUsersUserIdSettingsGet = <
                 type: "http",
             },
         ],
-        url: "/performance/users/{user_id}/settings",
+        url: "/api/performance/users/{user_id}/settings",
         ...options,
     });
 };
@@ -498,17 +507,17 @@ export const getUserSettingsPerformanceUsersUserIdSettingsGet = <
 /**
  * Set User Settings
  */
-export const setUserSettingsPerformanceUsersUserIdSettingsPost = <
+export const setUserSettingsApiPerformanceUsersUserIdSettingsPost = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        SetUserSettingsPerformanceUsersUserIdSettingsPostData,
+        SetUserSettingsApiPerformanceUsersUserIdSettingsPostData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).post<
-        SetUserSettingsPerformanceUsersUserIdSettingsPostResponses,
-        SetUserSettingsPerformanceUsersUserIdSettingsPostErrors,
+        SetUserSettingsApiPerformanceUsersUserIdSettingsPostResponses,
+        SetUserSettingsApiPerformanceUsersUserIdSettingsPostErrors,
         ThrowOnError
     >({
         security: [
@@ -517,7 +526,7 @@ export const setUserSettingsPerformanceUsersUserIdSettingsPost = <
                 type: "http",
             },
         ],
-        url: "/performance/users/{user_id}/settings",
+        url: "/api/performance/users/{user_id}/settings",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -531,17 +540,17 @@ export const setUserSettingsPerformanceUsersUserIdSettingsPost = <
  *
  * Calculate and retrieve general project performance data over a specified time period.
  */
-export const getGeneralProjectPerformancePerformanceProjectsProjectIdGet = <
+export const getGeneralProjectPerformanceApiPerformanceProjectsProjectIdGet = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetGeneralProjectPerformancePerformanceProjectsProjectIdGetData,
+        GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).get<
-        GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses,
-        GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors,
+        GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetResponses,
+        GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetErrors,
         ThrowOnError
     >({
         security: [
@@ -550,7 +559,7 @@ export const getGeneralProjectPerformancePerformanceProjectsProjectIdGet = <
                 type: "http",
             },
         ],
-        url: "/performance/projects/{project_id}",
+        url: "/api/performance/projects/{project_id}",
         ...options,
     });
 };
@@ -560,14 +569,14 @@ export const getGeneralProjectPerformancePerformanceProjectsProjectIdGet = <
  *
  * List all configured schedules.
  */
-export const listSchedulesSchedulerReportsGet = <
+export const listSchedulesApiSchedulerReportsGet = <
     ThrowOnError extends boolean = false,
 >(
-    options?: Options<ListSchedulesSchedulerReportsGetData, ThrowOnError>,
+    options?: Options<ListSchedulesApiSchedulerReportsGetData, ThrowOnError>,
 ) => {
     return (options?.client ?? client).get<
-        ListSchedulesSchedulerReportsGetResponses,
-        ListSchedulesSchedulerReportsGetErrors,
+        ListSchedulesApiSchedulerReportsGetResponses,
+        ListSchedulesApiSchedulerReportsGetErrors,
         ThrowOnError
     >({
         security: [
@@ -576,7 +585,7 @@ export const listSchedulesSchedulerReportsGet = <
                 type: "http",
             },
         ],
-        url: "/scheduler/reports",
+        url: "/api/scheduler/reports",
         ...options,
     });
 };
@@ -586,14 +595,14 @@ export const listSchedulesSchedulerReportsGet = <
  *
  * Create a scheduled weekly report.
  */
-export const createScheduleSchedulerReportsPost = <
+export const createScheduleApiSchedulerReportsPost = <
     ThrowOnError extends boolean = false,
 >(
-    options: Options<CreateScheduleSchedulerReportsPostData, ThrowOnError>,
+    options: Options<CreateScheduleApiSchedulerReportsPostData, ThrowOnError>,
 ) => {
     return (options.client ?? client).post<
-        CreateScheduleSchedulerReportsPostResponses,
-        CreateScheduleSchedulerReportsPostErrors,
+        CreateScheduleApiSchedulerReportsPostResponses,
+        CreateScheduleApiSchedulerReportsPostErrors,
         ThrowOnError
     >({
         security: [
@@ -602,7 +611,7 @@ export const createScheduleSchedulerReportsPost = <
                 type: "http",
             },
         ],
-        url: "/scheduler/reports",
+        url: "/api/scheduler/reports",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -616,17 +625,17 @@ export const createScheduleSchedulerReportsPost = <
  *
  * Delete a schedule and remove its job.
  */
-export const deleteScheduleSchedulerReportsScheduleIdDelete = <
+export const deleteScheduleApiSchedulerReportsScheduleIdDelete = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        DeleteScheduleSchedulerReportsScheduleIdDeleteData,
+        DeleteScheduleApiSchedulerReportsScheduleIdDeleteData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).delete<
-        DeleteScheduleSchedulerReportsScheduleIdDeleteResponses,
-        DeleteScheduleSchedulerReportsScheduleIdDeleteErrors,
+        DeleteScheduleApiSchedulerReportsScheduleIdDeleteResponses,
+        DeleteScheduleApiSchedulerReportsScheduleIdDeleteErrors,
         ThrowOnError
     >({
         security: [
@@ -635,7 +644,7 @@ export const deleteScheduleSchedulerReportsScheduleIdDelete = <
                 type: "http",
             },
         ],
-        url: "/scheduler/reports/{schedule_id}",
+        url: "/api/scheduler/reports/{schedule_id}",
         ...options,
     });
 };
@@ -645,17 +654,17 @@ export const deleteScheduleSchedulerReportsScheduleIdDelete = <
  *
  * Fetch a single schedule.
  */
-export const getScheduleSchedulerReportsScheduleIdGet = <
+export const getScheduleApiSchedulerReportsScheduleIdGet = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        GetScheduleSchedulerReportsScheduleIdGetData,
+        GetScheduleApiSchedulerReportsScheduleIdGetData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).get<
-        GetScheduleSchedulerReportsScheduleIdGetResponses,
-        GetScheduleSchedulerReportsScheduleIdGetErrors,
+        GetScheduleApiSchedulerReportsScheduleIdGetResponses,
+        GetScheduleApiSchedulerReportsScheduleIdGetErrors,
         ThrowOnError
     >({
         security: [
@@ -664,7 +673,7 @@ export const getScheduleSchedulerReportsScheduleIdGet = <
                 type: "http",
             },
         ],
-        url: "/scheduler/reports/{schedule_id}",
+        url: "/api/scheduler/reports/{schedule_id}",
         ...options,
     });
 };
@@ -674,17 +683,17 @@ export const getScheduleSchedulerReportsScheduleIdGet = <
  *
  * Update an existing scheduled report.
  */
-export const updateScheduleSchedulerReportsScheduleIdPut = <
+export const updateScheduleApiSchedulerReportsScheduleIdPut = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        UpdateScheduleSchedulerReportsScheduleIdPutData,
+        UpdateScheduleApiSchedulerReportsScheduleIdPutData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).put<
-        UpdateScheduleSchedulerReportsScheduleIdPutResponses,
-        UpdateScheduleSchedulerReportsScheduleIdPutErrors,
+        UpdateScheduleApiSchedulerReportsScheduleIdPutResponses,
+        UpdateScheduleApiSchedulerReportsScheduleIdPutErrors,
         ThrowOnError
     >({
         security: [
@@ -693,7 +702,7 @@ export const updateScheduleSchedulerReportsScheduleIdPut = <
                 type: "http",
             },
         ],
-        url: "/scheduler/reports/{schedule_id}",
+        url: "/api/scheduler/reports/{schedule_id}",
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -707,17 +716,17 @@ export const updateScheduleSchedulerReportsScheduleIdPut = <
  *
  * Trigger a scheduled report immediately.
  */
-export const sendScheduleNowSchedulerReportsScheduleIdSendNowPost = <
+export const sendScheduleNowApiSchedulerReportsScheduleIdSendNowPost = <
     ThrowOnError extends boolean = false,
 >(
     options: Options<
-        SendScheduleNowSchedulerReportsScheduleIdSendNowPostData,
+        SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostData,
         ThrowOnError
     >,
 ) => {
     return (options.client ?? client).post<
-        SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses,
-        SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors,
+        SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostResponses,
+        SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostErrors,
         ThrowOnError
     >({
         security: [
@@ -726,7 +735,7 @@ export const sendScheduleNowSchedulerReportsScheduleIdSendNowPost = <
                 type: "http",
             },
         ],
-        url: "/scheduler/reports/{schedule_id}/send-now",
+        url: "/api/scheduler/reports/{schedule_id}/send-now",
         ...options,
     });
 };

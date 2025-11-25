@@ -1387,7 +1387,7 @@ export type AppSchemasUsersTimelogNode = {
     mergeRequest?: AppSchemasUsersMergeRequestInfo | null;
 };
 
-export type LoginAuthLoginPostData = {
+export type LoginApiAuthLoginPostData = {
     body: LoginRequest;
     headers?: {
         /**
@@ -1397,10 +1397,10 @@ export type LoginAuthLoginPostData = {
     };
     path?: never;
     query?: never;
-    url: "/auth/login";
+    url: "/api/auth/login";
 };
 
-export type LoginAuthLoginPostErrors = {
+export type LoginApiAuthLoginPostErrors = {
     /**
      * Bad Request
      */
@@ -1419,27 +1419,27 @@ export type LoginAuthLoginPostErrors = {
     500: ErrorResponseModel;
 };
 
-export type LoginAuthLoginPostError =
-    LoginAuthLoginPostErrors[keyof LoginAuthLoginPostErrors];
+export type LoginApiAuthLoginPostError =
+    LoginApiAuthLoginPostErrors[keyof LoginApiAuthLoginPostErrors];
 
-export type LoginAuthLoginPostResponses = {
+export type LoginApiAuthLoginPostResponses = {
     /**
      * Successful Response
      */
     200: LoginResponse;
 };
 
-export type LoginAuthLoginPostResponse =
-    LoginAuthLoginPostResponses[keyof LoginAuthLoginPostResponses];
+export type LoginApiAuthLoginPostResponse =
+    LoginApiAuthLoginPostResponses[keyof LoginApiAuthLoginPostResponses];
 
-export type LogoutAuthLogoutPostData = {
+export type LogoutApiAuthLogoutPostData = {
     body?: never;
     path?: never;
     query?: never;
-    url: "/auth/logout";
+    url: "/api/auth/logout";
 };
 
-export type LogoutAuthLogoutPostErrors = {
+export type LogoutApiAuthLogoutPostErrors = {
     /**
      * Invalid credentials
      */
@@ -1450,27 +1450,27 @@ export type LogoutAuthLogoutPostErrors = {
     500: ErrorResponseModel;
 };
 
-export type LogoutAuthLogoutPostError =
-    LogoutAuthLogoutPostErrors[keyof LogoutAuthLogoutPostErrors];
+export type LogoutApiAuthLogoutPostError =
+    LogoutApiAuthLogoutPostErrors[keyof LogoutApiAuthLogoutPostErrors];
 
-export type LogoutAuthLogoutPostResponses = {
+export type LogoutApiAuthLogoutPostResponses = {
     /**
      * Successful Response
      */
     200: LogoutResponse;
 };
 
-export type LogoutAuthLogoutPostResponse =
-    LogoutAuthLogoutPostResponses[keyof LogoutAuthLogoutPostResponses];
+export type LogoutApiAuthLogoutPostResponse =
+    LogoutApiAuthLogoutPostResponses[keyof LogoutApiAuthLogoutPostResponses];
 
-export type UpdateGitlabConfigurationAuthGitlabPostData = {
+export type UpdateGitlabConfigurationApiAuthGitlabPostData = {
     body: GitLabConfigRequest;
     path?: never;
     query?: never;
-    url: "/auth/gitlab";
+    url: "/api/auth/gitlab";
 };
 
-export type UpdateGitlabConfigurationAuthGitlabPostErrors = {
+export type UpdateGitlabConfigurationApiAuthGitlabPostErrors = {
     /**
      * Bad Request
      */
@@ -1489,27 +1489,27 @@ export type UpdateGitlabConfigurationAuthGitlabPostErrors = {
     500: ErrorResponseModel;
 };
 
-export type UpdateGitlabConfigurationAuthGitlabPostError =
-    UpdateGitlabConfigurationAuthGitlabPostErrors[keyof UpdateGitlabConfigurationAuthGitlabPostErrors];
+export type UpdateGitlabConfigurationApiAuthGitlabPostError =
+    UpdateGitlabConfigurationApiAuthGitlabPostErrors[keyof UpdateGitlabConfigurationApiAuthGitlabPostErrors];
 
-export type UpdateGitlabConfigurationAuthGitlabPostResponses = {
+export type UpdateGitlabConfigurationApiAuthGitlabPostResponses = {
     /**
      * Successful Response
      */
     200: GitLabConfigResponse;
 };
 
-export type UpdateGitlabConfigurationAuthGitlabPostResponse =
-    UpdateGitlabConfigurationAuthGitlabPostResponses[keyof UpdateGitlabConfigurationAuthGitlabPostResponses];
+export type UpdateGitlabConfigurationApiAuthGitlabPostResponse =
+    UpdateGitlabConfigurationApiAuthGitlabPostResponses[keyof UpdateGitlabConfigurationApiAuthGitlabPostResponses];
 
-export type CheckGitlabTokenAuthGitlabTokenCheckPostData = {
+export type CheckGitlabTokenApiAuthGitlabTokenCheckPostData = {
     body: GitLabConfigRequest;
     path?: never;
     query?: never;
-    url: "/auth/gitlab/token-check";
+    url: "/api/auth/gitlab/token-check";
 };
 
-export type CheckGitlabTokenAuthGitlabTokenCheckPostErrors = {
+export type CheckGitlabTokenApiAuthGitlabTokenCheckPostErrors = {
     /**
      * Bad Request
      */
@@ -1528,27 +1528,27 @@ export type CheckGitlabTokenAuthGitlabTokenCheckPostErrors = {
     500: ErrorResponseModel;
 };
 
-export type CheckGitlabTokenAuthGitlabTokenCheckPostError =
-    CheckGitlabTokenAuthGitlabTokenCheckPostErrors[keyof CheckGitlabTokenAuthGitlabTokenCheckPostErrors];
+export type CheckGitlabTokenApiAuthGitlabTokenCheckPostError =
+    CheckGitlabTokenApiAuthGitlabTokenCheckPostErrors[keyof CheckGitlabTokenApiAuthGitlabTokenCheckPostErrors];
 
-export type CheckGitlabTokenAuthGitlabTokenCheckPostResponses = {
+export type CheckGitlabTokenApiAuthGitlabTokenCheckPostResponses = {
     /**
      * Successful Response
      */
     200: GitlabTokenCheckResponse;
 };
 
-export type CheckGitlabTokenAuthGitlabTokenCheckPostResponse =
-    CheckGitlabTokenAuthGitlabTokenCheckPostResponses[keyof CheckGitlabTokenAuthGitlabTokenCheckPostResponses];
+export type CheckGitlabTokenApiAuthGitlabTokenCheckPostResponse =
+    CheckGitlabTokenApiAuthGitlabTokenCheckPostResponses[keyof CheckGitlabTokenApiAuthGitlabTokenCheckPostResponses];
 
-export type GetProfileAuthMeGetData = {
+export type GetProfileApiAuthMeGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: "/auth/me";
+    url: "/api/auth/me";
 };
 
-export type GetProfileAuthMeGetErrors = {
+export type GetProfileApiAuthMeGetErrors = {
     /**
      * Invalid credentials
      */
@@ -1559,20 +1559,20 @@ export type GetProfileAuthMeGetErrors = {
     500: ErrorResponseModel;
 };
 
-export type GetProfileAuthMeGetError =
-    GetProfileAuthMeGetErrors[keyof GetProfileAuthMeGetErrors];
+export type GetProfileApiAuthMeGetError =
+    GetProfileApiAuthMeGetErrors[keyof GetProfileApiAuthMeGetErrors];
 
-export type GetProfileAuthMeGetResponses = {
+export type GetProfileApiAuthMeGetResponses = {
     /**
      * Successful Response
      */
     200: UserProfileResponse;
 };
 
-export type GetProfileAuthMeGetResponse =
-    GetProfileAuthMeGetResponses[keyof GetProfileAuthMeGetResponses];
+export type GetProfileApiAuthMeGetResponse =
+    GetProfileApiAuthMeGetResponses[keyof GetProfileApiAuthMeGetResponses];
 
-export type GetProjectMembersProjectsProjectIdMembersGetData = {
+export type GetProjectMembersApiProjectsProjectIdMembersGetData = {
     body?: never;
     path: {
         /**
@@ -1602,10 +1602,10 @@ export type GetProjectMembersProjectsProjectIdMembersGetData = {
          */
         search?: string | null;
     };
-    url: "/projects/{project_id}/members";
+    url: "/api/projects/{project_id}/members";
 };
 
-export type GetProjectMembersProjectsProjectIdMembersGetErrors = {
+export type GetProjectMembersApiProjectsProjectIdMembersGetErrors = {
     /**
      * Invalid credentials
      */
@@ -1624,22 +1624,22 @@ export type GetProjectMembersProjectsProjectIdMembersGetErrors = {
     500: ErrorResponseModel;
 };
 
-export type GetProjectMembersProjectsProjectIdMembersGetError =
-    GetProjectMembersProjectsProjectIdMembersGetErrors[keyof GetProjectMembersProjectsProjectIdMembersGetErrors];
+export type GetProjectMembersApiProjectsProjectIdMembersGetError =
+    GetProjectMembersApiProjectsProjectIdMembersGetErrors[keyof GetProjectMembersApiProjectsProjectIdMembersGetErrors];
 
-export type GetProjectMembersProjectsProjectIdMembersGetResponses = {
+export type GetProjectMembersApiProjectsProjectIdMembersGetResponses = {
     /**
-     * Response Get Project Members Projects  Project Id  Members Get
+     * Response Get Project Members Api Projects  Project Id  Members Get
      *
      * Successful Response
      */
     200: Array<MembersResponse>;
 };
 
-export type GetProjectMembersProjectsProjectIdMembersGetResponse =
-    GetProjectMembersProjectsProjectIdMembersGetResponses[keyof GetProjectMembersProjectsProjectIdMembersGetResponses];
+export type GetProjectMembersApiProjectsProjectIdMembersGetResponse =
+    GetProjectMembersApiProjectsProjectIdMembersGetResponses[keyof GetProjectMembersApiProjectsProjectIdMembersGetResponses];
 
-export type ListProjectsProjectsGetData = {
+export type ListProjectsApiProjectsGetData = {
     body?: never;
     path?: never;
     query?: {
@@ -1668,10 +1668,10 @@ export type ListProjectsProjectsGetData = {
          */
         membership?: boolean | null;
     };
-    url: "/projects/";
+    url: "/api/projects/";
 };
 
-export type ListProjectsProjectsGetErrors = {
+export type ListProjectsApiProjectsGetErrors = {
     /**
      * Invalid credentials
      */
@@ -1690,22 +1690,22 @@ export type ListProjectsProjectsGetErrors = {
     502: ErrorResponseModel;
 };
 
-export type ListProjectsProjectsGetError =
-    ListProjectsProjectsGetErrors[keyof ListProjectsProjectsGetErrors];
+export type ListProjectsApiProjectsGetError =
+    ListProjectsApiProjectsGetErrors[keyof ListProjectsApiProjectsGetErrors];
 
-export type ListProjectsProjectsGetResponses = {
+export type ListProjectsApiProjectsGetResponses = {
     /**
-     * Response List Projects Projects  Get
+     * Response List Projects Api Projects  Get
      *
      * Successful Response
      */
     200: Array<ProjectsResponse>;
 };
 
-export type ListProjectsProjectsGetResponse =
-    ListProjectsProjectsGetResponses[keyof ListProjectsProjectsGetResponses];
+export type ListProjectsApiProjectsGetResponse =
+    ListProjectsApiProjectsGetResponses[keyof ListProjectsApiProjectsGetResponses];
 
-export type GetProjectProjectsProjectIdGetData = {
+export type GetProjectApiProjectsProjectIdGetData = {
     body?: never;
     path: {
         /**
@@ -1716,10 +1716,10 @@ export type GetProjectProjectsProjectIdGetData = {
         project_id: number;
     };
     query?: never;
-    url: "/projects/{project_id}";
+    url: "/api/projects/{project_id}";
 };
 
-export type GetProjectProjectsProjectIdGetErrors = {
+export type GetProjectApiProjectsProjectIdGetErrors = {
     /**
      * Invalid credentials
      */
@@ -1738,20 +1738,20 @@ export type GetProjectProjectsProjectIdGetErrors = {
     500: ErrorResponseModel;
 };
 
-export type GetProjectProjectsProjectIdGetError =
-    GetProjectProjectsProjectIdGetErrors[keyof GetProjectProjectsProjectIdGetErrors];
+export type GetProjectApiProjectsProjectIdGetError =
+    GetProjectApiProjectsProjectIdGetErrors[keyof GetProjectApiProjectsProjectIdGetErrors];
 
-export type GetProjectProjectsProjectIdGetResponses = {
+export type GetProjectApiProjectsProjectIdGetResponses = {
     /**
      * Successful Response
      */
     200: ProjectsResponse;
 };
 
-export type GetProjectProjectsProjectIdGetResponse =
-    GetProjectProjectsProjectIdGetResponses[keyof GetProjectProjectsProjectIdGetResponses];
+export type GetProjectApiProjectsProjectIdGetResponse =
+    GetProjectApiProjectsProjectIdGetResponses[keyof GetProjectApiProjectsProjectIdGetResponses];
 
-export type ListGitlabUsersUsersGetData = {
+export type ListGitlabUsersApiUsersGetData = {
     body?: never;
     path?: never;
     query?: {
@@ -1780,10 +1780,10 @@ export type ListGitlabUsersUsersGetData = {
          */
         search?: string | null;
     };
-    url: "/users/";
+    url: "/api/users/";
 };
 
-export type ListGitlabUsersUsersGetErrors = {
+export type ListGitlabUsersApiUsersGetErrors = {
     /**
      * Validation Error
      */
@@ -1798,22 +1798,22 @@ export type ListGitlabUsersUsersGetErrors = {
     502: ErrorResponseModel;
 };
 
-export type ListGitlabUsersUsersGetError =
-    ListGitlabUsersUsersGetErrors[keyof ListGitlabUsersUsersGetErrors];
+export type ListGitlabUsersApiUsersGetError =
+    ListGitlabUsersApiUsersGetErrors[keyof ListGitlabUsersApiUsersGetErrors];
 
-export type ListGitlabUsersUsersGetResponses = {
+export type ListGitlabUsersApiUsersGetResponses = {
     /**
-     * Response List Gitlab Users Users  Get
+     * Response List Gitlab Users Api Users  Get
      *
      * Successful Response
      */
     200: Array<GitLabUser>;
 };
 
-export type ListGitlabUsersUsersGetResponse =
-    ListGitlabUsersUsersGetResponses[keyof ListGitlabUsersUsersGetResponses];
+export type ListGitlabUsersApiUsersGetResponse =
+    ListGitlabUsersApiUsersGetResponses[keyof ListGitlabUsersApiUsersGetResponses];
 
-export type GetGitlabUserUsersUserIdGetData = {
+export type GetGitlabUserApiUsersUserIdGetData = {
     body?: never;
     path: {
         /**
@@ -1824,10 +1824,10 @@ export type GetGitlabUserUsersUserIdGetData = {
         user_id: number;
     };
     query?: never;
-    url: "/users/{user_id}";
+    url: "/api/users/{user_id}";
 };
 
-export type GetGitlabUserUsersUserIdGetErrors = {
+export type GetGitlabUserApiUsersUserIdGetErrors = {
     /**
      * Validation Error
      */
@@ -1842,20 +1842,20 @@ export type GetGitlabUserUsersUserIdGetErrors = {
     502: ErrorResponseModel;
 };
 
-export type GetGitlabUserUsersUserIdGetError =
-    GetGitlabUserUsersUserIdGetErrors[keyof GetGitlabUserUsersUserIdGetErrors];
+export type GetGitlabUserApiUsersUserIdGetError =
+    GetGitlabUserApiUsersUserIdGetErrors[keyof GetGitlabUserApiUsersUserIdGetErrors];
 
-export type GetGitlabUserUsersUserIdGetResponses = {
+export type GetGitlabUserApiUsersUserIdGetResponses = {
     /**
      * Successful Response
      */
     200: GitLabUser;
 };
 
-export type GetGitlabUserUsersUserIdGetResponse =
-    GetGitlabUserUsersUserIdGetResponses[keyof GetGitlabUserUsersUserIdGetResponses];
+export type GetGitlabUserApiUsersUserIdGetResponse =
+    GetGitlabUserApiUsersUserIdGetResponses[keyof GetGitlabUserApiUsersUserIdGetResponses];
 
-export type GetUserTimelogsUsersUsernameTimelogsGetData = {
+export type GetUserTimelogsApiUsersUsernameTimelogsGetData = {
     body?: never;
     path: {
         /**
@@ -1891,10 +1891,10 @@ export type GetUserTimelogsUsersUsernameTimelogsGetData = {
          */
         after?: string | null;
     };
-    url: "/users/{username}/timelogs";
+    url: "/api/users/{username}/timelogs";
 };
 
-export type GetUserTimelogsUsersUsernameTimelogsGetErrors = {
+export type GetUserTimelogsApiUsersUsernameTimelogsGetErrors = {
     /**
      * Validation Error
      */
@@ -1909,20 +1909,20 @@ export type GetUserTimelogsUsersUsernameTimelogsGetErrors = {
     502: ErrorResponseModel;
 };
 
-export type GetUserTimelogsUsersUsernameTimelogsGetError =
-    GetUserTimelogsUsersUsernameTimelogsGetErrors[keyof GetUserTimelogsUsersUsernameTimelogsGetErrors];
+export type GetUserTimelogsApiUsersUsernameTimelogsGetError =
+    GetUserTimelogsApiUsersUsernameTimelogsGetErrors[keyof GetUserTimelogsApiUsersUsernameTimelogsGetErrors];
 
-export type GetUserTimelogsUsersUsernameTimelogsGetResponses = {
+export type GetUserTimelogsApiUsersUsernameTimelogsGetResponses = {
     /**
      * Successful Response
      */
     200: TimelogData;
 };
 
-export type GetUserTimelogsUsersUsernameTimelogsGetResponse =
-    GetUserTimelogsUsersUsernameTimelogsGetResponses[keyof GetUserTimelogsUsersUsernameTimelogsGetResponses];
+export type GetUserTimelogsApiUsersUsernameTimelogsGetResponse =
+    GetUserTimelogsApiUsersUsernameTimelogsGetResponses[keyof GetUserTimelogsApiUsersUsernameTimelogsGetResponses];
 
-export type GetUserPerformancePerformanceUsersUserIdGetData = {
+export type GetUserPerformanceApiPerformanceUsersUserIdGetData = {
     body?: never;
     path: {
         /**
@@ -1946,10 +1946,10 @@ export type GetUserPerformancePerformanceUsersUserIdGetData = {
          */
         end_date: string;
     };
-    url: "/performance/users/{user_id}";
+    url: "/api/performance/users/{user_id}";
 };
 
-export type GetUserPerformancePerformanceUsersUserIdGetErrors = {
+export type GetUserPerformanceApiPerformanceUsersUserIdGetErrors = {
     /**
      * Invalid credentials
      */
@@ -1964,20 +1964,20 @@ export type GetUserPerformancePerformanceUsersUserIdGetErrors = {
     500: ErrorResponseModel;
 };
 
-export type GetUserPerformancePerformanceUsersUserIdGetError =
-    GetUserPerformancePerformanceUsersUserIdGetErrors[keyof GetUserPerformancePerformanceUsersUserIdGetErrors];
+export type GetUserPerformanceApiPerformanceUsersUserIdGetError =
+    GetUserPerformanceApiPerformanceUsersUserIdGetErrors[keyof GetUserPerformanceApiPerformanceUsersUserIdGetErrors];
 
-export type GetUserPerformancePerformanceUsersUserIdGetResponses = {
+export type GetUserPerformanceApiPerformanceUsersUserIdGetResponses = {
     /**
      * Successful Response
      */
     200: GeneralUserPerformance;
 };
 
-export type GetUserPerformancePerformanceUsersUserIdGetResponse =
-    GetUserPerformancePerformanceUsersUserIdGetResponses[keyof GetUserPerformancePerformanceUsersUserIdGetResponses];
+export type GetUserPerformanceApiPerformanceUsersUserIdGetResponse =
+    GetUserPerformanceApiPerformanceUsersUserIdGetResponses[keyof GetUserPerformanceApiPerformanceUsersUserIdGetResponses];
 
-export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetData =
+export type GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetData =
     {
         body?: never;
         path: {
@@ -2008,10 +2008,10 @@ export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetData 
              */
             end_date: string;
         };
-        url: "/performance/projects/{project_id}/users/{user_id}";
+        url: "/api/performance/projects/{project_id}/users/{user_id}";
     };
 
-export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors =
+export type GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetErrors =
     {
         /**
          * Invalid credentials
@@ -2031,10 +2031,10 @@ export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetError
         500: ErrorResponseModel;
     };
 
-export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetError =
-    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors[keyof GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetErrors];
+export type GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetError =
+    GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetErrors[keyof GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetErrors];
 
-export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses =
+export type GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetResponses =
     {
         /**
          * Successful Response
@@ -2042,10 +2042,10 @@ export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetRespo
         200: ProjectPerformanceResponse;
     };
 
-export type GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponse =
-    GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses[keyof GetProjectPerformancePerformanceProjectsProjectIdUsersUserIdGetResponses];
+export type GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetResponse =
+    GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetResponses[keyof GetProjectPerformanceApiPerformanceProjectsProjectIdUsersUserIdGetResponses];
 
-export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData = {
+export type GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetData = {
     body?: never;
     path: {
         /**
@@ -2069,32 +2069,33 @@ export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetData = {
          */
         end_date: string;
     };
-    url: "/performanceusers/{user_id}/time-spent";
+    url: "/api/performanceusers/{user_id}/time-spent";
 };
 
-export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors = {
-    /**
-     * Invalid credentials
-     */
-    401: ErrorResponseModel;
-    /**
-     * Resource not found
-     */
-    404: ErrorResponseModel;
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-    /**
-     * Internal Server Error
-     */
-    500: ErrorResponseModel;
-};
+export type GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetErrors =
+    {
+        /**
+         * Invalid credentials
+         */
+        401: ErrorResponseModel;
+        /**
+         * Resource not found
+         */
+        404: ErrorResponseModel;
+        /**
+         * Validation Error
+         */
+        422: HttpValidationError;
+        /**
+         * Internal Server Error
+         */
+        500: ErrorResponseModel;
+    };
 
-export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetError =
-    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors[keyof GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetErrors];
+export type GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetError =
+    GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetErrors[keyof GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetErrors];
 
-export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses =
+export type GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetResponses =
     {
         /**
          * Successful Response
@@ -2102,10 +2103,10 @@ export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses =
         200: TimeSpentStats;
     };
 
-export type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponse =
-    GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses[keyof GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponses];
+export type GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetResponse =
+    GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetResponses[keyof GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetResponses];
 
-export type GetUserSettingsPerformanceUsersUserIdSettingsGetData = {
+export type GetUserSettingsApiPerformanceUsersUserIdSettingsGetData = {
     body?: never;
     path: {
         /**
@@ -2114,10 +2115,10 @@ export type GetUserSettingsPerformanceUsersUserIdSettingsGetData = {
         user_id: number;
     };
     query?: never;
-    url: "/performance/users/{user_id}/settings";
+    url: "/api/performance/users/{user_id}/settings";
 };
 
-export type GetUserSettingsPerformanceUsersUserIdSettingsGetErrors = {
+export type GetUserSettingsApiPerformanceUsersUserIdSettingsGetErrors = {
     /**
      * Invalid credentials
      */
@@ -2136,20 +2137,20 @@ export type GetUserSettingsPerformanceUsersUserIdSettingsGetErrors = {
     500: ErrorResponseModel;
 };
 
-export type GetUserSettingsPerformanceUsersUserIdSettingsGetError =
-    GetUserSettingsPerformanceUsersUserIdSettingsGetErrors[keyof GetUserSettingsPerformanceUsersUserIdSettingsGetErrors];
+export type GetUserSettingsApiPerformanceUsersUserIdSettingsGetError =
+    GetUserSettingsApiPerformanceUsersUserIdSettingsGetErrors[keyof GetUserSettingsApiPerformanceUsersUserIdSettingsGetErrors];
 
-export type GetUserSettingsPerformanceUsersUserIdSettingsGetResponses = {
+export type GetUserSettingsApiPerformanceUsersUserIdSettingsGetResponses = {
     /**
      * Successful Response
      */
     200: UserPerformanceSettings;
 };
 
-export type GetUserSettingsPerformanceUsersUserIdSettingsGetResponse =
-    GetUserSettingsPerformanceUsersUserIdSettingsGetResponses[keyof GetUserSettingsPerformanceUsersUserIdSettingsGetResponses];
+export type GetUserSettingsApiPerformanceUsersUserIdSettingsGetResponse =
+    GetUserSettingsApiPerformanceUsersUserIdSettingsGetResponses[keyof GetUserSettingsApiPerformanceUsersUserIdSettingsGetResponses];
 
-export type SetUserSettingsPerformanceUsersUserIdSettingsPostData = {
+export type SetUserSettingsApiPerformanceUsersUserIdSettingsPostData = {
     body: UserPerfomanceSettingsRequest;
     path: {
         /**
@@ -2158,10 +2159,10 @@ export type SetUserSettingsPerformanceUsersUserIdSettingsPostData = {
         user_id: number;
     };
     query?: never;
-    url: "/performance/users/{user_id}/settings";
+    url: "/api/performance/users/{user_id}/settings";
 };
 
-export type SetUserSettingsPerformanceUsersUserIdSettingsPostErrors = {
+export type SetUserSettingsApiPerformanceUsersUserIdSettingsPostErrors = {
     /**
      * Invalid credentials
      */
@@ -2176,47 +2177,48 @@ export type SetUserSettingsPerformanceUsersUserIdSettingsPostErrors = {
     500: ErrorResponseModel;
 };
 
-export type SetUserSettingsPerformanceUsersUserIdSettingsPostError =
-    SetUserSettingsPerformanceUsersUserIdSettingsPostErrors[keyof SetUserSettingsPerformanceUsersUserIdSettingsPostErrors];
+export type SetUserSettingsApiPerformanceUsersUserIdSettingsPostError =
+    SetUserSettingsApiPerformanceUsersUserIdSettingsPostErrors[keyof SetUserSettingsApiPerformanceUsersUserIdSettingsPostErrors];
 
-export type SetUserSettingsPerformanceUsersUserIdSettingsPostResponses = {
+export type SetUserSettingsApiPerformanceUsersUserIdSettingsPostResponses = {
     /**
      * Successful Response
      */
     200: UserPerformanceSettings;
 };
 
-export type SetUserSettingsPerformanceUsersUserIdSettingsPostResponse =
-    SetUserSettingsPerformanceUsersUserIdSettingsPostResponses[keyof SetUserSettingsPerformanceUsersUserIdSettingsPostResponses];
+export type SetUserSettingsApiPerformanceUsersUserIdSettingsPostResponse =
+    SetUserSettingsApiPerformanceUsersUserIdSettingsPostResponses[keyof SetUserSettingsApiPerformanceUsersUserIdSettingsPostResponses];
 
-export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Project Id
-         *
-         * The ID of the GitLab project.
-         */
-        project_id: number;
+export type GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetData =
+    {
+        body?: never;
+        path: {
+            /**
+             * Project Id
+             *
+             * The ID of the GitLab project.
+             */
+            project_id: number;
+        };
+        query: {
+            /**
+             * Start Date
+             *
+             * The start date for the performance period in ISO format.
+             */
+            start_date: string;
+            /**
+             * End Date
+             *
+             * The end date for the performance period in ISO format.
+             */
+            end_date: string;
+        };
+        url: "/api/performance/projects/{project_id}";
     };
-    query: {
-        /**
-         * Start Date
-         *
-         * The start date for the performance period in ISO format.
-         */
-        start_date: string;
-        /**
-         * End Date
-         *
-         * The end date for the performance period in ISO format.
-         */
-        end_date: string;
-    };
-    url: "/performance/projects/{project_id}";
-};
 
-export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors =
+export type GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetErrors =
     {
         /**
          * Invalid credentials
@@ -2232,10 +2234,10 @@ export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors =
         500: ErrorResponseModel;
     };
 
-export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetError =
-    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors[keyof GetGeneralProjectPerformancePerformanceProjectsProjectIdGetErrors];
+export type GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetError =
+    GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetErrors[keyof GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetErrors];
 
-export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses =
+export type GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetResponses =
     {
         /**
          * Successful Response
@@ -2243,17 +2245,17 @@ export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses
         200: GeneralProjectPerformance;
     };
 
-export type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponse =
-    GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses[keyof GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponses];
+export type GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetResponse =
+    GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetResponses[keyof GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetResponses];
 
-export type ListSchedulesSchedulerReportsGetData = {
+export type ListSchedulesApiSchedulerReportsGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: "/scheduler/reports";
+    url: "/api/scheduler/reports";
 };
 
-export type ListSchedulesSchedulerReportsGetErrors = {
+export type ListSchedulesApiSchedulerReportsGetErrors = {
     /**
      * Invalid credentials
      */
@@ -2264,29 +2266,29 @@ export type ListSchedulesSchedulerReportsGetErrors = {
     500: ErrorResponseModel;
 };
 
-export type ListSchedulesSchedulerReportsGetError =
-    ListSchedulesSchedulerReportsGetErrors[keyof ListSchedulesSchedulerReportsGetErrors];
+export type ListSchedulesApiSchedulerReportsGetError =
+    ListSchedulesApiSchedulerReportsGetErrors[keyof ListSchedulesApiSchedulerReportsGetErrors];
 
-export type ListSchedulesSchedulerReportsGetResponses = {
+export type ListSchedulesApiSchedulerReportsGetResponses = {
     /**
-     * Response List Schedules Scheduler Reports Get
+     * Response List Schedules Api Scheduler Reports Get
      *
      * Successful Response
      */
     200: Array<ScheduledReportResponse>;
 };
 
-export type ListSchedulesSchedulerReportsGetResponse =
-    ListSchedulesSchedulerReportsGetResponses[keyof ListSchedulesSchedulerReportsGetResponses];
+export type ListSchedulesApiSchedulerReportsGetResponse =
+    ListSchedulesApiSchedulerReportsGetResponses[keyof ListSchedulesApiSchedulerReportsGetResponses];
 
-export type CreateScheduleSchedulerReportsPostData = {
+export type CreateScheduleApiSchedulerReportsPostData = {
     body: ScheduledReportCreate;
     path?: never;
     query?: never;
-    url: "/scheduler/reports";
+    url: "/api/scheduler/reports";
 };
 
-export type CreateScheduleSchedulerReportsPostErrors = {
+export type CreateScheduleApiSchedulerReportsPostErrors = {
     /**
      * Invalid credentials
      */
@@ -2309,20 +2311,20 @@ export type CreateScheduleSchedulerReportsPostErrors = {
     502: ErrorResponseModel;
 };
 
-export type CreateScheduleSchedulerReportsPostError =
-    CreateScheduleSchedulerReportsPostErrors[keyof CreateScheduleSchedulerReportsPostErrors];
+export type CreateScheduleApiSchedulerReportsPostError =
+    CreateScheduleApiSchedulerReportsPostErrors[keyof CreateScheduleApiSchedulerReportsPostErrors];
 
-export type CreateScheduleSchedulerReportsPostResponses = {
+export type CreateScheduleApiSchedulerReportsPostResponses = {
     /**
      * Successful Response
      */
     201: ScheduledReportResponse;
 };
 
-export type CreateScheduleSchedulerReportsPostResponse =
-    CreateScheduleSchedulerReportsPostResponses[keyof CreateScheduleSchedulerReportsPostResponses];
+export type CreateScheduleApiSchedulerReportsPostResponse =
+    CreateScheduleApiSchedulerReportsPostResponses[keyof CreateScheduleApiSchedulerReportsPostResponses];
 
-export type DeleteScheduleSchedulerReportsScheduleIdDeleteData = {
+export type DeleteScheduleApiSchedulerReportsScheduleIdDeleteData = {
     body?: never;
     path: {
         /**
@@ -2331,10 +2333,10 @@ export type DeleteScheduleSchedulerReportsScheduleIdDeleteData = {
         schedule_id: string;
     };
     query?: never;
-    url: "/scheduler/reports/{schedule_id}";
+    url: "/api/scheduler/reports/{schedule_id}";
 };
 
-export type DeleteScheduleSchedulerReportsScheduleIdDeleteErrors = {
+export type DeleteScheduleApiSchedulerReportsScheduleIdDeleteErrors = {
     /**
      * Invalid credentials
      */
@@ -2349,20 +2351,20 @@ export type DeleteScheduleSchedulerReportsScheduleIdDeleteErrors = {
     422: HttpValidationError;
 };
 
-export type DeleteScheduleSchedulerReportsScheduleIdDeleteError =
-    DeleteScheduleSchedulerReportsScheduleIdDeleteErrors[keyof DeleteScheduleSchedulerReportsScheduleIdDeleteErrors];
+export type DeleteScheduleApiSchedulerReportsScheduleIdDeleteError =
+    DeleteScheduleApiSchedulerReportsScheduleIdDeleteErrors[keyof DeleteScheduleApiSchedulerReportsScheduleIdDeleteErrors];
 
-export type DeleteScheduleSchedulerReportsScheduleIdDeleteResponses = {
+export type DeleteScheduleApiSchedulerReportsScheduleIdDeleteResponses = {
     /**
      * Successful Response
      */
     204: void;
 };
 
-export type DeleteScheduleSchedulerReportsScheduleIdDeleteResponse =
-    DeleteScheduleSchedulerReportsScheduleIdDeleteResponses[keyof DeleteScheduleSchedulerReportsScheduleIdDeleteResponses];
+export type DeleteScheduleApiSchedulerReportsScheduleIdDeleteResponse =
+    DeleteScheduleApiSchedulerReportsScheduleIdDeleteResponses[keyof DeleteScheduleApiSchedulerReportsScheduleIdDeleteResponses];
 
-export type GetScheduleSchedulerReportsScheduleIdGetData = {
+export type GetScheduleApiSchedulerReportsScheduleIdGetData = {
     body?: never;
     path: {
         /**
@@ -2373,10 +2375,10 @@ export type GetScheduleSchedulerReportsScheduleIdGetData = {
         schedule_id: string;
     };
     query?: never;
-    url: "/scheduler/reports/{schedule_id}";
+    url: "/api/scheduler/reports/{schedule_id}";
 };
 
-export type GetScheduleSchedulerReportsScheduleIdGetErrors = {
+export type GetScheduleApiSchedulerReportsScheduleIdGetErrors = {
     /**
      * Invalid credentials
      */
@@ -2391,20 +2393,20 @@ export type GetScheduleSchedulerReportsScheduleIdGetErrors = {
     422: HttpValidationError;
 };
 
-export type GetScheduleSchedulerReportsScheduleIdGetError =
-    GetScheduleSchedulerReportsScheduleIdGetErrors[keyof GetScheduleSchedulerReportsScheduleIdGetErrors];
+export type GetScheduleApiSchedulerReportsScheduleIdGetError =
+    GetScheduleApiSchedulerReportsScheduleIdGetErrors[keyof GetScheduleApiSchedulerReportsScheduleIdGetErrors];
 
-export type GetScheduleSchedulerReportsScheduleIdGetResponses = {
+export type GetScheduleApiSchedulerReportsScheduleIdGetResponses = {
     /**
      * Successful Response
      */
     200: ScheduledReportResponse;
 };
 
-export type GetScheduleSchedulerReportsScheduleIdGetResponse =
-    GetScheduleSchedulerReportsScheduleIdGetResponses[keyof GetScheduleSchedulerReportsScheduleIdGetResponses];
+export type GetScheduleApiSchedulerReportsScheduleIdGetResponse =
+    GetScheduleApiSchedulerReportsScheduleIdGetResponses[keyof GetScheduleApiSchedulerReportsScheduleIdGetResponses];
 
-export type UpdateScheduleSchedulerReportsScheduleIdPutData = {
+export type UpdateScheduleApiSchedulerReportsScheduleIdPutData = {
     body: ScheduledReportUpdate;
     path: {
         /**
@@ -2413,10 +2415,10 @@ export type UpdateScheduleSchedulerReportsScheduleIdPutData = {
         schedule_id: string;
     };
     query?: never;
-    url: "/scheduler/reports/{schedule_id}";
+    url: "/api/scheduler/reports/{schedule_id}";
 };
 
-export type UpdateScheduleSchedulerReportsScheduleIdPutErrors = {
+export type UpdateScheduleApiSchedulerReportsScheduleIdPutErrors = {
     /**
      * Invalid credentials
      */
@@ -2431,20 +2433,20 @@ export type UpdateScheduleSchedulerReportsScheduleIdPutErrors = {
     422: HttpValidationError;
 };
 
-export type UpdateScheduleSchedulerReportsScheduleIdPutError =
-    UpdateScheduleSchedulerReportsScheduleIdPutErrors[keyof UpdateScheduleSchedulerReportsScheduleIdPutErrors];
+export type UpdateScheduleApiSchedulerReportsScheduleIdPutError =
+    UpdateScheduleApiSchedulerReportsScheduleIdPutErrors[keyof UpdateScheduleApiSchedulerReportsScheduleIdPutErrors];
 
-export type UpdateScheduleSchedulerReportsScheduleIdPutResponses = {
+export type UpdateScheduleApiSchedulerReportsScheduleIdPutResponses = {
     /**
      * Successful Response
      */
     200: ScheduledReportResponse;
 };
 
-export type UpdateScheduleSchedulerReportsScheduleIdPutResponse =
-    UpdateScheduleSchedulerReportsScheduleIdPutResponses[keyof UpdateScheduleSchedulerReportsScheduleIdPutResponses];
+export type UpdateScheduleApiSchedulerReportsScheduleIdPutResponse =
+    UpdateScheduleApiSchedulerReportsScheduleIdPutResponses[keyof UpdateScheduleApiSchedulerReportsScheduleIdPutResponses];
 
-export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostData = {
+export type SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostData = {
     body?: never;
     path: {
         /**
@@ -2453,10 +2455,10 @@ export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostData = {
         schedule_id: string;
     };
     query?: never;
-    url: "/scheduler/reports/{schedule_id}/send-now";
+    url: "/api/scheduler/reports/{schedule_id}/send-now";
 };
 
-export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors = {
+export type SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostErrors = {
     /**
      * Invalid credentials
      */
@@ -2475,12 +2477,12 @@ export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors = {
     500: ErrorResponseModel;
 };
 
-export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostError =
-    SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors[keyof SendScheduleNowSchedulerReportsScheduleIdSendNowPostErrors];
+export type SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostError =
+    SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostErrors[keyof SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostErrors];
 
-export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses = {
+export type SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostResponses = {
     /**
-     * Response Send Schedule Now Scheduler Reports  Schedule Id  Send Now Post
+     * Response Send Schedule Now Api Scheduler Reports  Schedule Id  Send Now Post
      *
      * Successful Response
      */
@@ -2489,8 +2491,8 @@ export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses = {
     };
 };
 
-export type SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponse =
-    SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses[keyof SendScheduleNowSchedulerReportsScheduleIdSendNowPostResponses];
+export type SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostResponse =
+    SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostResponses[keyof SendScheduleNowApiSchedulerReportsScheduleIdSendNowPostResponses];
 
 export type HealthHealthGetData = {
     body?: never;

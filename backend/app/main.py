@@ -59,10 +59,10 @@ async def catch_exceptions_middleware(request: Request, call_next):
         )
 
 
-app.include_router(api_router)
+app.include_router(api_router, prefix="/api")
 
 
-@app.get("/health", tags=["health"])  # pragma: no cover - trivial endpoint
+@app.get("/api/health", tags=["health"])  # pragma: no cover - trivial endpoint
 async def health() -> dict[str, str]:
     """Simple health check endpoint."""
 

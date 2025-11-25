@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginAuthLoginPost } from "@/client";
+import { loginApiAuthLoginPost } from "@/client";
 import { z, ZodError } from "zod";
 
 const zLoginAuthLoginPostData = z.object({
@@ -45,7 +45,7 @@ export default function LoginPage() {
             zLoginAuthLoginPostData.parse({ username, password });
 
             // Send request
-            const res = await loginAuthLoginPost({
+            const res = await loginApiAuthLoginPost({
                 body: { username, password },
             });
 

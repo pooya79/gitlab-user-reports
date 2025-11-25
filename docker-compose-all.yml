@@ -7,7 +7,7 @@ services:
       - "--providers.docker.network=localnet"
       - "--entrypoints.web.address=:80"
     ports:
-      - "${PORT:-80}:80"
+      - "${HTTP_PORT:-80}:80"
       - "${TRAEFIK_DASHBOARD_PORT:-8080}:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -35,6 +35,8 @@ services:
       # does NOT expect '/api' in the URL path.
       #- "traefik.http.middlewares.api-strip.stripprefix.prefixes=/api"
       #- "traefik.http.routers.backend.middlewares=api-strip"
+    extra_hosts:
+      - "${HOST_VC_DOMAIN:-example.com}:${HOST_VC}"
     depends_on:
       - mongodb
 
@@ -48,13 +50,19 @@ services:
       - .env
     command: ["python", "-m", "app.cli.run_scheduler"]
     restart: unless-stopped
+    labels:
+      - "traefik.enable=false"
+    extra_hosts:
+      - "${HOST_VC_DOMAIN:-example.com}:${HOST_VC}"
+    networks:
+      - localnet
 
   mongodb:
     image: mongo:latest
     container_name: mongodb
     restart: unless-stopped
     ports:
-      - "${MONGODB_PORT:-27017}:27017"
+      - "${MONGODB_OUT_PORT:-27017}:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_ROOT_USERNAME:-root}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD:-example}
@@ -62,7 +70,6 @@ services:
     volumes:
       - mongo_data:/data/db
       - mongo_config:/data/configdb
-    # --- FIX: Added network so backend can talk to it ---
     networks:
       - localnet
 
@@ -70,9 +77,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8000}
     container_name: frontend
+    command: ["node", "server.js"]
     env_file:
       - .env
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8000}
     networks:
       - localnet
     labels:

@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Loader2, Mail, Plus, Trash } from "lucide-react";
 
 import {
-    getUserSettingsPerformanceUsersUserIdSettingsGet,
-    setUserSettingsPerformanceUsersUserIdSettingsPost,
-    type GetUserSettingsPerformanceUsersUserIdSettingsGetResponse,
+    getUserSettingsApiPerformanceUsersUserIdSettingsGet,
+    setUserSettingsApiPerformanceUsersUserIdSettingsPost,
+    type GetUserSettingsApiPerformanceUsersUserIdSettingsGetResponse,
 } from "@/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +32,7 @@ export default function UserSettingsTab({
 }: UserSettingsTabProps) {
     const numericUserId = useMemo(() => Number.parseInt(userId, 10), [userId]);
     const [settings, setSettings] =
-        useState<GetUserSettingsPerformanceUsersUserIdSettingsGetResponse | null>(
+        useState<GetUserSettingsApiPerformanceUsersUserIdSettingsGetResponse | null>(
             null,
         );
     const [loading, setLoading] = useState(false);
@@ -58,7 +58,7 @@ export default function UserSettingsTab({
 
             try {
                 const res =
-                    await getUserSettingsPerformanceUsersUserIdSettingsGet({
+                    await getUserSettingsApiPerformanceUsersUserIdSettingsGet({
                         signal: controller.signal,
                         path: { user_id: numericUserId },
                     });
@@ -133,14 +133,13 @@ export default function UserSettingsTab({
         setError(null);
 
         try {
-            const res = await setUserSettingsPerformanceUsersUserIdSettingsPost(
-                {
+            const res =
+                await setUserSettingsApiPerformanceUsersUserIdSettingsPost({
                     path: { user_id: numericUserId },
                     body: {
                         additional_user_emails: emails,
                     },
-                },
-            );
+                });
 
             if (res.error) {
                 const detail =

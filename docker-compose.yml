@@ -12,6 +12,8 @@ services:
       - .env
 
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    extra_hosts:
+      - "${HOST_VC_DOMAIN:-example.com}:${HOST_VC}"
 
     develop:
       # Create a `watch` configuration to update the app
@@ -39,6 +41,8 @@ services:
     env_file:
       - .env
     command: ["python", "-m", "app.cli.run_scheduler"]
+    extra_hosts:
+      - "${HOST_VC_DOMAIN:-example.com}:${HOST_VC}"
     restart: unless-stopped
 
   mongodb:

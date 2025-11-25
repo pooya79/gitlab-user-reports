@@ -20,8 +20,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { KPICardGroup, type KPIEntry } from "@/components/kpi-card-group";
 import {
-    getGeneralProjectPerformancePerformanceProjectsProjectIdGet,
-    type GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponse,
+    getGeneralProjectPerformanceApiPerformanceProjectsProjectIdGet,
+    type GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetResponse,
 } from "@/client";
 import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
 import { clearAccessToken } from "@/lib/auth";
@@ -40,7 +40,7 @@ export default function OverviewTab({
     onErrorChange,
 }: OverviewTabProps) {
     const [performance, setPerformance] =
-        useState<GetGeneralProjectPerformancePerformanceProjectsProjectIdGetResponse | null>(
+        useState<GetGeneralProjectPerformanceApiPerformanceProjectsProjectIdGetResponse | null>(
             null,
         );
     const [loading, setLoading] = useState(false);
@@ -67,7 +67,7 @@ export default function OverviewTab({
 
             try {
                 const res =
-                    await getGeneralProjectPerformancePerformanceProjectsProjectIdGet(
+                    await getGeneralProjectPerformanceApiPerformanceProjectsProjectIdGet(
                         {
                             signal: controller.signal,
                             path: { project_id: projectId },

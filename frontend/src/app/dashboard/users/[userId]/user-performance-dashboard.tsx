@@ -6,7 +6,7 @@ import { endOfWeek, format, formatDistanceToNow, startOfWeek } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { ArrowLeft, ExternalLink, Loader2, Shield } from "lucide-react";
 
-import { getGitlabUserUsersUserIdGet, type GitLabUser } from "@/client";
+import { getGitlabUserApiUsersUserIdGet, type GitLabUser } from "@/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -63,7 +63,7 @@ export default function UserPerformanceDashboard({
             setError(null);
 
             try {
-                const res = await getGitlabUserUsersUserIdGet({
+                const res = await getGitlabUserApiUsersUserIdGet({
                     signal: controller.signal,
                     path: { user_id: userId },
                 });

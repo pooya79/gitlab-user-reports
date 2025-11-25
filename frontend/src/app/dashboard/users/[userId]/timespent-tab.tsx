@@ -14,8 +14,8 @@ import {
     type DailyProjectTimespentDatum,
 } from "@/components/charts";
 import {
-    getTimeSpentStatisticsPerformanceusersUserIdTimeSpentGet,
-    type GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponse,
+    getTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGet,
+    type GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetResponse,
 } from "@/client";
 import { clearAccessToken } from "@/lib/auth";
 import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
@@ -42,7 +42,7 @@ export default function TimespentTab({
     onErrorChange,
 }: TimespentTabProps) {
     const [timeSpent, setTimeSpent] =
-        useState<GetTimeSpentStatisticsPerformanceusersUserIdTimeSpentGetResponse | null>(
+        useState<GetTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGetResponse | null>(
             null,
         );
     const [loading, setLoading] = useState(false);
@@ -85,7 +85,7 @@ export default function TimespentTab({
 
             try {
                 const res =
-                    await getTimeSpentStatisticsPerformanceusersUserIdTimeSpentGet(
+                    await getTimeSpentStatisticsApiPerformanceusersUserIdTimeSpentGet(
                         {
                             signal: controller.signal,
                             path: { user_id: numericUserId },

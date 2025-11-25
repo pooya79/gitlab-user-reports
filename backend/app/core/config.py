@@ -35,8 +35,7 @@ class Settings(BaseSettings):
     app_name: str = "GitLab User Reports"
     debug: bool = False
     cors_origins: str | list[str] = []
-    host: str = "127.0.0.1"
-    port: int = 8000
+    backend_url: str = "http://localhost:8000"
 
     jwt_secret_key: str = "insecure-development-secret"
     jwt_algorithm: str = "HS256"

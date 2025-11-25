@@ -16,8 +16,8 @@ import {
     type ProjectContribution,
 } from "@/components/project-contributions-card";
 import {
-    getUserPerformancePerformanceUsersUserIdGet,
-    type GetUserPerformancePerformanceUsersUserIdGetResponse,
+    getUserPerformanceApiPerformanceUsersUserIdGet,
+    type GetUserPerformanceApiPerformanceUsersUserIdGetResponse,
 } from "@/client";
 import { useGitlabTokenStore } from "@/lib/gitlab-token-watcher";
 import { clearAccessToken } from "@/lib/auth";
@@ -38,7 +38,7 @@ export default function OverviewTab({
     dateRange,
 }: OverviewTabProps) {
     const [performance, setPerformance] =
-        useState<GetUserPerformancePerformanceUsersUserIdGetResponse | null>(
+        useState<GetUserPerformanceApiPerformanceUsersUserIdGetResponse | null>(
             null,
         );
     const [loading, setLoading] = useState(false);
@@ -64,14 +64,15 @@ export default function OverviewTab({
             onErrorChange?.(null);
 
             try {
-                const res = await getUserPerformancePerformanceUsersUserIdGet({
-                    signal: controller.signal,
-                    path: { user_id: userId },
-                    query: {
-                        start_date: startDate,
-                        end_date: endDate,
-                    },
-                });
+                const res =
+                    await getUserPerformanceApiPerformanceUsersUserIdGet({
+                        signal: controller.signal,
+                        path: { user_id: userId },
+                        query: {
+                            start_date: startDate,
+                            end_date: endDate,
+                        },
+                    });
 
                 if (controller.signal.aborted) {
                     return;
