@@ -6,6 +6,9 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.network=localnet"
       - "--entrypoints.web.address=:80"
+      # CONSTRAINT DEFINITION:
+      # Tell Traefik: "Only look at containers that have the label 'scope=gitlab-users-report'"
+      - "--providers.docker.constraints=Label(`scope`, `gitlab-users-report`)"
     ports:
       - "${HTTP_PORT:-80}:80"
       - "${TRAEFIK_DASHBOARD_PORT:-8080}:8080"
@@ -13,6 +16,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - localnet
+    restart: unless-stopped
 
   backend:
     build:
@@ -23,22 +27,21 @@ services:
       - .env
     networks:
       - localnet
+    # Port 8000 is internal only (proxied by Traefik)
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     labels:
       - "traefik.enable=true"
-      # It is good practice to explicitly define the entrypoint
+      # REQUIRED: This matches the constraint in Traefik above
+      - "scope=gitlab-users-report" 
+      
       - "traefik.http.routers.backend.entrypoints=web"
       - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
-      
-      # OPTIONAL: Uncomment the 2 lines below if your backend code 
-      # does NOT expect '/api' in the URL path.
-      #- "traefik.http.middlewares.api-strip.stripprefix.prefixes=/api"
-      #- "traefik.http.routers.backend.middlewares=api-strip"
     extra_hosts:
-      - "${HOST_VC_DOMAIN:-example.com}:${HOST_VC}"
+      - "${HOST_VC_DOMAIN:-vc.jooyeshgar.net}:${HOST_VC}"
     depends_on:
       - mongodb
+    restart: unless-stopped
 
   scheduler:
     build:
@@ -53,7 +56,7 @@ services:
     labels:
       - "traefik.enable=false"
     extra_hosts:
-      - "${HOST_VC_DOMAIN:-example.com}:${HOST_VC}"
+      - "${HOST_VC_DOMAIN:-vc.jooyeshgar.net}:${HOST_VC}"
     networks:
       - localnet
 
@@ -78,23 +81,26 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8000}
+        - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-/}
     container_name: frontend
     command: ["node", "server.js"]
     env_file:
       - .env
     environment:
-      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8000}
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-/}
     networks:
       - localnet
     labels:
       - "traefik.enable=true"
+      # REQUIRED: This matches the constraint in Traefik
+      - "scope=gitlab-users-report"
+      
       - "traefik.http.routers.frontend.entrypoints=web"
-      # Matches everything else
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
       - "traefik.http.services.frontend.loadbalancer.server.port=3000"
     depends_on:
       - backend
+    restart: unless-stopped
 
 networks:
   localnet:
