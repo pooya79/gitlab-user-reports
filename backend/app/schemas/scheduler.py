@@ -140,6 +140,9 @@ class ScheduledReportResponse(ScheduledReportBase):
     id: str
     last_sent_at: datetime | None = None
     last_error: str | None = None
+    last_email_content: str | None = Field(
+        default=None, description="HTML body of the last sent report."
+    )
     created_at: datetime | None = None
     updated_at: datetime | None = None
     next_run_at: datetime | None = Field(

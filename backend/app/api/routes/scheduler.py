@@ -53,6 +53,7 @@ def _serialize_schedule(doc: dict[str, Any]) -> ScheduledReportResponse:
         active=doc.get("active", True),
         last_sent_at=doc.get("last_sent_at"),
         last_error=doc.get("last_error"),
+        last_email_content=doc.get("last_email_content"),
         created_at=doc.get("created_at"),
         updated_at=doc.get("updated_at"),
         next_run_at=next_run_time(doc),
@@ -145,6 +146,7 @@ async def create_schedule(
         "created_at": now,
         "updated_at": now,
         "last_sent_at": None,
+        "last_email_content": None,
         "last_error": None,
         "manual_trigger_at": None,
     }

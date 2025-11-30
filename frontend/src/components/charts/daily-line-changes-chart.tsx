@@ -123,7 +123,7 @@ export function DailyLineChangesChart({
                                 tickLine={false}
                                 axisLine={false}
                                 allowDecimals={false}
-                                width={16}
+                                width={32}
                             />
                             <ChartTooltip
                                 cursor={{ fill: "var(--muted)" }}

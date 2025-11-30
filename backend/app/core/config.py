@@ -24,13 +24,15 @@ class Settings(BaseSettings):
 
     mongodb: MongoDBSettings
 
-    smtp_host: str = "mail.yourdomain.com"
-    smtp_port: int = 587
-    smtp_username: str = "your_email@yourdomain.com"
-    smtp_password: str = "your_email_password"
-    smtp_use_tls: bool = True
-    smtp_use_ssl: bool = False
-    email_from: str = "your_email@yourdomain.com"
+    mail_username: str = "example@example.com"
+    mail_password: str | None = None
+    mail_from: str = "test@example.com"
+    mail_from_name: str = "test"
+    mail_server: str = "test.smtp.server"
+    mail_port: int = 587
+    mail_starttls: bool = True
+    mail_ssl_tls: bool = False
+    use_credentials: bool | None = None
 
     app_name: str = "GitLab User Reports"
     debug: bool = False

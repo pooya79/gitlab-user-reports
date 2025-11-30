@@ -158,9 +158,9 @@ def _get_mail_client() -> FastMail:
     missing_fields = [
         name
         for name, configured in {
-            "smtp_host": settings.smtp_host,
-            "smtp_port": settings.smtp_port,
-            "email_from": settings.email_from,
+            "mail_server": settings.mail_server,
+            "mail_port": settings.mail_port,
+            "mail_from": settings.mail_from,
         }.items()
         if not configured
     ]
@@ -170,14 +170,17 @@ def _get_mail_client() -> FastMail:
         )
 
     mail_conf = ConnectionConfig(
-        MAIL_USERNAME=settings.smtp_username,
-        MAIL_PASSWORD=settings.smtp_password,
-        MAIL_FROM=settings.email_from,
-        MAIL_PORT=settings.smtp_port,
-        MAIL_SERVER=settings.smtp_host,
-        MAIL_STARTTLS=settings.smtp_use_tls,
-        MAIL_SSL_TLS=settings.smtp_use_ssl,
-        USE_CREDENTIALS=bool(settings.smtp_username),
+        MAIL_USERNAME=settings.mail_username,
+        MAIL_PASSWORD=settings.mail_password,
+        MAIL_FROM=settings.mail_from,
+        MAIL_FROM_NAME=settings.mail_from_name,
+        MAIL_SERVER=settings.mail_server,
+        MAIL_PORT=settings.mail_port,
+        MAIL_STARTTLS=settings.mail_starttls,
+        MAIL_SSL_TLS=settings.mail_ssl_tls,
+        USE_CREDENTIALS=bool(settings.mail_username)
+        if settings.use_credentials is None
+        else settings.use_credentials,
         VALIDATE_CERTS=True,
     )
     return FastMail(mail_conf)
@@ -328,18 +331,7 @@ async def send_scheduled_report(schedule_id: str) -> None:
     try:
         # write in database for now for debugging purposes
         logger.info("Sending email for schedule %s to %s", schedule_id, recipients)
-        mongo_db["email_logs"].insert_one(
-            {
-                "schedule_id": schedule_object_id,
-                "to": recipients,
-                "cc": schedule.get("cc") or [],
-                "bcc": schedule.get("bcc") or [],
-                "subject": subject,
-                "body": body,
-                "sent_at": _now_utc(),
-            }
-        )
-        # await mail_client.send_message(message)
+        await mail_client.send_message(message)
         mongo_db["scheduled_reports"].update_one(
             {"_id": schedule_object_id},
             {
@@ -347,6 +339,7 @@ async def send_scheduled_report(schedule_id: str) -> None:
                     "last_sent_at": _now_utc(),
                     "last_error": None,
                     "updated_at": _now_utc(),
+                    "last_email_content": body,
                 }
             },
         )

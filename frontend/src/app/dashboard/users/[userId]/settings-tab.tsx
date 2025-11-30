@@ -177,7 +177,7 @@ export default function UserSettingsTab({
     };
 
     const handleAddEmail = () => {
-        const normalized = newEmail.trim().toLowerCase();
+        const normalized = newEmail.trim();
         if (!normalized) {
             return;
         }
