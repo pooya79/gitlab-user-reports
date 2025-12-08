@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
-from typing import Iterable
+from typing import Iterable, Any
 import requests
+import json
 from pydantic import ValidationError
 
 import gitlab
@@ -769,3 +770,243 @@ def summarize_project_performance(
         daily_deletions=dict(daily_deletions),
         daily_changes=dict(daily_changes),
     )
+
+
+def get_user_performance_for_llm(
+    *,
+    gitlab_client: gitlab.Gitlab,
+    user_id: int,
+    start_date: datetime,
+    end_date: datetime,
+    additional_user_emails: list[str] = [],
+) -> str:
+    """Return a summary of the user's performance for use with a language model in json format."""
+
+    user = gitlab_client.users.get(user_id)
+    user_emails = [user.email] + additional_user_emails
+
+    # 1. Highlights: Approvals and Comments via Events
+    events = _fetch_user_events(user=user, start=start_date, end=end_date)
+    code_review_stats, event_project_ids = _summarize_events(events)
+
+    # 2. Total Time Logs & Detail gathering
+    # Extract URL and Token from client to use in get_time_spent_stats
+    # Note: gitlab_client.url and private_token/oauth_token are standard attributes
+    token = gitlab_client.private_token or gitlab_client.oauth_token
+    time_stats = get_time_spent_stats(
+        gitlab_token=token,
+        gitlab_base_url=gitlab_client.url,
+        username=user.username,
+        start_time=start_date,
+        end_time=end_date,
+        first=100,
+    )
+
+    # Prepare data structures
+    highlights = {
+        "total_commits": 0,
+        "add_lines": 0,
+        "remove_lines": 0,
+        "approvals": code_review_stats.approvals_given,
+        "comments": code_review_stats.review_comments
+        + code_review_stats.notes_authored,
+        "total_time_spent": f"{time_stats.total_time_spent_hours:.2f} hours",
+    }
+
+    # Map: key="project_id:iid", value={details, commits:[], time_logs:[]}
+    mr_cache: dict[str, dict[str, Any]] = {}
+    issue_logs: list[dict[str, Any]] = []
+    main_branch_commits: list[dict[str, Any]] = []
+
+    # Cache for full objects to avoid repeated API calls
+    # project_id -> project object
+    project_obj_cache: dict[int, Any] = {}
+
+    # Process Time Logs
+    # Flatten all project timelogs from the stats
+    all_timelogs = []
+    for proj_log in time_stats.project_timelogs:
+        all_timelogs.extend(proj_log.timelogs)
+
+    for log in all_timelogs:
+        formatted_time = (
+            f"{int(log.time_spent / 60)}m"
+            if log.time_spent < 3600
+            else f"{log.time_spent / 3600:.1f}h"
+        )
+
+        log_entry = {
+            "time": formatted_time,
+            "summary": log.summary or "No summary",
+            "date": log.spent_at.isoformat(),
+        }
+
+        if log.merge_request:
+            # It is an MR time log
+            key = f"{log.project.id}:{log.merge_request.iid}"
+            if key not in mr_cache:
+                mr_cache[key] = {
+                    "title": log.merge_request.title,
+                    "description": "",  # Will fill later if possible, or leave empty
+                    "project_id": log.project.id,
+                    "iid": log.merge_request.iid,
+                    "web_url": log.merge_request.web_url,
+                    "commits": [],
+                    "time_logs": [],
+                }
+            mr_cache[key]["time_logs"].append(log_entry)
+
+        elif log.issue:
+            # It is an Issue time log
+            # We need description of issue. IssueInfo in log doesn't have it.
+            # We will attempt to fetch it or use placeholder.
+            # To avoid N+1 slow down, we do a lazy fetch or just omit description if strict performance is needed.
+            # Here we will try to fetch project->issue to get description.
+
+            issue_desc = ""
+            try:
+                if log.project.id not in project_obj_cache:
+                    project_obj_cache[log.project.id] = gitlab_client.projects.get(
+                        log.project.id
+                    )
+
+                # Check if we already fetched this issue description?
+                # For simplicity, we fetch info now.
+                # Optimization: In a real heavy load, batch or cache issues.
+                target_issue = project_obj_cache[log.project.id].issues.get(
+                    log.issue.iid
+                )
+                issue_desc = target_issue.description
+            except Exception:
+                issue_desc = "Could not fetch description"
+
+            issue_logs.append(
+                {
+                    "issue_title": log.issue.title,
+                    "issue_description": issue_desc,
+                    "project": log.project.name_with_namespace,
+                    "time_spent": formatted_time,
+                    "summary": log.summary or "No summary",
+                    "date": log.spent_at.isoformat(),
+                }
+            )
+
+    # 3. Process Commits and Link to MRs
+    # Identify all relevant projects from events and time logs to scan for commits
+    relevant_project_ids = event_project_ids.union(
+        {pl.project.id for pl in time_stats.project_timelogs}
+    )
+
+    for pid in relevant_project_ids:
+        try:
+            if pid not in project_obj_cache:
+                project_obj_cache[pid] = gitlab_client.projects.get(pid)
+
+            project = project_obj_cache[pid]
+
+            # Fetch commits
+            # We reuse the logic from get_project_performance_stats essentially
+            commits = []
+            for email in user_emails:
+                commits.extend(
+                    project.commits.list(
+                        all=True,
+                        get_all=True,
+                        since=start_date.isoformat(),
+                        until=(end_date + timedelta(days=1)).isoformat(),
+                        author=email,
+                        with_stats=True,
+                    )
+                )
+
+            # Filter valid commits
+            valid_commits = [
+                c
+                for c in commits
+                if c.author_email in user_emails
+                and _parse_gitlab_datetime(c.authored_date) >= start_date
+                and _parse_gitlab_datetime(c.authored_date) <= end_date
+                and len(c.parent_ids) < 2
+            ]
+
+            for commit in valid_commits:
+                stats = commit.stats or {}
+                adds = stats.get("additions", 0)
+                rems = stats.get("deletions", 0)
+
+                # Update highlights
+                highlights["total_commits"] += 1
+                highlights["add_lines"] += adds
+                highlights["remove_lines"] += rems
+
+                commit_info = {
+                    "message": commit.title,
+                    "add_lines": adds,
+                    "remove_lines": rems,
+                    "date": commit.authored_date,
+                    "web_url": commit.web_url,
+                }
+
+                # Link to MR
+                # This API call (commit.merge_requests()) is the bottleneck.
+                # It is required to associate a commit with an MR accurately.
+                try:
+                    associated_mrs = commit.merge_requests()
+                except Exception:
+                    associated_mrs = []
+
+                if not associated_mrs:
+                    # Main branch / Orphan commit
+                    commit_info["project"] = project.name_with_namespace
+                    main_branch_commits.append(commit_info)
+                else:
+                    # Add to MR(s)
+                    for mr_ref in associated_mrs:
+                        mr_iid = mr_ref.get("iid")
+                        mr_key = f"{pid}:{mr_iid}"
+
+                        if mr_key not in mr_cache:
+                            # If we didn't see this MR in time logs, create entry now
+                            # We might need to fetch description if we want it perfect
+                            # The mr_ref usually contains title, iid, project_id, web_url
+                            # But not always description.
+
+                            # Let's fetch full MR if we want description
+                            # To save time, we might skip description or fetch it:
+                            description = mr_ref.get("description", "")
+                            if not description:
+                                try:
+                                    full_mr = project.mergerequests.get(mr_iid)
+                                    description = full_mr.description
+                                except:
+                                    description = ""
+
+                            mr_cache[mr_key] = {
+                                "title": mr_ref.get("title"),
+                                "description": description,
+                                "project_id": pid,
+                                "iid": mr_iid,
+                                "web_url": mr_ref.get("web_url"),
+                                "commits": [],
+                                "time_logs": [],
+                            }
+
+                        mr_cache[mr_key]["commits"].append(commit_info)
+
+        except Exception:
+            # If a project fails to load, skip it but continue aggregation
+            continue
+
+    # Format the MR list
+    formatted_merge_requests = list(mr_cache.values())
+
+    # Construct final JSON object
+    final_data = {
+        "highlights": highlights,
+        "total_time_logs": highlights["total_time_spent"],  # Redundant but requested
+        "merge_requests": formatted_merge_requests,
+        "main_branch_commits": main_branch_commits,
+        "issue_time_logs": issue_logs,
+    }
+
+    return json.dumps(final_data, indent=2, default=str)
