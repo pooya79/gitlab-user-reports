@@ -876,6 +876,8 @@ dependencies = [
     { name = "fastapi-mail", extra = ["httpx"] },
     { name = "jdatetime" },
     { name = "jinja2" },
+    { name = "logfire" },
+    { name = "markdown" },
     { name = "plotly" },
     { name = "pydantic-ai" },
     { name = "pydantic-settings" },
@@ -899,6 +901,8 @@ requires-dist = [
     { name = "fastapi-mail", extras = ["httpx"], specifier = ">=1.5.8" },
     { name = "jdatetime", specifier = ">=5.2.0" },
     { name = "jinja2", specifier = ">=3.1.6" },
+    { name = "logfire", specifier = ">=4.14.2" },
+    { name = "markdown", specifier = ">=3.10" },
     { name = "plotly", specifier = ">=6.3.1" },
     { name = "pydantic-ai", specifier = ">=1.10.0" },
     { name = "pydantic-settings", specifier = ">=2.11.0" },
@@ -1672,6 +1676,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/59/25/6072086af3b3ac5c2c2f2a6cf89488a1b228ffc6ee0fb357ed1e227efd13/logfire_api-4.14.2.tar.gz", hash = "sha256:bbdeccd931069b76ab811261b41bc52d8b78d1c045fc4b4237dbc085e0fb9bcd", size = 57604, upload_time = "2025-10-24T20:14:40.551Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/58/c7/b06a83df678fca882c24fb498e628e0406bdb95ffdfa7ae43ecc0a714d52/logfire_api-4.14.2-py3-none-any.whl", hash = "sha256:aa4af2ecb007c3e0095e25ba4526fd8c0e2c0be2ceceac71ca651c4ad86dc713", size = 95021, upload_time = "2025-10-24T20:14:36.161Z" },
+]
+
+[[package]]
+name = "markdown"
+version = "3.10"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/ab/7dd27d9d863b3376fcf23a5a13cb5d024aed1db46f963f1b5735ae43b3be/markdown-3.10.tar.gz", hash = "sha256:37062d4f2aa4b2b6b32aefb80faa300f82cc790cb949a35b8caede34f2b68c0e", size = 364931, upload_time = "2025-11-03T19:51:15.007Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/70/81/54e3ce63502cd085a0c556652a4e1b919c45a446bd1e5300e10c44c8c521/markdown-3.10-py3-none-any.whl", hash = "sha256:b5b99d6951e2e4948d939255596523444c0e677c669700b1d17aa4a8a464cb7c", size = 107678, upload_time = "2025-11-03T19:51:13.887Z" },
 ]
 
 [[package]]

@@ -1,7 +1,4 @@
-from pydantic_ai import (
-    Agent,
-    UsageLimits,
-)
+from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIChatModel, OpenAIChatModelSettings
 from pydantic_ai.providers.openrouter import OpenRouterProvider
 
@@ -15,11 +12,10 @@ class PerformanceAgent:
             provider=OpenRouterProvider(api_key=openrouter_api_key),
         )
 
-    async def run(self, user_prompt: str, syste_prompt: str) -> str:
+    async def summarize_performance(self, user_stats: str, system_prompt: str) -> str:
         agent = Agent(
             model=self.model,
-            system_prompt=syste_prompt,
-            usage_limits=UsageLimits(max_tokens=50000),
+            system_prompt=system_prompt,
         )
-        response = await agent.run(user_prompt)
+        response = await agent.run(user_stats)
         return response.output

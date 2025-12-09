@@ -6,6 +6,7 @@ import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
 import jdatetime
+import markdown
 from functools import lru_cache
 from typing import Any
 
@@ -60,6 +61,16 @@ _EMAIL_TEMPLATE = Environment(
         body { margin: 0; padding: 0; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
         img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
         table { border-collapse: collapse !important; }
+
+        /* Markdown Content Styling */
+        /* These styles target the HTML generated from the Markdown text */
+        .md-content h1, .md-content h2, .md-content h3 { margin-top: 20px; margin-bottom: 10px; font-size: 16px; color: #24292e; }
+        .md-content p { margin-bottom: 12px; line-height: 1.6; }
+        .md-content ul, .md-content ol { margin-bottom: 12px; padding-left: 20px; }
+        .md-content li { margin-bottom: 4px; }
+        .md-content strong { color: #24292e; font-weight: 600; }
+        .md-content code { background-color: rgba(27,31,35,0.05); padding: 2px 4px; border-radius: 3px; font-family: monospace; font-size: 85%; }
+        .md-content blockquote { border-left: 4px solid #dfe2e5; color: #6a737d; padding-left: 16px; margin: 0 0 16px 0; }
     </style>
     </head>
     <body style="background-color: #f4f7fa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px 0;">
@@ -216,6 +227,19 @@ _EMAIL_TEMPLATE = Environment(
                 </table>
                 {% endif %}
 
+                <!-- LLM SUMMARY SECTION -->
+                {% if llm_summary %}
+                <h3 style="margin: 30px 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #6a737d; border-bottom: 2px solid #f1f3f5; padding-bottom: 8px;">
+                    ✨ AI Performance Summary
+                </h3>
+                <div style="background-color: #ffffff; border: 1px solid #e1e4e8; border-radius: 6px; padding: 20px; font-size: 14px; color: #24292e;">
+                    <div class="md-content">
+                        <!-- We use 'safe' here because we assume the Python code converted Markdown to HTML -->
+                        {{ llm_summary | safe }}
+                    </div>
+                </div>
+                {% endif %}
+
             </div>
 
             <!-- FOOTER -->
@@ -321,7 +345,11 @@ def _record_last_error(schedule_id: ObjectId, error: str) -> None:
 
 
 def _render_email_body(
-    perf: Any, time_spent: Any | None, start_date: datetime, end_date: datetime
+    perf: Any,
+    time_spent: Any | None,
+    start_date: datetime,
+    end_date: datetime,
+    llm_summary: str | None = None,
 ) -> str:
     return _EMAIL_TEMPLATE.render(
         perf=perf,
@@ -331,6 +359,7 @@ def _render_email_body(
         now_utc=_now_utc(),
         jalali_date=_format_jalali_date,
         jalali_datetime=_format_jalali_datetime,
+        llm_summary=llm_summary,
     )
 
 
@@ -406,6 +435,35 @@ async def send_scheduled_report(schedule_id: str) -> None:
         time_spent = None
 
     try:
+        llm_performance = get_user_performance_for_llm(
+            gitlab_client=gitlab_client,
+            user_id=int(schedule["user_id"]),
+            start_date=start_date,
+            end_date=end_date,
+            additional_user_emails=_get_additional_user_emails(
+                int(schedule["user_id"])
+            ),
+        )
+        agent = PerformanceAgent(
+            model_name=get_settings().llm_model_name,
+            openrouter_api_key=get_settings().openrouter_api_key,
+        )
+        performance_summary = await agent.summarize_performance(
+            llm_performance, PerformancePrompt
+        )
+        logger.info(
+            "LLM performance summary for schedule %s: %s",
+            schedule_id,
+            performance_summary,
+        )
+        llm_summary_html = markdown.markdown(performance_summary)
+    except Exception as exc:  # pragma: no cover - external API failure
+        logger.error(
+            "Failed to summarize performance for schedule %s: %s", schedule_id, exc
+        )
+        llm_summary_html = None
+
+    try:
         mail_client = _get_mail_client()
     except RuntimeError as exc:
         logger.error("Email configuration error: %s", exc)
@@ -416,7 +474,12 @@ async def send_scheduled_report(schedule_id: str) -> None:
         schedule.get("subject", f"Weekly performance report for {performance.username}")
         or f"Weekly performance report for {performance.username}"
     )
-    body = _render_email_body(performance, time_spent, start_date, end_date)
+    # Add start and end dates to subject
+    subject += f" ({_format_jalali_date(start_date)} — {_format_jalali_date(end_date)})"
+
+    body = _render_email_body(
+        performance, time_spent, start_date, end_date, llm_summary_html
+    )
     message = MessageSchema(
         subject=subject,
         recipients=recipients,

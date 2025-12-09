@@ -46,6 +46,10 @@ class Settings(BaseSettings):
 
     performance_cache_expiry_seconds: int = 3600  # 1 hour
 
+    llm_model_name: str = "deepseek/deepseek-v3.2"
+    openrouter_api_key: str | None = None
+    logfire_token: str = ""
+
     safe_date_offset: int = (
         90  # days to add to 'until' of user performance to account for late commits
     )

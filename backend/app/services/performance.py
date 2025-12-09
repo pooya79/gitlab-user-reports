@@ -806,7 +806,8 @@ def get_user_performance_for_llm(
         "add_lines": 0,
         "remove_lines": 0,
         "approvals": code_review_stats.approvals_given,
-        "comments": code_review_stats.review_comments + code_review_stats.notes_authored,
+        "comments": code_review_stats.review_comments
+        + code_review_stats.notes_authored,
         "total_time_spent": f"{time_stats.total_time_spent_hours:.2f} hours",
     }
 
@@ -829,14 +830,14 @@ def get_user_performance_for_llm(
             if log.time_spent < 3600
             else f"{log.time_spent / 3600:.1f}h"
         )
-        
+
         # CHANGED: Force date string format
         date_str = log.spent_at.strftime("%Y-%m-%d")
 
         log_entry = {
             "time": formatted_time,
             "summary": log.summary or "No summary",
-            "date": date_str, 
+            "date": date_str,
         }
 
         if log.merge_request:
@@ -844,7 +845,7 @@ def get_user_performance_for_llm(
             if key not in mr_cache:
                 mr_cache[key] = {
                     "title": log.merge_request.title,
-                    "description": "", 
+                    "description": "",
                     "project_id": log.project.id,
                     "iid": log.merge_request.iid,
                     "commits": [],
@@ -856,9 +857,13 @@ def get_user_performance_for_llm(
             issue_desc = ""
             try:
                 if log.project.id not in project_obj_cache:
-                    project_obj_cache[log.project.id] = gitlab_client.projects.get(log.project.id)
-                
-                target_issue = project_obj_cache[log.project.id].issues.get(log.issue.iid)
+                    project_obj_cache[log.project.id] = gitlab_client.projects.get(
+                        log.project.id
+                    )
+
+                target_issue = project_obj_cache[log.project.id].issues.get(
+                    log.issue.iid
+                )
                 issue_desc = target_issue.description
             except Exception:
                 issue_desc = "Could not fetch description"
@@ -894,7 +899,9 @@ def get_user_performance_for_llm(
                         all=True,
                         get_all=True,
                         since=start_date.isoformat(),
-                        until=(end_date + timedelta(days=1)).isoformat(),
+                        until=(
+                            end_date + +timedelta(days=get_settings().safe_date_offset)
+                        ).isoformat(),
                         author=email,
                         with_stats=True,
                     )
