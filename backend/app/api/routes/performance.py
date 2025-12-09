@@ -29,6 +29,7 @@ from app.services.performance import (
     get_project_performance_stats,
     get_time_spent_stats,
     summarize_project_performance,
+    get_user_performance_for_llm,
 )
 from app.core.config import get_settings
 
@@ -388,4 +389,28 @@ async def get_general_project_performance(
                 + dt.timedelta(seconds=get_settings().performance_cache_expiry_seconds),
             }
         )
+    return performance_data
+
+
+@router.get(
+    "/users/{user_id}/llm-performance",
+    response_model=str,
+    responses={
+        401: GeneralErrorResponses.UNAUTHORIZED,
+        500: GeneralErrorResponses.INTERNAL_SERVER_ERROR,
+    },
+)
+async def get_user_performance_for_llm_endpoint(
+    user_id: int,
+    start_date: dt.datetime,
+    end_date: dt.datetime,
+    auth_context: AuthContext = Depends(get_auth_context),
+) -> str:
+    """Retrieve user performance data formatted for LLM consumption."""
+    performance_data = get_user_performance_for_llm(
+        gitlab_client=auth_context.gitlab_client,
+        user_id=user_id,
+        start_date=start_date,
+        end_date=end_date,
+    )
     return performance_data

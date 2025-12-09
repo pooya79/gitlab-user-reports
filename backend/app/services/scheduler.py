@@ -22,7 +22,9 @@ from app.services.performance import (
     PerformanceComputationError,
     get_time_spent_stats,
     summarize_user_performance,
+    get_user_performance_for_llm,
 )
+from app.agents import PerformancePrompt, PerformanceAgent
 
 logger = logging.getLogger(__name__)
 
@@ -37,13 +39,11 @@ def _to_jalali(dt: datetime) -> jdatetime.datetime:
 
 def _format_jalali_date(dt: datetime) -> str:
     """Return a Jalali date string for display."""
-
     return _to_jalali(dt).strftime("%Y-%m-%d")
 
 
 def _format_jalali_datetime(dt: datetime) -> str:
     """Return a Jalali date-time string for display."""
-
     return _to_jalali(dt).strftime("%Y-%m-%d %H:%M")
 
 
@@ -52,106 +52,182 @@ _EMAIL_TEMPLATE = Environment(
     autoescape=select_autoescape(enabled_extensions=("html",)),
 ).from_string(
     """
-    <div style="font-family: Arial, sans-serif; line-height: 1.4; color: #1f2933;">
-      <h2 style="margin-bottom: 4px;">Weekly performance for {{ perf.username }}</h2>
-      <p style="margin-top: 0; color: #52606d;">
-        Period: {{ jalali_date(start_date) }} – {{ jalali_date(end_date) }}
-      </p>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <style>
+        /* Client-specific resets */
+        body { margin: 0; padding: 0; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        table { border-collapse: collapse !important; }
+    </style>
+    </head>
+    <body style="background-color: #f4f7fa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px 0;">
+        
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e1e4e8;">
+            
+            <!-- HEADER -->
+            <div style="background-color: #24292e; padding: 24px 30px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 600;">Weekly Performance</h1>
+                <p style="color: #a3aab1; margin: 8px 0 0 0; font-size: 14px;">
+                    {{ perf.username }}
+                </p>
+                <div style="display: inline-block; background: rgba(255,255,255,0.1); border-radius: 4px; padding: 4px 12px; margin-top: 12px;">
+                    <span style="color: #ffffff; font-size: 12px; letter-spacing: 0.5px;">
+                        {{ jalali_date(start_date) }} — {{ jalali_date(end_date) }}
+                    </span>
+                </div>
+            </div>
 
-      <h3 style="margin-bottom: 4px;">Highlights</h3>
-      <ul style="margin-top: 4px;">
-        <li><strong>Commits:</strong> {{ perf.commits }}</li>
-        <li><strong>Changes:</strong> {{ perf.changes }} ( +{{ perf.additions }}, -{{ perf.deletions }} )</li>
-        <li><strong>MRs touched:</strong> {{ perf.mr_contributed }}</li>
-        <li><strong>Approvals:</strong> {{ perf.approvals_given }}</li>
-        <li><strong>Review comments:</strong> {{ perf.review_comments }}</li>
-      </ul>
+            <!-- CONTENT -->
+            <div style="padding: 30px;">
 
-      {% if time_spent %}
-      <h3 style="margin-bottom: 4px;">Time spent</h3>
-      <ul style="margin-top: 4px;">
-        <li><strong>Total hours:</strong> {{ "%.1f" | format(time_spent.total_time_spent_hours) }}</li>
-        <li><strong>MRs contributed:</strong> {{ time_spent.mr_contributed }}</li>
-        <li><strong>Issues contributed:</strong> {{ time_spent.issue_contributed }}</li>
-      </ul>
-      {% if time_spent.daily_project_time_spent %}
-      <table style="border-collapse: collapse; width: 100%; margin-top: 6px;">
-        <thead>
-          <tr>
-            <th style="text-align: left; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">Date</th>
-            <th style="text-align: left; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">Project</th>
-            <th style="text-align: right; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">Hours</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for date, project, hours in time_spent.daily_project_time_spent %}
-          <tr>
-            <td style="padding: 6px 4px; border-bottom: 1px solid #e5e9f2;">{{ jalali_date(date) }}</td>
-            <td style="padding: 6px 4px; border-bottom: 1px solid #e5e9f2;">{{ project }}</td>
-            <td style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #e5e9f2;">{{ "%.1f"|format(hours) }}</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% endif %}
-      {% endif %}
+                <!-- KEY METRICS GRID -->
+                <h3 style="margin: 0 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #8899a6; border-bottom: 2px solid #f1f3f5; padding-bottom: 8px;">
+                    Highlights
+                </h3>
+                
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 25px;">
+                    <tr>
+                        <td width="33%" style="text-align: center; padding: 10px; border-right: 1px solid #eee;">
+                            <div style="font-size: 24px; font-weight: 700; color: #2c3e50;">{{ perf.commits }}</div>
+                            <div style="font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px;">Commits</div>
+                        </td>
+                        <td width="33%" style="text-align: center; padding: 10px; border-right: 1px solid #eee;">
+                            <div style="font-size: 24px; font-weight: 700; color: #2c3e50;">{{ perf.mr_contributed }}</div>
+                            <div style="font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px;">MRs Touched</div>
+                        </td>
+                        <td width="33%" style="text-align: center; padding: 10px;">
+                            <div style="font-size: 24px; font-weight: 700; color: #2c3e50;">{{ perf.approvals_given }}</div>
+                            <div style="font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px;">Approvals</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="border-top: 1px solid #eee; padding-top: 15px; text-align: center;">
+                            <span style="font-size: 14px; color: #52606d;">Lines of Code: </span>
+                            <span style="color: #28a745; font-weight: 600; margin-left: 5px;">+{{ perf.additions }}</span>
+                            <span style="color: #cb2431; font-weight: 600; margin-left: 5px;">-{{ perf.deletions }}</span>
+                            <span style="color: #52606d; font-size: 13px; margin-left: 15px;">({{ perf.review_comments }} comments)</span>
+                        </td>
+                    </tr>
+                </table>
 
-      {% if perf.daily_commit_counts %}
-      <h3 style="margin-bottom: 4px;">Daily activity</h3>
-      <table style="border-collapse: collapse; width: 100%; margin-top: 6px;">
-        <thead>
-          <tr>
-            <th style="text-align: left; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">Date</th>
-            <th style="text-align: right; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">Commits</th>
-            <th style="text-align: right; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">Changes</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for date, commits in perf.daily_commit_counts|dictsort %}
-          <tr>
-            <td style="padding: 6px 4px; border-bottom: 1px solid #e5e9f2;">{{ jalali_date(date) }}</td>
-            <td style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #e5e9f2;">{{ commits }}</td>
-            <td style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #e5e9f2;">
-              {{ perf.daily_changes.get(date, 0) }}
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% endif %}
+                <!-- TIME SPENT (Conditional) -->
+                {% if time_spent %}
+                <h3 style="margin: 25px 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #8899a6; border-bottom: 2px solid #f1f3f5; padding-bottom: 8px;">
+                    Time Management
+                </h3>
+                <div style="background-color: #f8f9fa; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+                    <table width="100%">
+                        <tr>
+                            <td style="color: #52606d;"><strong>Total Hours:</strong></td>
+                            <td style="text-align: right; color: #24292e;">{{ "%.1f" | format(time_spent.total_time_spent_hours) }} hrs</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #52606d;"><strong>MRs Contributed:</strong></td>
+                            <td style="text-align: right; color: #24292e;">{{ time_spent.mr_contributed }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #52606d;"><strong>Issues Contributed:</strong></td>
+                            <td style="text-align: right; color: #24292e;">{{ time_spent.issue_contributed }}</td>
+                        </tr>
+                    </table>
+                </div>
 
-      {% if perf.project_performances %}
-      <h3 style="margin-bottom: 4px;">By project</h3>
-      <table style="border-collapse: collapse; width: 100%; margin-top: 6px;">
-        <thead>
-          <tr>
-            <th style="text-align: left; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">Project</th>
-            <th style="text-align: right; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">Commits</th>
-            <th style="text-align: right; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">Changes</th>
-            <th style="text-align: right; border-bottom: 1px solid #d3dce6; padding: 6px 4px;">MRs</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for proj in perf.project_performances %}
-          <tr>
-            <td style="padding: 6px 4px; border-bottom: 1px solid #e5e9f2;">
-              <a href="{{ proj.web_url }}" style="color: #1f7aec; text-decoration: none;">
-                {{ proj.name_with_namespace or proj.name }}
-              </a>
-            </td>
-            <td style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #e5e9f2;">{{ proj.commits }}</td>
-            <td style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #e5e9f2;">{{ proj.changes }}</td>
-            <td style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #e5e9f2;">{{ proj.mr_contributed }}</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% endif %}
+                {% if time_spent.daily_project_time_spent %}
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                    <thead>
+                        <tr style="background-color: #f1f3f5;">
+                            <th style="text-align: left; padding: 8px; border-radius: 4px 0 0 4px; color: #495057;">Date</th>
+                            <th style="text-align: left; padding: 8px; color: #495057;">Project</th>
+                            <th style="text-align: right; padding: 8px; border-radius: 0 4px 4px 0; color: #495057;">Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for date, project, hours in time_spent.daily_project_time_spent %}
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; color: #495057;">{{ jalali_date(date) }}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; font-weight: 500; color: #24292e;">{{ project }}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #24292e;">{{ "%.1f"|format(hours) }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+                {% endif %}
 
-      <p style="margin-top: 12px; color: #52606d;">
-        Generated at {{ jalali_datetime(now_utc) }} (Jalali).
-      </p>
-    </div>
+                <!-- DAILY ACTIVITY -->
+                {% if perf.daily_commit_counts %}
+                <h3 style="margin: 30px 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #8899a6; border-bottom: 2px solid #f1f3f5; padding-bottom: 8px;">
+                    Daily Activity
+                </h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                    <thead>
+                        <tr style="background-color: #f1f3f5;">
+                            <th style="text-align: left; padding: 8px; border-radius: 4px 0 0 4px; color: #495057;">Date</th>
+                            <th style="text-align: right; padding: 8px; color: #495057;">Commits</th>
+                            <th style="text-align: right; padding: 8px; border-radius: 0 4px 4px 0; color: #495057;">Changes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for date, commits in perf.daily_commit_counts|dictsort %}
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; color: #495057;">{{ jalali_date(date) }}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right;">
+                                <span style="background: #e1e4e8; padding: 2px 6px; border-radius: 10px; font-size: 11px;">{{ commits }}</span>
+                            </td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #24292e;">
+                                {{ perf.daily_changes.get(date, 0) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+                <!-- BY PROJECT -->
+                {% if perf.project_performances %}
+                <h3 style="margin: 30px 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #8899a6; border-bottom: 2px solid #f1f3f5; padding-bottom: 8px;">
+                    Project Breakdown
+                </h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                    <thead>
+                        <tr style="background-color: #f1f3f5;">
+                            <th style="text-align: left; padding: 8px; border-radius: 4px 0 0 4px; color: #495057;">Project</th>
+                            <th style="text-align: right; padding: 8px; color: #495057;">Com.</th>
+                            <th style="text-align: right; padding: 8px; color: #495057;">Chg.</th>
+                            <th style="text-align: right; padding: 8px; border-radius: 0 4px 4px 0; color: #495057;">MRs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for proj in perf.project_performances %}
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef;">
+                                <a href="{{ proj.web_url }}" style="color: #0366d6; text-decoration: none; font-weight: 500;">
+                                    {{ proj.name_with_namespace or proj.name }}
+                                </a>
+                            </td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #586069;">{{ proj.commits }}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #586069;">{{ proj.changes }}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #586069;">{{ proj.mr_contributed }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+            </div>
+
+            <!-- FOOTER -->
+            <div style="background-color: #f8f9fa; padding: 15px; text-align: center; border-top: 1px solid #e1e4e8;">
+                <p style="margin: 0; color: #959da5; font-size: 11px;">
+                    Generated at {{ jalali_datetime(now_utc) }} (Jalali)
+                </p>
+            </div>
+            
+        </div>
+    </body>
+    </html>
     """
 )
 
