@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
+import jdatetime
 from functools import lru_cache
 from typing import Any
 
@@ -27,6 +28,25 @@ logger = logging.getLogger(__name__)
 
 _scheduler = AsyncIOScheduler(timezone=timezone.utc)
 
+
+def _to_jalali(dt: datetime) -> jdatetime.datetime:
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    return jdatetime.datetime.fromgregorian(datetime=dt)
+
+
+def _format_jalali_date(dt: datetime) -> str:
+    """Return a Jalali date string for display."""
+
+    return _to_jalali(dt).strftime("%Y-%m-%d")
+
+
+def _format_jalali_datetime(dt: datetime) -> str:
+    """Return a Jalali date-time string for display."""
+
+    return _to_jalali(dt).strftime("%Y-%m-%d %H:%M")
+
+
 _EMAIL_TEMPLATE = Environment(
     loader=BaseLoader(),
     autoescape=select_autoescape(enabled_extensions=("html",)),
@@ -35,7 +55,7 @@ _EMAIL_TEMPLATE = Environment(
     <div style="font-family: Arial, sans-serif; line-height: 1.4; color: #1f2933;">
       <h2 style="margin-bottom: 4px;">Weekly performance for {{ perf.username }}</h2>
       <p style="margin-top: 0; color: #52606d;">
-        Period: {{ start_date.date() }} – {{ end_date.date() }}
+        Period: {{ jalali_date(start_date) }} – {{ jalali_date(end_date) }}
       </p>
 
       <h3 style="margin-bottom: 4px;">Highlights</h3>
@@ -66,7 +86,7 @@ _EMAIL_TEMPLATE = Environment(
         <tbody>
         {% for date, project, hours in time_spent.daily_project_time_spent %}
           <tr>
-            <td style="padding: 6px 4px; border-bottom: 1px solid #e5e9f2;">{{ date.date() }}</td>
+            <td style="padding: 6px 4px; border-bottom: 1px solid #e5e9f2;">{{ jalali_date(date) }}</td>
             <td style="padding: 6px 4px; border-bottom: 1px solid #e5e9f2;">{{ project }}</td>
             <td style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #e5e9f2;">{{ "%.1f"|format(hours) }}</td>
           </tr>
@@ -89,7 +109,7 @@ _EMAIL_TEMPLATE = Environment(
         <tbody>
         {% for date, commits in perf.daily_commit_counts|dictsort %}
           <tr>
-            <td style="padding: 6px 4px; border-bottom: 1px solid #e5e9f2;">{{ date.date() }}</td>
+            <td style="padding: 6px 4px; border-bottom: 1px solid #e5e9f2;">{{ jalali_date(date) }}</td>
             <td style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #e5e9f2;">{{ commits }}</td>
             <td style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #e5e9f2;">
               {{ perf.daily_changes.get(date, 0) }}
@@ -129,7 +149,7 @@ _EMAIL_TEMPLATE = Environment(
       {% endif %}
 
       <p style="margin-top: 12px; color: #52606d;">
-        Generated at {{ now_utc.strftime("%Y-%m-%d %H:%M UTC") }}.
+        Generated at {{ jalali_datetime(now_utc) }} (Jalali).
       </p>
     </div>
     """
@@ -233,6 +253,8 @@ def _render_email_body(
         start_date=start_date,
         end_date=end_date,
         now_utc=_now_utc(),
+        jalali_date=_format_jalali_date,
+        jalali_datetime=_format_jalali_datetime,
     )
 
 

@@ -18,6 +18,7 @@ dependencies = [
     "weasyprint>=66.0",
     "requests>=2.32.5",
     "fastapi-mail[httpx]>=1.5.8",
+    "jdatetime>=5.2.0",
 ]
 
 [dependency-groups]
