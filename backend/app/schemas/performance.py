@@ -340,6 +340,7 @@ class GeneralUserPerformance(BaseModel):
 
     # Per-project performance
     project_performances: list[ProjectPerformanceShort]
+    mr_references: list[str] = Field(default_factory=list)
 
     @field_serializer(
         "daily_commit_counts",

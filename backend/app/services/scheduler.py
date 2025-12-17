@@ -48,6 +48,63 @@ def _format_jalali_datetime(dt: datetime) -> str:
     return _to_jalali(dt).strftime("%Y-%m-%d %H:%M")
 
 
+def _jalali_weekday(dt: datetime) -> str:
+    """Return the Jalali weekday name for display."""
+    return _to_jalali(dt).strftime("%A")
+
+
+def _extract_timelog_mr_refs(time_spent: Any | None) -> set[str]:
+    """Collect merge request references from time logging data."""
+    refs: set[str] = set()
+    if not time_spent:
+        return refs
+
+    for project_timelog in getattr(time_spent, "project_timelogs", []) or []:
+        for timelog in getattr(project_timelog, "timelogs", []) or []:
+            mr = getattr(timelog, "merge_request", None)
+            ref = getattr(mr, "reference", None) if mr else None
+            if ref:
+                refs.add(ref)
+    return refs
+
+
+def _aggregate_hours_by_day(time_spent: Any | None) -> dict[str, float]:
+    """Sum time-spent hours keyed by YYYY-MM-DD."""
+    hours: dict[str, float] = {}
+    if not time_spent:
+        return hours
+
+    for date, _project, num_hours in getattr(
+        time_spent, "daily_project_time_spent", []
+    ):
+        date_key = date.date().isoformat()
+        hours[date_key] = hours.get(date_key, 0.0) + float(num_hours)
+    return hours
+
+
+def _project_hours_map(time_spent: Any | None) -> dict[str, float]:
+    """Map project path to total hours from timelogs."""
+    project_hours: dict[str, float] = {}
+    if not time_spent:
+        return project_hours
+
+    for project_timelog in getattr(time_spent, "project_timelogs", []) or []:
+        project = getattr(project_timelog, "project", None)
+        if not project:
+            continue
+        project_key = (
+            getattr(project, "path_with_namespace", None)
+            or getattr(project, "web_url", None)
+            or str(getattr(project, "id", ""))
+        )
+        if not project_key:
+            continue
+        project_hours[project_key] = getattr(
+            project_timelog, "total_time_spent_hours", 0.0
+        )
+    return project_hours
+
+
 _EMAIL_TEMPLATE = Environment(
     loader=BaseLoader(),
     autoescape=select_autoescape(enabled_extensions=("html",)),
@@ -71,11 +128,31 @@ _EMAIL_TEMPLATE = Environment(
         .md-content strong { color: #24292e; font-weight: 600; }
         .md-content code { background-color: rgba(27,31,35,0.05); padding: 2px 4px; border-radius: 3px; font-family: monospace; font-size: 85%; }
         .md-content blockquote { border-left: 4px solid #dfe2e5; color: #6a737d; padding-left: 16px; margin: 0 0 16px 0; }
+        .md-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 13px; /* Slightly smaller for tables */
+        }
+        
+        /* Add borders and padding to cells */
+        .md-content th, 
+        .md-content td {
+            border: 1px solid #e1e4e8;
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* Style the header row */
+        .md-content th {
+            background-color: #f6f8fa;
+            font-weight: 600;
+        }
     </style>
     </head>
     <body style="background-color: #f4f7fa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px 0;">
         
-        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e1e4e8;">
+        <div style="max-width: 760px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e1e4e8;">
             
             <!-- HEADER -->
             <div style="background-color: #24292e; padding: 24px 30px; text-align: center;">
@@ -100,17 +177,21 @@ _EMAIL_TEMPLATE = Environment(
                 
                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 25px;">
                     <tr>
-                        <td width="33%" style="text-align: center; padding: 10px; border-right: 1px solid #eee;">
+                        <td width="25%" style="text-align: center; padding: 10px; border-right: 1px solid #eee;">
                             <div style="font-size: 24px; font-weight: 700; color: #2c3e50;">{{ perf.commits }}</div>
                             <div style="font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px;">Commits</div>
                         </td>
-                        <td width="33%" style="text-align: center; padding: 10px; border-right: 1px solid #eee;">
-                            <div style="font-size: 24px; font-weight: 700; color: #2c3e50;">{{ perf.mr_contributed }}</div>
-                            <div style="font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px;">MRs Touched</div>
+                        <td width="25%" style="text-align: center; padding: 10px; border-right: 1px solid #eee;">
+                            <div style="font-size: 20px; font-weight: 700; color: #2c3e50;">{{ time_spent.mr_contributed }}/{{ perf.mr_contributed }}/{{ perf.approvals_given }}</div>
+                            <div style="font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px;">MRs WithTimeLog/Contributed/Approvals</div>
                         </td>
-                        <td width="33%" style="text-align: center; padding: 10px;">
-                            <div style="font-size: 24px; font-weight: 700; color: #2c3e50;">{{ perf.approvals_given }}</div>
-                            <div style="font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px;">Approvals</div>
+                        <td width="25%" style="text-align: center; padding: 10px; border-right: 1px solid #eee;">
+                            <div style="font-size: 24px; font-weight: 700; color: #2c3e50;">{{ time_spent.issue_contributed }}</div>
+                            <div style="font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px;">Issues WithTimeLog</div>
+                        </td>
+                        <td width="25%" style="text-align: center; padding: 10px;">
+                            <div style="font-size: 24px; font-weight: 700; color: #2c3e50;">{{ "%.1f" | format(total_hours or 0) }}</div>
+                            <div style="font-size: 11px; color: #7f8c8d; text-transform: uppercase; margin-top: 4px;">Total Hours</div>
                         </td>
                     </tr>
                     <tr>
@@ -128,28 +209,13 @@ _EMAIL_TEMPLATE = Environment(
                 <h3 style="margin: 25px 0 15px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #8899a6; border-bottom: 2px solid #f1f3f5; padding-bottom: 8px;">
                     Time Management
                 </h3>
-                <div style="background-color: #f8f9fa; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
-                    <table width="100%">
-                        <tr>
-                            <td style="color: #52606d;"><strong>Total Hours:</strong></td>
-                            <td style="text-align: right; color: #24292e;">{{ "%.1f" | format(time_spent.total_time_spent_hours) }} hrs</td>
-                        </tr>
-                        <tr>
-                            <td style="color: #52606d;"><strong>MRs Contributed:</strong></td>
-                            <td style="text-align: right; color: #24292e;">{{ time_spent.mr_contributed }}</td>
-                        </tr>
-                        <tr>
-                            <td style="color: #52606d;"><strong>Issues Contributed:</strong></td>
-                            <td style="text-align: right; color: #24292e;">{{ time_spent.issue_contributed }}</td>
-                        </tr>
-                    </table>
-                </div>
 
                 {% if time_spent.daily_project_time_spent %}
                 <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
                     <thead>
                         <tr style="background-color: #f1f3f5;">
                             <th style="text-align: left; padding: 8px; border-radius: 4px 0 0 4px; color: #495057;">Date</th>
+                            <th style="text-align: left; padding: 8px; color: #495057;">Weekday</th>
                             <th style="text-align: left; padding: 8px; color: #495057;">Project</th>
                             <th style="text-align: right; padding: 8px; border-radius: 0 4px 4px 0; color: #495057;">Hours</th>
                         </tr>
@@ -158,6 +224,7 @@ _EMAIL_TEMPLATE = Environment(
                     {% for date, project, hours in time_spent.daily_project_time_spent %}
                         <tr>
                             <td style="padding: 8px; border-bottom: 1px solid #e9ecef; color: #495057;">{{ jalali_date(date) }}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; color: #495057;">{{ weekday_name(date) }}</td>
                             <td style="padding: 8px; border-bottom: 1px solid #e9ecef; font-weight: 500; color: #24292e;">{{ project }}</td>
                             <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #24292e;">{{ "%.1f"|format(hours) }}</td>
                         </tr>
@@ -176,19 +243,26 @@ _EMAIL_TEMPLATE = Environment(
                     <thead>
                         <tr style="background-color: #f1f3f5;">
                             <th style="text-align: left; padding: 8px; border-radius: 4px 0 0 4px; color: #495057;">Date</th>
+                            <th style="text-align: left; padding: 8px; color: #495057;">Weekday</th>
                             <th style="text-align: right; padding: 8px; color: #495057;">Commits</th>
-                            <th style="text-align: right; padding: 8px; border-radius: 0 4px 4px 0; color: #495057;">Changes</th>
+                            <th style="text-align: right; padding: 8px; color: #495057;">Changes</th>
+                            <th style="text-align: right; padding: 8px; border-radius: 0 4px 4px 0; color: #495057;">Hours</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for date, commits in perf.daily_commit_counts|dictsort %}
                         <tr>
+                            {% set date_key = date.strftime("%Y-%m-%d") %}
                             <td style="padding: 8px; border-bottom: 1px solid #e9ecef; color: #495057;">{{ jalali_date(date) }}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; color: #495057;">{{ weekday_name(date) }}</td>
                             <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right;">
                                 <span style="background: #e1e4e8; padding: 2px 6px; border-radius: 10px; font-size: 11px;">{{ commits }}</span>
                             </td>
                             <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #24292e;">
                                 {{ perf.daily_changes.get(date, 0) }}
+                            </td>
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #24292e;">
+                                {{ "%.1f"|format(hours_by_day.get(date_key, 0)) }}
                             </td>
                         </tr>
                     {% endfor %}
@@ -207,7 +281,8 @@ _EMAIL_TEMPLATE = Environment(
                             <th style="text-align: left; padding: 8px; border-radius: 4px 0 0 4px; color: #495057;">Project</th>
                             <th style="text-align: right; padding: 8px; color: #495057;">Com.</th>
                             <th style="text-align: right; padding: 8px; color: #495057;">Chg.</th>
-                            <th style="text-align: right; padding: 8px; border-radius: 0 4px 4px 0; color: #495057;">MRs</th>
+                            <th style="text-align: right; padding: 8px; color: #495057;">MRs</th>
+                            <th style="text-align: right; padding: 8px; border-radius: 0 4px 4px 0; color: #495057;">Hours</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -221,6 +296,8 @@ _EMAIL_TEMPLATE = Environment(
                             <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #586069;">{{ proj.commits }}</td>
                             <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #586069;">{{ proj.changes }}</td>
                             <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #586069;">{{ proj.mr_contributed }}</td>
+                            {% set proj_key = proj.path_with_namespace or proj.web_url or (proj.id ~ "") %}
+                            <td style="padding: 8px; border-bottom: 1px solid #e9ecef; text-align: right; color: #586069;">{{ "%.1f"|format(project_hours.get(proj_key, 0)) }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -233,7 +310,7 @@ _EMAIL_TEMPLATE = Environment(
                     ✨ AI Performance Summary
                 </h3>
                 <div style="background-color: #ffffff; border: 1px solid #e1e4e8; border-radius: 6px; padding: 20px; font-size: 14px; color: #24292e;">
-                    <div class="md-content">
+                    <div class="md-content" dir="rtl" style="direction: rtl; text-align: right; font-family: Tahoma, Arial, sans-serif;">
                         <!-- We use 'safe' here because we assume the Python code converted Markdown to HTML -->
                         {{ llm_summary | safe }}
                     </div>
@@ -350,6 +427,11 @@ def _render_email_body(
     start_date: datetime,
     end_date: datetime,
     llm_summary: str | None = None,
+    *,
+    mrs_touched: int = 0,
+    total_hours: float | None = None,
+    hours_by_day: dict[str, float] | None = None,
+    project_hours: dict[str, float] | None = None,
 ) -> str:
     return _EMAIL_TEMPLATE.render(
         perf=perf,
@@ -360,6 +442,11 @@ def _render_email_body(
         jalali_date=_format_jalali_date,
         jalali_datetime=_format_jalali_datetime,
         llm_summary=llm_summary,
+        mrs_touched=mrs_touched,
+        total_hours=total_hours,
+        hours_by_day=hours_by_day or {},
+        project_hours=project_hours or {},
+        weekday_name=_jalali_weekday,
     )
 
 
@@ -434,6 +521,15 @@ async def send_scheduled_report(schedule_id: str) -> None:
         )
         time_spent = None
 
+    performance_mr_refs = set(getattr(performance, "mr_references", []) or [])
+    time_spent_mr_refs = _extract_timelog_mr_refs(time_spent)
+    mrs_touched = len(performance_mr_refs & time_spent_mr_refs)
+    hours_by_day = _aggregate_hours_by_day(time_spent)
+    project_hours = _project_hours_map(time_spent)
+    total_hours = (
+        float(getattr(time_spent, "total_time_spent_hours", 0.0)) if time_spent else 0.0
+    )
+
     try:
         llm_performance = get_user_performance_for_llm(
             gitlab_client=gitlab_client,
@@ -456,7 +552,9 @@ async def send_scheduled_report(schedule_id: str) -> None:
             schedule_id,
             performance_summary,
         )
-        llm_summary_html = markdown.markdown(performance_summary)
+        llm_summary_html = markdown.markdown(
+            performance_summary, extensions=["tables", "nl2br", "fenced_code"]
+        )
     except Exception as exc:  # pragma: no cover - external API failure
         logger.error(
             "Failed to summarize performance for schedule %s: %s", schedule_id, exc
@@ -478,7 +576,15 @@ async def send_scheduled_report(schedule_id: str) -> None:
     subject += f" ({_format_jalali_date(start_date)} — {_format_jalali_date(end_date)})"
 
     body = _render_email_body(
-        performance, time_spent, start_date, end_date, llm_summary_html
+        performance,
+        time_spent,
+        start_date,
+        end_date,
+        llm_summary_html,
+        mrs_touched=mrs_touched,
+        total_hours=total_hours,
+        hours_by_day=hours_by_day,
+        project_hours=project_hours,
     )
     message = MessageSchema(
         subject=subject,

@@ -281,6 +281,102 @@ def get_project_performance_stats(
     )
 
 
+def summarize_user_performance(
+    *,
+    gitlab_client: gitlab.Gitlab,
+    user_id: int,
+    start_date: datetime,
+    end_date: datetime,
+    additional_user_emails: list[str] = [],
+) -> GeneralUserPerformance:
+    """Build an aggregated view of a developer's performance across projects."""
+    user = gitlab_client.users.get(user_id)
+    user_emails = [user.email] + additional_user_emails
+
+    # Fetch and summarize events
+    events = _fetch_user_events(user=user, start=start_date, end=end_date)
+    code_review_stats, involved_project_ids = _summarize_events(events)
+
+    # Gather project-specific performance data
+    project_performances: list[ProjectPerformanceResponse] = []
+    total_commits = 0
+    total_additions = 0
+    total_deletions = 0
+    daily_commit_counts: dict[datetime, int] = defaultdict(int)
+    daily_additions: dict[str, int] = defaultdict(int)
+    daily_deletions: dict[str, int] = defaultdict(int)
+    daily_changes: dict[str, int] = defaultdict(int)
+    mr_references: set[str] = set()
+    for project_id in involved_project_ids:
+        project_stats = get_project_performance_stats(
+            gitlab_client=gitlab_client,
+            user_emails=user_emails,
+            project_id=project_id,
+            since=start_date,
+            until=end_date,
+        )
+        project_performances.append(project_stats)
+
+        total_commits += project_stats.commits
+        total_additions += project_stats.additions
+        total_deletions += project_stats.deletions
+
+        if project_stats.merge_requests:
+            mr_references.update(
+                mr.reference for mr in project_stats.merge_requests if mr.reference
+            )
+
+        for date, count in project_stats.daily_commit_counts.items():
+            daily_commit_counts[date] += count
+        for date, adds in project_stats.daily_additions.items():
+            daily_additions[date] += adds
+        for date, dels in project_stats.daily_deletions.items():
+            daily_deletions[date] += dels
+        for date, changes in project_stats.daily_changes.items():
+            daily_changes[date] += changes
+
+    total_changes = total_additions + total_deletions
+
+    return GeneralUserPerformance(
+        userd_id=user.id,
+        username=user.username,
+        commits=total_commits,
+        additions=total_additions,
+        deletions=total_deletions,
+        changes=total_changes,
+        mr_contributed=sum(pp.mr_contributed for pp in project_performances),
+        approvals_given=code_review_stats.approvals_given,
+        review_merge_requests=code_review_stats.reviewed_merge_requests,
+        review_comments=code_review_stats.review_comments,
+        notes_authored=code_review_stats.notes_authored,
+        daily_commit_counts=dict(daily_commit_counts),
+        daily_additions=dict(daily_additions),
+        daily_deletions=dict(daily_deletions),
+        daily_changes=dict(daily_changes),
+        mr_references=sorted(mr_references),
+        project_performances=[
+            ProjectPerformanceShort(
+                id=pp.id,
+                name=pp.name,
+                avatar_url=pp.avatar_url,
+                web_url=pp.web_url,
+                path_with_namespace=pp.path_with_namespace,
+                name_with_namespace=pp.name_with_namespace,
+                since=pp.since,
+                until=pp.until,
+                commits=pp.commits,
+                additions=pp.additions,
+                deletions=pp.deletions,
+                changes=pp.changes,
+                mr_contributed=pp.mr_contributed,
+                calculated_at=pp.calculated_at,
+                merge_requests=pp.merge_requests,
+            )
+            for pp in project_performances
+        ],
+    )
+
+
 def get_time_spent_stats(
     gitlab_token: str,
     gitlab_base_url: str,
@@ -589,95 +685,6 @@ def get_time_spent_stats(
         mr_contributed=len(mr_ids),
         issue_contributed=len(issue_ids),
         project_timelogs=project_timelogs,
-    )
-
-
-def summarize_user_performance(
-    *,
-    gitlab_client: gitlab.Gitlab,
-    user_id: int,
-    start_date: datetime,
-    end_date: datetime,
-    additional_user_emails: list[str] = [],
-) -> GeneralUserPerformance:
-    """Build an aggregated view of a developer's performance across projects."""
-    user = gitlab_client.users.get(user_id)
-    user_emails = [user.email] + additional_user_emails
-
-    # Fetch and summarize events
-    events = _fetch_user_events(user=user, start=start_date, end=end_date)
-    code_review_stats, involved_project_ids = _summarize_events(events)
-
-    # Gather project-specific performance data
-    project_performances: list[ProjectPerformanceResponse] = []
-    total_commits = 0
-    total_additions = 0
-    total_deletions = 0
-    daily_commit_counts: dict[datetime, int] = defaultdict(int)
-    daily_additions: dict[str, int] = defaultdict(int)
-    daily_deletions: dict[str, int] = defaultdict(int)
-    daily_changes: dict[str, int] = defaultdict(int)
-    for project_id in involved_project_ids:
-        project_stats = get_project_performance_stats(
-            gitlab_client=gitlab_client,
-            user_emails=user_emails,
-            project_id=project_id,
-            since=start_date,
-            until=end_date,
-        )
-        project_performances.append(project_stats)
-
-        total_commits += project_stats.commits
-        total_additions += project_stats.additions
-        total_deletions += project_stats.deletions
-
-        for date, count in project_stats.daily_commit_counts.items():
-            daily_commit_counts[date] += count
-        for date, adds in project_stats.daily_additions.items():
-            daily_additions[date] += adds
-        for date, dels in project_stats.daily_deletions.items():
-            daily_deletions[date] += dels
-        for date, changes in project_stats.daily_changes.items():
-            daily_changes[date] += changes
-
-    total_changes = total_additions + total_deletions
-
-    return GeneralUserPerformance(
-        userd_id=user.id,
-        username=user.username,
-        commits=total_commits,
-        additions=total_additions,
-        deletions=total_deletions,
-        changes=total_changes,
-        mr_contributed=sum(pp.mr_contributed for pp in project_performances),
-        approvals_given=code_review_stats.approvals_given,
-        review_merge_requests=code_review_stats.reviewed_merge_requests,
-        review_comments=code_review_stats.review_comments,
-        notes_authored=code_review_stats.notes_authored,
-        daily_commit_counts=dict(daily_commit_counts),
-        daily_additions=dict(daily_additions),
-        daily_deletions=dict(daily_deletions),
-        daily_changes=dict(daily_changes),
-        project_performances=[
-            ProjectPerformanceShort(
-                id=pp.id,
-                name=pp.name,
-                avatar_url=pp.avatar_url,
-                web_url=pp.web_url,
-                path_with_namespace=pp.path_with_namespace,
-                name_with_namespace=pp.name_with_namespace,
-                since=pp.since,
-                until=pp.until,
-                commits=pp.commits,
-                additions=pp.additions,
-                deletions=pp.deletions,
-                changes=pp.changes,
-                mr_contributed=pp.mr_contributed,
-                calculated_at=pp.calculated_at,
-                merge_requests=pp.merge_requests,
-            )
-            for pp in project_performances
-        ],
     )
 
 
